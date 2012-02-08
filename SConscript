@@ -50,7 +50,7 @@
 # library that can be employed by Ruby network components.    
 # :
 # *************************************************************************
-end of header
+# end of header
 
 import os, subprocess
 
