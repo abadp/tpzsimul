@@ -1,0 +1,133 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+
+<!-- ******** -->
+<Router id="TORUS-CT-NOC-MC" inputs=4 outputs=4 bufferSize=31 bufferControl=CT routingControl="TORUS-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=5>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="5" outputs="5" headerDelay=0 dataDelay=0 vnets=5 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.5">
+   <Connection id="C02" source="ROUTER.5" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+</Router>
+
+<!-- ******** -->
+<Router id="TORUS-CT-NOC-UC" inputs=4 outputs=4 bufferSize=31 bufferControl=CT routingControl="TORUS-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT-UC" numMessTypes=5>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="5" outputs="5" headerDelay=0 dataDelay=0 vnets=5 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.5">
+   <Connection id="C02" source="ROUTER.5" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+</Router>
+
+<!-- ************* -->
+
+
+<Router id="MESH-CT-NOC-MC" inputs=4 outputs=4 bufferSize=11 bufferControl=CT routingControl="MESH-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=5>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="5" outputs="5" headerDelay=0 dataDelay=0 vnets=5 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.5">
+   <Connection id="C02" source="ROUTER.5" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+</Router>
+
+<!-- ************* -->
+
+
+<Router id="MESH-CT-NOC-UC" inputs=4 outputs=4 bufferSize=11 bufferControl=CT routingControl="MESH-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT-UC" numMessTypes=5>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="5" outputs="5" headerDelay=0 dataDelay=0 vnets=5 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.5">
+   <Connection id="C02" source="ROUTER.5" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+</Router>

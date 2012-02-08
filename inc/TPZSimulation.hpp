@@ -239,12 +239,12 @@
       { m_defaultProb = value; }
       
       void setLoadProb(double value);
-
+      
+      void setVerbosity(unsigned value)
+      { m_verbosity = value; }
+      
       void setShowState(Boolean value)
       { m_ShowState = value; }
-
-      void setExtraStats(Boolean value)
-      { m_extraStats = value; }
 
       void setTrafficPattern(TPZTrafficPattern* pattern)
       { m_TrafficPattern = pattern; }
@@ -404,7 +404,6 @@
       TPZTrafficPattern* m_TrafficPattern;
       
       Boolean            m_isRafagaMode;
-      Boolean            m_extraStats;
       unsigned short     m_ProtocolTypes;
       unsigned long      m_SimulationCycles;
       unsigned long      m_StopSimulation;
@@ -413,6 +412,7 @@
       unsigned           m_Seed;
       unsigned           m_MessageLength;
       unsigned           m_PacketLength;
+      unsigned           m_verbosity;
       unsigned           m_Radius;
       unsigned           m_flitSize;
       double             m_q;

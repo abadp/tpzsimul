@@ -86,6 +86,7 @@
 #define  OPT_SIMUL_BUFFERSIZE   'u'
 #define  OPT_CLOCK_TRACE        'C'
 #define  OPT_NO_SEED            'r' //fixed seed
+#define  OPT_RES_VERBOSITY      'v'
 #define  OPT_SIMUL_BCAST_PROB   'A' //Probability of generation a CAST messages
 #define  OPT_SPECIFY_NETWORK    'n' //Specifies network. Non-operating
 #define  OPT_BEGIN_TRACE_DUMP   'T' //Starts to roll after that the trace clock. Not operational
@@ -93,8 +94,7 @@
 #define  OPT_INJECT_MAP         'I' //Show map periodically or at the end injeccion
 #define  OPT_NUM_THREADS        'N' //Create N threads
 #define  OPT_DROP_TRAFFIC       'D' //Drop traffic if injectionqueues are full
-#define  OPT_SHOW_EXTENDED      'X' //show extendended statistics at the end
-
+#define  OPT_SGML_NAME          'F'
 
 //*************************************************************************
 
@@ -353,7 +353,18 @@ void TPZSimulator :: deleteAllSimulations()
 TPZSimulation* TPZSimulator :: initialize(const TPZString& param)
 {
    TPZOptions opts(param);
-   installBuilders(param.word(1));
+   
+   TPZString sgmlName = opts.getValueForOption(OPT_SGML_NAME);
+   if(sgmlName == TPZString(""))
+   {
+      TPZString iniFileName= param.word(1) + TPZString(".ini");
+      installBuilders(iniFileName); 
+   }
+   else
+   {
+      installBuilders(sgmlName);
+   }
+   
    TPZSimulationBuilder* sBuilder = (TPZSimulationBuilder*)
                                     TPZComponent::simulationBuilder;
    
@@ -375,11 +386,12 @@ TPZSimulation* TPZSimulator :: initialize(const TPZString& param)
    TPZString seed           = opts.getValueForOption(OPT_RANDOM_SEED);
    TPZString injectMap      = opts.getValueForOption(OPT_INJECT_MAP);
    TPZString numHilos       = opts.getValueForOption(OPT_NUM_THREADS);
+   TPZString verbosity      = opts.getValueForOption(OPT_RES_VERBOSITY);
    
    Boolean   dropTraffic    = opts.isOptionActive(OPT_DROP_TRAFFIC);
    Boolean   noSeed         = opts.isOptionActive(OPT_NO_SEED);
    Boolean   noDisplay      = opts.isOptionActive(OPT_SIMUL_STATE);
-   Boolean   dumpExtra      = opts.isOptionActive(OPT_SHOW_EXTENDED);
+   
 
    TPZSimulation* simulation = (TPZSimulation*)
                   (sBuilder->createComponentWithId(simulationName));
@@ -473,7 +485,10 @@ TPZSimulation* TPZSimulator :: initialize(const TPZString& param)
    {
       simulation->setBimodalTraffic(bimodal);
    }
-   
+   if( verbosity != TPZString("") )
+   {
+      simulation->setVerbosity(verbosity.asInteger());
+   }
    if( probString == TPZString("") && loadString == TPZString("") )
    {
       if(simulation->defaultLoadProb() != -1 && simulation->defaultLoadSupply() != -1)
@@ -506,8 +521,6 @@ TPZSimulation* TPZSimulator :: initialize(const TPZString& param)
    
    if( noDisplay ) simulation->setShowState(false);
 
-   if( dumpExtra ) simulation->setExtraStats(true);
-   
    if( bufferFile != TPZString("") )
    {
       simulation -> setShowBufferState(true);
@@ -565,10 +578,8 @@ TPZSimulation* TPZSimulator :: initialize(const TPZString& param)
 
 void TPZSimulator :: installBuilders(const TPZString& name)
 {
-//   TPZIniFile inifile (name + ". Ini");
-
-   TPZIniFile iniFile("TPZSimul.ini");
-
+   TPZIniFile iniFile(name);
+   
    TPZString rFile = iniFile.getValueFor("RouterFile");
    TPZString nFile = iniFile.getValueFor("NetworkFile");
    TPZString sFile = iniFile.getValueFor("SimulationFile");
@@ -584,7 +595,6 @@ void TPZSimulator :: installBuilders(const TPZString& name)
    TPZComponent::networkBuilder   = nBuilder;
    TPZComponent::simulationBuilder= sBuilder;
 }
-
 
 //*************************************************************************
 //:

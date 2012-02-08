@@ -155,6 +155,7 @@ TPZSimulation :: TPZSimulation(const TPZComponentId& id)
                  m_Seed(113),
                  m_MessageLength(0),
                  m_PacketLength(0),
+		 m_verbosity(0),
                  m_q(0.0),
                  m_defaultLoad(-1.0),
                  m_defaultProb(-1.0),
@@ -178,8 +179,7 @@ TPZSimulation :: TPZSimulation(const TPZComponentId& id)
                  m_isRafagaMode(false),
                  m_pipelineNormal(0),
                  m_discardTraffic(false),
-                 m_pipelineBypass(0),
-                 m_extraStats(false)
+                 m_pipelineBypass(0)
 {
    setSimulation(this);
    disableNotification();
@@ -364,8 +364,7 @@ void TPZSimulation :: initializePool(unsigned size)
     }
 #else
    m_poolSize=size;
-   m_MessagePool = new TPZMessagePool(m_poolSize);
-   assert (getMessagePool().free()>0);
+   m_MessagePool = new TPZMessagePool(m_poolSize);   
 #endif
 
 
@@ -660,7 +659,10 @@ TPZString TPZSimulation :: writeSimulationStatus()
    
    time_t localHour2 = time(0);
    TPZString buffer;
-
+   
+   //****************************************************************************************************************************
+   // VERBOSITY=0
+   //****************************************************************************************************************************
    buffer += TPZString("\n******************* NET CONFIGURATION *********************") +
 	     TPZString("\n Network        : ") + asString() +
              TPZString("\n Started at     : " ) + ctime(&m_StartHour) +
@@ -696,23 +698,23 @@ TPZString TPZSimulation :: writeSimulationStatus()
              TPZString("\n Buffer message latency  = ") + TPZString(latMediaMsgBuffer) +
              TPZString("\n Maximum message latency = ") + TPZString(m_Network->getMaximLatency(TPZNetwork::Message)) +
              TPZString("\n Last Message cycle      = ") + TPZString(m_LastMessage) + TPZString("\n");
-             if(!m_extraStats) buffer += TPZString("***********************************************************\n");
+             buffer += TPZString("***********************************************************\n");
 
-             if( m_extraStats )
-             {
-                TPZString("\n\n******************** EVENT COUNTING **********************")+
-                TPZString("\n Buffer Writes           = ") + TPZString(m_Network->getEventCount( TPZNetwork::BufferWrite))+
-                TPZString("\n Buffer Reads            = ") + TPZString(m_Network->getEventCount( TPZNetwork::BufferRead))+
-                TPZString("\n VC Arbitrations         = ") + TPZString(m_Network->getEventCount( TPZNetwork::VCArbitration))+
-                TPZString("\n SW Arbitrations         = ") + TPZString(m_Network->getEventCount( TPZNetwork::SWArbitration))+
-                TPZString("\n SW Traversal            = ") + TPZString(m_Network->getEventCount( TPZNetwork::SWTraversal))+
-	        TPZString("\n Router Bypass           = ") + TPZString(m_Network->getEventCount( TPZNetwork::RouterBypass))+
-                TPZString("\n Link Traversal          = ") + TPZString(m_Network->getEventCount( TPZNetwork::LinkTraversal))+
-	        TPZString("\n\n**********************************************************")+
-	        TPZString("\n");
-             }
-      
-             if( m_extraStats ) for (int i=1; i<=index; i++)
+             TPZString("\n\n******************** EVENT COUNTING **********************")+
+             TPZString("\n Buffer Writes           = ") + TPZString(m_Network->getEventCount( TPZNetwork::BufferWrite))+
+             TPZString("\n Buffer Reads            = ") + TPZString(m_Network->getEventCount( TPZNetwork::BufferRead))+
+             TPZString("\n VC Arbitrations         = ") + TPZString(m_Network->getEventCount( TPZNetwork::VCArbitration))+
+             TPZString("\n SW Arbitrations         = ") + TPZString(m_Network->getEventCount( TPZNetwork::SWArbitration))+
+             TPZString("\n SW Traversal            = ") + TPZString(m_Network->getEventCount( TPZNetwork::SWTraversal))+
+	     TPZString("\n Router Bypass           = ") + TPZString(m_Network->getEventCount( TPZNetwork::RouterBypass))+
+             TPZString("\n Link Traversal          = ") + TPZString(m_Network->getEventCount( TPZNetwork::LinkTraversal))+
+	     TPZString("\n\n**********************************************************")+
+	     TPZString("\n");
+             
+	     //****************************************************************************************************************************
+             // VERBOSITY=1
+             //****************************************************************************************************************************
+             if( m_verbosity>0 ) for (int i=1; i<=index; i++)
              {
                 buffer += TPZString("\n****************** VIRTUAL NETWORK ") + TPZString(i) + TPZString(" *********************");
                 double distanciaMediaProtocol = double(m_Network->getProtocolAverageDistance (i))/double(m_Network->getProtocolMessagesRx(i));
@@ -729,7 +731,11 @@ TPZString TPZSimulation :: writeSimulationStatus()
                 buffer += TPZString("\n**********************************************************");
                 buffer += TPZString("\n");
              }
-             if( m_extraStats )
+	     
+	     //****************************************************************************************************************************
+             // VERBOSITY=2
+             //****************************************************************************************************************************
+             if( m_verbosity>1 )
              {
 	        buffer += TPZString("\n******************* INJECION MAP (flits/cycle) ***********");
                 buffer += TPZString("\n");
@@ -765,6 +771,12 @@ TPZString TPZSimulation :: writeSimulationStatus()
                       }
                    }
                 }
+	     }
+	     //****************************************************************************************************************************
+             // VERBOSITY=3
+             //****************************************************************************************************************************
+             if( m_verbosity>2 )
+             {
                 buffer += TPZString("\n");
                 buffer += TPZString("\n****************** LINK USAGE MAP (%) *******************");
                 buffer += TPZString("\n");

@@ -1,0 +1,6 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+<!--Simple Routers-->
+<TorusNetwork id="T44_CT_NOC_MC" sizeX=4  sizeY=4  router="TORUS-CT-NOC-MC" delay=0>
+<MeshNetwork id="M44_CT_NOC_MC" sizeX=4  sizeY=4  router="MESH-CT-NOC-MC" delay=0>
+<TorusNetwork id="T44_CT_NOC_UC" sizeX=4  sizeY=4  router="TORUS-CT-NOC-UC" delay=0>
+<MeshNetwork id="M44_CT_NOC_UC" sizeX=4  sizeY=4  router="MESH-CT-NOC-UC" delay=0>
