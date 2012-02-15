@@ -202,7 +202,7 @@ void TPZThread :: ThreadFunction()
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
                TPZRouter* router = m_MyNet -> getRouterAt(X,Y,Z);
-               if(!m_MyNet->endSimulation())router->preRun(m_runTime);
+               router->preRun(m_runTime);
             }
        for(i=min_XYZ; i<=max_XYZ; i++ )
             {  
@@ -210,7 +210,7 @@ void TPZThread :: ThreadFunction()
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
                TPZRouter* router = m_MyNet -> getRouterAt(X,Y,Z);
-               if(!m_MyNet->endSimulation())router->run(m_runTime);
+               router->run(m_runTime);
             }    
        for(i=min_XYZ; i<=max_XYZ; i++ )
             {  
@@ -218,7 +218,7 @@ void TPZThread :: ThreadFunction()
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
                TPZRouter* router = m_MyNet -> getRouterAt(X,Y,Z);
-               if(!m_MyNet->endSimulation())router->postRun(m_runTime);
+               router->postRun(m_runTime);
             }      
 
       //Only slaves are synchorized before to run the connections
