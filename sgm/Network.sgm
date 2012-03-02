@@ -37,6 +37,9 @@
 <TorusNetwork id="T44_VC_22" sizeX=4  sizeY=4  router="VC-TORUS-2CH-2MT" delay=0>
 <TorusNetwork id="T44_VC_MUX_22" sizeX=4  sizeY=4  router="VC-TORUS-MUX-2CH-2MT" delay=0>
 
+<TorusNetwork id="T44_ROTARY" sizeX=4  sizeY=4  router="ROTARY" delay=0>
+<TorusNetwork id="T88_ROTARY" sizeX=8  sizeY=8  router="ROTARY" delay=0>
+
 <!--Buffered Crossbar-->
 <MeshNetwork id="M44_CT_BUF_XBAR" sizeX=4  sizeY=4  router="CT-BUFFERED-XBAR" delay=0>
 

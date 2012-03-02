@@ -44,7 +44,7 @@
 // 	
 //*************************************************************************
 //:
-//    File: TPZMultiportIOFifo.hpp
+//    File: TPZInputStage.hpp
 //
 //    Class: 
 //
@@ -53,72 +53,67 @@
 //*************************************************************************
 //end of header
 
-#ifndef __TPZMultiportIOFifo_HPP__
-#define __TPZMultiportIOFifo_HPP__
+#ifndef __TPZInputStage_HPP__
+#define __TPZInputStage_HPP__
+
 //************************************************************************
- #include <TPZRunnableComponent.hpp>
+
+   #include <TPZRunnableComponent.hpp>
 
 //************************************************************************
 
    class TPZRouterBuilder;
-   
-   class TPZMultiportIOFifo : public TPZRunnableComponent
+
+//************************************************************************
+
+   class TPZInputStage : public TPZRunnableComponent
    {
       typedef TPZRunnableComponent Inhereited;
       friend class TPZRouterBuilder;
 
    public:   
-      typedef enum {  CT, WH, NIL } TPZBufferControl; //TPZQueueControl;
-      
-      TPZMultiportIOFifo ( const TPZComponentId& id,
-                                unsigned bufferSize, unsigned numberInputPorts,
-				unsigned numberOutputPorts, 
-                                unsigned missLimit, TPZBufferControl control );
+      typedef enum { NIL, CT } TPZInputStageControl;
+         
+      TPZInputStage( const TPZComponentId& id, 
+                     unsigned size,
+		     unsigned outputs,
+                     TPZInputStageControl control );
                      
-      virtual ~TPZMultiportIOFifo();
+      virtual ~TPZInputStage();
    
       virtual TPZString asString() const;
       
       unsigned bufferHoles() const;
-      
-      virtual unsigned bufferHolesShort() const	   //For cc-numa Traffic
-      {return 0;}
-
-      unsigned numberOfInputs () const
-      {return m_inputs;}
-
-      unsigned numberOfOutputs () const
-      {return m_outputs;}
-
-      unsigned getMissLimit() const
-      { return m_missLimit; }
-      
       unsigned bufferOccupation() const;
       
-      TPZBufferControl getBufferControl() const
-      { return m_BufferControl; }
+      TPZInputStageControl getStageControl() const
+      { return m_StageControl; }
       
       unsigned getBufferSize() const
       { return m_BufferSize; }
+      
+      unsigned getNumOutputs() const
+      { return m_outputs; }
 
       void setBufferSize(unsigned size);
       
       // Run time information
-      DEFINE_RTTI(TPZMultiportIOFifo);
+      DEFINE_RTTI(TPZInputStage);
    
    protected:      
       virtual void buildFlowControl();
 
    private:
-      static TPZMultiportIOFifo* newFrom(const TPZTag* tag, TPZComponent* owner);
+      static TPZInputStage* newFrom(const TPZTag* tag, TPZComponent* owner);
 
       unsigned m_BufferSize;
-      unsigned m_inputs;
       unsigned m_outputs;
-      TPZBufferControl m_BufferControl;
-      unsigned m_missLimit;
+      TPZInputStageControl m_StageControl;
    };
 
 //*************************************************************************
 
 #endif
+
+
+// fin del fichero

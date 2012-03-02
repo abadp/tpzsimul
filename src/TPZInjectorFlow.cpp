@@ -241,7 +241,12 @@ void TPZInjectorFlow :: sendMessage(TPZMessage* msg)
 #endif
 
      m_MessageQueue.enqueue(msg); 
-
+#ifndef NO_TRAZA
+        uTIME delayTime = getOwnerRouter().getCurrentTime() ;
+        TPZString texto = getComponent().asString() + " ENQUEUE. TIME = ";
+            texto += TPZString(delayTime) + " # " + msg->asString();
+            TPZWRITE2LOG( texto );
+#endif	
 #ifdef PTOPAZ
      if (msg->getExternalInfo()!=0) pthread_mutex_unlock(&m_QueueKey); 
 #endif
@@ -382,13 +387,14 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
    {
    
       //If the message does not anticipate that there will be room for the whole flits
-#ifdef PTOPAZ     
-      if(topMessage->flitNumber() == 1 &&
-         getMessagePool(pool_index).free() < (topMessage->getMessageLength()*topMessage->getPacketLength()))
+#ifdef PTOPAZ
+#ifndef NO_POOL
+      if(topMessage->flitNumber() == 1 && getMessagePool(pool_index).free() < (topMessage->getMessageLength()*topMessage->getPacketLength()))
       {
          releaseQueueKey();
          return 0;
       } 
+#endif
       if((returnMsg = getMessagePool(pool_index).allocate())==0)
       {
          TPZString err;
@@ -396,18 +402,20 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
          EXIT_PROGRAM(err);
       }
 #else
-      if(topMessage->flitNumber() == 1 &&
-         getMessagePool().free() < (topMessage->getMessageLength()*topMessage->getPacketLength()))
+#ifndef NO_POOL
+      if(topMessage->flitNumber() == 1 && getMessagePool().free() < (topMessage->getMessageLength()*topMessage->getPacketLength()))
       {
          return 0;
-      } 
+      }
+#endif 
       if((returnMsg = getMessagePool().allocate())==0)
       {
          TPZString err;
          err.sprintf(ERR_TPZPOOL_001);
          EXIT_PROGRAM(err);
       }
-#endif      
+#endif
+  
       //Reset distance when
       //message back to be reused
       *returnMsg = *topMessage;

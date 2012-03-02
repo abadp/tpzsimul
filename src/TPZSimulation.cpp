@@ -364,8 +364,7 @@ void TPZSimulation :: initializePool(unsigned size)
     }
 #else
    m_poolSize=size;
-   m_MessagePool = new TPZMessagePool(m_poolSize);
-   assert (getMessagePool().free()>0);
+   m_MessagePool = new TPZMessagePool(m_poolSize);   
 #endif
 
 

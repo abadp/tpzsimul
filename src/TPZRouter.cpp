@@ -95,6 +95,14 @@
 #include <TPZMultiportFifo.hpp>
 #endif
 
+#ifndef __TPZInputStage_HPP__
+#include <TPZInputStage.hpp>
+#endif
+
+#ifndef __TPZOutputStage_HPP__
+#include <TPZOutputStage.hpp>
+#endif
+
 #ifndef __TPZMultiportIOFifo_HPP__
 #include <TPZMultiportIOFifo.hpp>
 #endif
@@ -166,12 +174,12 @@ TPZRouter::TPZRouter(const TPZComponentId& id) :
             m_ExtraPoolSize(0), m_numberOfHosts(1),
             m_ContadorXplus(0), m_ContadorXminus(0), m_ContadorYplus(0),
             m_ContadorYminus(0), m_ContadorLocal(0), m_ContadorTotal(0),
-            m_ProtocolMessages(0), m_InOrderTableXplus(0), m_InOrderTableXminus(0),
-            m_InOrderTableYplus(0), m_InOrderTableYminus(0),
-            m_InOrderTableLocalNode(0), m_maskXplus(0), m_maskXminus(0),
+            m_ProtocolMessages(0), m_maskXplus(0), m_maskXminus(0),
             m_maskYplus(0), m_maskYminus(0), 
 	    m_maskZplus(0), m_maskZminus(0), m_maskLocalNode(0),
-            m_ContadorLinkX(0), m_ContadorLinkY(0),
+            m_XplusFreeInOrder(true), m_XminusFreeInOrder(true),
+	    m_YplusFreeInOrder(true), m_YminusFreeInOrder(true),
+	    m_LocalNodeFreeInOrder(true),m_ContadorLinkX(0), m_ContadorLinkY(0),
             m_StateLinkXplus(false), m_StateLinkXminus(false), m_StateLinkYplus(false),
             m_StateLinkYminus(false), m_StateLinkLocalNorm(false), m_StateLinkLocalRev(false),
             m_LinkUtilization(0), m_LinkChangesDirection(0){	    
@@ -190,11 +198,6 @@ TPZRouter::TPZRouter(const TPZComponentId& id) :
 
 TPZRouter::~TPZRouter() {
     delete m_ProtocolMessages;
-    delete m_InOrderTableXplus;
-    delete m_InOrderTableXminus;
-    delete m_InOrderTableYplus;
-    delete m_InOrderTableYminus;
-    delete m_InOrderTableLocalNode;
     TPZComponentSet::Cursor cursor(m_ComponentSet);
     forCursor(cursor) {
         cursor.element()->setRouter(0);
@@ -208,6 +211,8 @@ TPZRouter::~TPZRouter() {
     m_BufferList.removeAllElements();
     m_InjectorList.removeAllElements();
     m_ConsumerList.removeAllElements();
+    m_InputStageList.removeAllElements();
+    m_OutputStageList.removeAllElements();
     m_MessageList.removeAllElements();
 }
 
@@ -318,16 +323,6 @@ void TPZRouter::postRun(uTIME runTime) {
 
 void TPZRouter::initialize() {
     if ( !isInitializated() ) {
-        m_InOrderTableXplus = new PAFInOrderTable(5);
-        m_InOrderTableXplus->initialize(0);
-        m_InOrderTableXminus = new PAFInOrderTable(5);
-        m_InOrderTableXminus->initialize(0);
-        m_InOrderTableYplus = new PAFInOrderTable(5);
-        m_InOrderTableYplus->initialize(0);
-        m_InOrderTableYminus = new PAFInOrderTable(5);
-        m_InOrderTableYminus->initialize(0);
-        m_InOrderTableLocalNode = new PAFInOrderTable(5);
-        m_InOrderTableLocalNode->initialize(0);
         TPZComponentSet::Cursor componentCursor(m_ComponentSet);
         forCursor(componentCursor) {
             TPZComponent* current = componentCursor.element();
@@ -501,6 +496,11 @@ void* TPZRouter::getExternalInfo() {
    
    if(rc!=0)
    {
+#ifndef NO_TRAZA
+   TPZString texto = TPZString((long long unsigned)(rc));
+   texto += TPZString(" Que me lo cogen");
+   TPZWRITE2LOG( texto );
+#endif   
      m_ExternalInfo.dequeue(rc);
    }
 #ifdef PTOPAZ
@@ -761,6 +761,31 @@ void TPZRouter::addMultiportIOBuffer(TPZMultiportIOFifo* mportio) {
 
 //*************************************************************************
 //:
+//  f: void addInputStageBuffer (TPZInputStage * istage);
+//
+//  d:
+//:
+//*************************************************************************
+
+void TPZRouter::addInputStageBuffer(TPZInputStage* istage) {
+    if (istage)
+        m_InputStageList.add(istage);
+}
+
+//*************************************************************************
+//:
+//  f: void addOutputStageBuffer (TPZOutputStage * ostage);
+//
+//  d:
+//:
+//*************************************************************************
+
+void TPZRouter::addOutputStageBuffer(TPZOutputStage* ostage) {
+    if (ostage)
+        m_OutputStageList.add(ostage);
+}
+//*************************************************************************
+//:
 //  f: void setBufferSize (unsigned size);
 //
 //  d:
@@ -773,6 +798,15 @@ void TPZRouter::setBufferSize(unsigned size) {
         cursor.element()->setBufferSize(size);
     }
 }
+
+//*************************************************************************
+//:
+//  f: void getTotalBufferSize ();
+//
+//  d:
+//:
+//*************************************************************************
+
 unsigned TPZRouter::getTotalBuffeSize() const {
     unsigned sizeTotal=0;
     TPZBufferList::Cursor cursor(m_BufferList);
@@ -786,6 +820,14 @@ unsigned TPZRouter::getTotalBuffeSize() const {
     TPZMultiportIOBufferList::Cursor cursor3(m_MultiportIOBufferList);
     forCursor(cursor3) {
         sizeTotal+=cursor3.element()->getBufferSize();
+    }
+    TPZInputStageList::Cursor cursor4(m_InputStageList);
+    forCursor(cursor4) {
+        sizeTotal+=cursor4.element()->getBufferSize();
+    }
+    TPZOutputStageList::Cursor cursor5(m_OutputStageList);
+    forCursor(cursor5) {
+        sizeTotal+=cursor5.element()->getBufferSize();
     }
     return sizeTotal+m_ExtraPoolSize;
 }
@@ -1309,61 +1351,6 @@ TPZPosition TPZRouter::positionOf(TPZROUTINGTYPE dir, const TPZPosition& pos,
 
 //*************************************************************************
 //:
-//  f: void incrInOrderTable (TPZROUTINGTYPE type TPZROUTINGTYPE valor_table)
-//
-//  d:
-//:
-//*************************************************************************
-void TPZRouter::incrInOrderTable(TPZROUTINGTYPE tipo, TPZROUTINGTYPE valor_table) {
-    unsigned data;
-    if (tipo == _Xplus_) {
-        m_InOrderTableXplus->valueAt(valor_table, data);
-        data++;
-        m_InOrderTableXplus->setValueAt(valor_table, data);
-    } else if (tipo == _Xminus_) {
-        m_InOrderTableXminus->valueAt(valor_table, data);
-        data++;
-        m_InOrderTableXminus->setValueAt(valor_table, data);
-    } else if (tipo == _Yplus_) {
-        m_InOrderTableYplus->valueAt(valor_table, data);
-        data++;
-        m_InOrderTableYplus->setValueAt(valor_table, data);
-    } else if (tipo == _Yminus_) {
-        m_InOrderTableYminus->valueAt(valor_table, data);
-        data++;
-        m_InOrderTableYminus->setValueAt(valor_table, data);
-    } else if (tipo == _LocalNode_) {
-        m_InOrderTableLocalNode->valueAt(valor_table, data);
-        data++;
-        m_InOrderTableLocalNode->setValueAt(valor_table, data);
-    }
-}
-
-//*************************************************************************
-//:
-//  f: unsigned getInOrderTable (TPZROUTINGTYPE type TPZROUTINGTYPE valor_table)
-//
-//  d:
-//:
-//*************************************************************************
-unsigned TPZRouter::getInOrderTable(TPZROUTINGTYPE tipo,
-        TPZROUTINGTYPE valor_table) {
-    unsigned data;
-    if (tipo == _Xplus_) {
-        m_InOrderTableXplus->valueAt(valor_table, data);
-    } else if (tipo == _Xminus_) {
-        m_InOrderTableXminus->valueAt(valor_table, data);
-    } else if (tipo == _Yplus_) {
-        m_InOrderTableYplus->valueAt(valor_table, data);
-    } else if (tipo == _Yminus_) {
-        m_InOrderTableYminus->valueAt(valor_table, data);
-    } else if (tipo == _LocalNode_) {
-        m_InOrderTableLocalNode->valueAt(valor_table, data);
-    }
-    return data;
-}
-//*************************************************************************
-//:
 //  f: unsigned long long getMask (TPZROUTINGTYPE direction)
 //
 //  d:
@@ -1419,6 +1406,93 @@ void TPZRouter::setMask(TPZROUTINGTYPE direction, unsigned long long mask) {
         break;
     }
 }
+//*************************************************************************
+//:
+//  f: Boolean getFreeInOrder(przROUTINGTYPE direction);
+//
+//  d:
+//:
+//*************************************************************************
+Boolean TPZRouter :: getFreeInOrder(TPZROUTINGTYPE direction)
+{
+   switch( direction )
+   {
+      case _Xplus_  : 
+         return m_XplusFreeInOrder;
+      case _Xminus_ : 
+         return m_XminusFreeInOrder;
+      case _Yplus_  : 
+           return m_YplusFreeInOrder;
+      case _Yminus_ : 
+           return m_YminusFreeInOrder;
+      case _LocalNode_ :
+           return m_LocalNodeFreeInOrder;
+      default :
+           break;
+    }
+}  
+ //*************************************************************************
+//:
+//  f: Boolean getFreeInOrder(przROUTINGTYPE direction);
+//
+//  d:
+//:
+//*************************************************************************
+
+void TPZRouter :: setInOrderOccupied(TPZROUTINGTYPE direction)
+{
+   switch( direction )
+   {
+      case _Xplus_  : 
+         m_XplusFreeInOrder= false;
+	 break;
+      case _Xminus_ : 
+         m_XminusFreeInOrder=false;
+	 break;
+      case _Yplus_  : 
+           m_YplusFreeInOrder=false;
+	   break;
+      case _Yminus_ : 
+           m_YminusFreeInOrder=false;
+	   break;
+      case _LocalNode_ :
+           m_LocalNodeFreeInOrder=false;
+	       	            
+      default :
+           break;
+    }
+}  
+ //*************************************************************************
+//:
+//  f: Boolean getFreeInOrder(przROUTINGTYPE direction);
+//
+//  d:
+//:
+//*************************************************************************
+
+void TPZRouter :: setInOrderFree(TPZROUTINGTYPE direction)
+{
+   switch( direction )
+   {
+      case _Xplus_  : 
+         m_XplusFreeInOrder= true;
+	 break;
+      case _Xminus_ : 
+         m_XminusFreeInOrder=true;
+	 break;
+      case _Yplus_  : 
+           m_YplusFreeInOrder=true;
+	   break;
+      case _Yminus_ : 
+           m_YminusFreeInOrder=true;
+	   break;
+      case _LocalNode_ :
+               m_LocalNodeFreeInOrder=true;
+	       	            
+      default :
+           break;
+    }
+}  
 
 //*************************************************************************
 //:

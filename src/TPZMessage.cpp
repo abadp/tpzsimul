@@ -391,6 +391,7 @@ TPZString TPZMessage::asString() const {
         rs+=TPZString(" Mask=")+ TPZString(m_Msgmask) + "/";
         
     }
+    rs += TPZString("ExternalInfo=") + (long long unsigned)(m_ExternalInfo) + "/";
     return rs;
 }
 

@@ -128,7 +128,8 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
          _EXTERN _CONST TPZString TPZ_TAG_CROSSBAR         _IS("Crossbar");
          _EXTERN _CONST TPZString TPZ_TAG_MUX              _IS("Multiplexor");
          _EXTERN _CONST TPZString TPZ_TAG_DEMUX            _IS("Demultiplexor");
-    
+	 _EXTERN _CONST TPZString TPZ_TAG_ISTAGE           _IS("InputStage");
+         _EXTERN _CONST TPZString TPZ_TAG_OSTAGE           _IS("OutputStage");
     
     
     _EXTERN _CONST TPZString TPZ_TAG_MESHNET          _IS("MeshNetwork");
@@ -147,6 +148,7 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
 
     _EXTERN _CONST TPZString ICL_TAG_BUBBLE_SIZE     _IS("bubbleSize");
     _EXTERN _CONST TPZString TPZ_TAG_WIDE_MEM        _IS("wideMemory");
+    _EXTERN _CONST TPZString TPZ_TAG_MISSR_LIMIT     _IS("missLimit");
     _EXTERN _CONST TPZString TPZ_TAG_SIZE            _IS("size");
     _EXTERN _CONST TPZString TPZ_TAG_SIZE_SHORT      _IS("sizeShort");
     _EXTERN _CONST TPZString TPZ_TAG_CONTROL         _IS("control");
