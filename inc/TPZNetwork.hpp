@@ -115,7 +115,8 @@
       typedef TPZVector<TPZQueue <TPZMessage*> > TPZPendindMessages;
 
       enum { Flit, Packet, Message };
-      typedef enum { BufferWrite, BufferRead, VCArbitration, SWArbitration, SWTraversal, LinkTraversal, RouterBypass} TPZTipoEvento;      
+      typedef enum { BufferWrite, BufferRead, VCArbitration, SWArbitration, SWTraversal, IStageTraversal, 
+                     OStageTraversal, MPTraversal, LinkTraversal, RouterBypass} TPZTipoEvento;      
       
       TPZNetwork( const TPZComponentId& id,
                   const TPZString& routerId,
@@ -480,6 +481,9 @@
       double  m_SWArbitration;
       double  m_SWTraversal;
       double  m_LinkTraversal;
+      double  m_IStageTraversal;
+      double  m_OStageTraversal;
+      double  m_MPTraversal;
       double  m_RouterBypass;
       //******************************************************************
       //END OF ADDITION

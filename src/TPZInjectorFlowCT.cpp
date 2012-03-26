@@ -133,7 +133,6 @@ Boolean TPZInjectorFlowCT :: outputWriting()
 {
    outputInterfaz() -> clearData();
 
-
    if( isAnyMessageToSend())
    {
       if( (!outputInterfaz()->isStopActive())  || isHeaderSent() )
@@ -141,7 +140,11 @@ Boolean TPZInjectorFlowCT :: outputWriting()
          TPZMessage* msg = getNextFlitToSend();
          m_flitsSent++;
          if(!msg) return true;
-    
+  #ifdef PTOPAZ      
+         TPZNetwork* net = ((TPZSimulation*)(getComponent().getSimulation()))->getNetwork();
+         unsigned n = net->getThreadID(pthread_self());
+         msg -> setPoolIndex(n);
+#endif  
     
          if( msg->isHeader() || msg->isHeadTail() )
      {
@@ -154,7 +157,7 @@ Boolean TPZInjectorFlowCT :: outputWriting()
          if(msg->isTail() ) setHeaderSent(false);
          
 	 outputInterfaz()->sendData(msg);
-         #ifndef NO_TRAZA
+	 #ifndef NO_TRAZA
             uTIME delayTime = getOwnerRouter().getCurrentTime() ;
             TPZString texto = getComponent().asString() + " Flit Tx. TIME = ";
             texto += TPZString(delayTime) + " # " + msg->asString();

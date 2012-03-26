@@ -72,6 +72,13 @@
 #include <TPZMultiportFifo.hpp>
 #endif
 
+#ifndef __TPZInputStage_HPP__
+#include <TPZInputStage.hpp>
+#endif
+
+#ifndef __TPZOutputStage_HPP__
+#include <TPZOutputStage.hpp>
+#endif
 
 #ifndef __TPZMultiportIOFifo_HPP__
 #include <TPZMultiportIOFifo.hpp>
@@ -172,6 +179,14 @@ TPZComponent* TPZRouterBuilder::parseComponentDefinition( const TPZTag* tag,
    else if( tagName == TPZ_TAG_MPBUFFER )
    {
       rComponent = TPZMultiportFifo ::newFrom(tag,owner);
+   }
+   else if( tagName == TPZ_TAG_ISTAGE )
+   {
+      rComponent = TPZInputStage ::newFrom(tag,owner);
+   }
+   else if( tagName == TPZ_TAG_OSTAGE )
+   {
+      rComponent = TPZOutputStage ::newFrom(tag,owner);
    }
    else if( tagName == TPZ_TAG_MPIOBUFFER )
    {

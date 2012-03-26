@@ -233,7 +233,6 @@ TPZMessage* TPZTrafficPattern::generateBasicMessage(const TPZPosition& source)
    message->setVnet(VirtualNet);
    message->setSource(source);
    message->setGenerationTime(getSimulation().getCurrentTime());
-    
    if (isBimodal())
    {
       if (drand48()<=m_ProbBimodal)

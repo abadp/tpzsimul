@@ -59,88 +59,97 @@
 
 //*************************************************************************
 
-   #include <TPZFlow.hpp>
-   
-   #ifndef __TPZMessage_HPP__
-   #include <TPZMessage.hpp>
-   #endif
-   
-   #ifndef __TPZMessage_HPP__
-   #include <TPZMessage.hpp>
-   #endif  
-   
-   #ifndef __TPZQueue_HPP__ 
-   #include <TPZQueue.hpp>
-   #endif 
-   
+#include <TPZFlow.hpp>
+
+#ifndef __TPZMessage_HPP__
+#include <TPZMessage.hpp>
+#endif
+
+#ifndef __TPZMultiportIOFifo_HPP__
+#include <TPZMultiportIOFifo.hpp>
+#endif
+
+#ifndef __TPZMultiportFifo_HPP__
+#include <TPZMultiportFifo.hpp>
+#endif
+
+#ifndef __TPZQueue_HPP__
+#include <TPZQueue.hpp>
+#endif
+
 //*************************************************************************
 
-typedef TPZQueue<TPZMessage*> QueueFlits;
+   typedef TPZQueue<TPZMessage*> QueueFlits;
 
-   class TPZMultiportIOFifoFlow : public TPZFlow
+   class TPZMultiportIOFifoFlow: public TPZFlow
    {
       typedef TPZFlow Inhereited;
-
+   
    public:
+   
       TPZMultiportIOFifoFlow( TPZComponent& component);
       virtual ~TPZMultiportIOFifoFlow();
-      
+   
       virtual void initialize();
       virtual void postInitialize();
-
+   
       virtual Boolean inputReading();
       virtual Boolean stateChange();
       virtual Boolean outputWriting();
-      
-      virtual Boolean controlAlgoritm(Boolean data, int delta)
-      {return true;}
+   
+      virtual Boolean onReadyUp(unsigned interfaz, unsigned cv);
+      virtual Boolean controlAlgoritm(Boolean info=false, int delta=0);
+   
       virtual Boolean onStopUp(unsigned interfaz, unsigned cv);
-      virtual Boolean onStopDown(unsigned interfaz, unsigned cv);
-      //Added VPV
-      virtual Boolean bubbleReady() const;   
-      void setBufferSize(unsigned size)
-      { m_Size = size; }
-  
-      // Run time information
-      DEFINE_RTTI(TPZMultiportIOFifoFlow);
-      
+      virtual Boolean onStopDown( unsigned interfaz, unsigned cv);
+   
+      virtual Boolean checkHeader(TPZMessage* flitnow, unsigned interfaz);
       unsigned bufferElements() const;
       
-      unsigned bufferSize() const
-      { return m_Size; }
+      unsigned getInputMem();
+      unsigned bufferSize() const 
+      { return m_Size;}
+      unsigned bufferHoles() const 
+      {return m_Size - bufferElements();}
+      virtual unsigned getNumPackets()
+      { return m_NumOfPackets; }
+      virtual unsigned getSizeInPackets()
+      { return m_sizeInPackets; }
+      void setBufferSize( unsigned size) 
+      {m_Size=size;}
       
-
-
-      unsigned bufferHoles() const
-      { return m_Size - bufferElements(); }   
-      
-                   
-
+      DEFINE_RTTI(TPZMultiportIOFifoFlow);
+   
    protected:
-      virtual void    sendFlit(TPZMessage* msg, unsigned ointerfaz);
+   
+      virtual void sendFlit(TPZMessage* msg, unsigned interfaz);
+   
+      unsigned    m_NumOfPackets;
       unsigned    m_Size;
       unsigned    m_inputs;
-      unsigned    m_outputs;      
-      Boolean     m_SendStop;
+      unsigned    m_outputs;
+      Boolean    *m_ocupado;
+      Boolean    *m_inOcupado;
       QueueFlits *m_memory;
-      unsigned   *m_InputIndex;
-      unsigned   *m_OutputIndex;
-      unsigned   *m_payload;
-      unsigned    m_wideOfMemory; //must be greater than or = m_lpack
-      unsigned    m_lpack;  //is equal to the memory bandwidth
-      int m_flitsStored;
+      unsigned   *m_inMemSelected;
+      unsigned   *m_outPortSelected;
+      Boolean     m_lowocupation;
+      
+      TPZROUTINGTYPE m_inputDirection;
+      TPZROUTINGTYPE m_outputDirection;
+      TPZMultiportIOFifo* m_NextMulti;
+      TPZMultiportFifo* m_OutMux;
+   
+      unsigned m_sizeInPackets;
+      unsigned m_missroutingLimit;
+           
    private:
+      
       virtual Boolean propagateStop();
+   };
 
-      
-
-      
-};
-
-//*************************************************************************
-
-
+//***************************************************************************
+   
 #endif
 
-
-// end of file
+// fin de fichero
