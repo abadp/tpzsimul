@@ -143,6 +143,8 @@ MODULES = TPZAttribute  \
 	  TPZInjectorFlowCT \
 	  TPZInjectorFlowCTUC \
 	  TPZInjectorFlowUC \
+	  TPZInputStage \
+	  TPZInputStageFlow \
           TPZInterfaz \
           TPZMessage  \
 	  TPZMultiplexor \
@@ -160,6 +162,8 @@ MODULES = TPZAttribute  \
           TPZNotifier \
           TPZObserver \
           TPZOptions   \
+	  TPZOutputStage \
+	  TPZOutputStageFlow \
           TPZPort  \
 	  TPZPortInput \
 	  TPZPortOutput \

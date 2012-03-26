@@ -44,7 +44,7 @@
 // 	
 //*************************************************************************
 //:
-//    File: TPZMultiportIOFifo.hpp
+//    File: TPZInputStageFlow.hpp
 //
 //    Class: 
 //
@@ -53,72 +53,86 @@
 //*************************************************************************
 //end of header
 
-#ifndef __TPZMultiportIOFifo_HPP__
-#define __TPZMultiportIOFifo_HPP__
-//************************************************************************
- #include <TPZRunnableComponent.hpp>
-
-//************************************************************************
-
-   class TPZRouterBuilder;
-   
-   class TPZMultiportIOFifo : public TPZRunnableComponent
-   {
-      typedef TPZRunnableComponent Inhereited;
-      friend class TPZRouterBuilder;
-
-   public:   
-      typedef enum {  CT, WH, NIL } TPZBufferControl; //TPZQueueControl;
-      
-      TPZMultiportIOFifo ( const TPZComponentId& id,
-                                unsigned bufferSize, unsigned numberInputPorts,
-				unsigned numberOutputPorts, 
-                                unsigned missLimit, TPZBufferControl control );
-                     
-      virtual ~TPZMultiportIOFifo();
-   
-      virtual TPZString asString() const;
-      
-      unsigned bufferHoles() const;
-      
-      virtual unsigned bufferHolesShort() const	   //For cc-numa Traffic
-      {return 0;}
-
-      unsigned numberOfInputs () const
-      {return m_inputs;}
-
-      unsigned numberOfOutputs () const
-      {return m_outputs;}
-
-      unsigned getMissLimit() const
-      { return m_missLimit; }
-      
-      unsigned bufferOccupation() const;
-      
-      TPZBufferControl getBufferControl() const
-      { return m_BufferControl; }
-      
-      unsigned getBufferSize() const
-      { return m_BufferSize; }
-
-      void setBufferSize(unsigned size);
-      
-      // Run time information
-      DEFINE_RTTI(TPZMultiportIOFifo);
-   
-   protected:      
-      virtual void buildFlowControl();
-
-   private:
-      static TPZMultiportIOFifo* newFrom(const TPZTag* tag, TPZComponent* owner);
-
-      unsigned m_BufferSize;
-      unsigned m_inputs;
-      unsigned m_outputs;
-      TPZBufferControl m_BufferControl;
-      unsigned m_missLimit;
-   };
+#ifndef __TPZInputStageFlow_HPP__
+#define __TPZInputStageFlow_HPP__
 
 //*************************************************************************
 
+   #include <TPZFlow.hpp>
+   
+   #ifndef __TPZMessage_HPP__
+   #include <TPZMessage.hpp>
+   #endif
+   
+   #ifndef __TPZMultiportIOFifo_HPP__
+   #include <TPZMultiportIOFifo.hpp>
+   #endif
+   
+//*************************************************************************
+
+   class TPZInputStageFlow : public TPZFlow
+   {
+      typedef TPZFlow Inhereited;
+      
+   public:
+      TPZInputStageFlow( TPZComponent& component);
+
+      virtual void initialize();
+      virtual void postInitialize();
+
+      virtual Boolean inputReading();
+      virtual Boolean stateChange();
+      virtual Boolean outputWriting();
+      
+      virtual Boolean onStopUp(unsigned interfaz, unsigned cv);
+      virtual Boolean onStopDown(unsigned interfaz, unsigned cv);
+      
+      virtual Boolean onReadyUp(unsigned interfaz, unsigned cv);
+      virtual Boolean controlAlgoritm(Boolean info=false, int delta=0);
+      
+      virtual unsigned calculateOptimalOutput(TPZMessage* msg);
+      
+      virtual Boolean updateMessageInfo(TPZMessage* msg);
+      
+      unsigned getOptimalOutput()
+      { return m_OptimalOutput; }
+      
+      void setOptimalOutput( unsigned port)
+      { m_OptimalOutput = port; }
+      
+      void setBufferSize(unsigned size)
+      { m_Size = size; }
+  
+      // Run time information
+      DEFINE_RTTI(TPZInputStageFlow);
+
+      unsigned bufferSize() const
+      { return m_Size; }
+
+      unsigned bufferElements() const
+      { return getEventQueue().numberOfElements(); }
+
+      unsigned bufferHoles() const
+      { return m_Size - bufferElements(); } 
+
+   protected:
+      virtual Boolean dispatchEvent(const TPZEvent& event);
+      virtual void    sendFlit(TPZMessage* msg, unsigned interfaz);
+      unsigned  m_outputs;
+      
+      TPZMultiportIOFifo* m_BufferRight;
+      TPZMultiportIOFifo* m_BufferLeft;
+
+   private:
+      unsigned  m_Size;
+      unsigned  m_OptimalOutput;
+      
+};
+
+//*************************************************************************
+
+
 #endif
+
+
+// end of file

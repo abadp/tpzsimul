@@ -3,7 +3,7 @@
    <Network            id="M44_CT_NOC">
    <SimulationCycles   id=20000000000000000>
    <StopInjectionAfterMsg id=200000000000>
-   <TrafficPattern     id="MODAL" type=TRACE traceFile="test.trace" numMessTypes=5>
+   <TrafficPattern     id="MODAL" type=RANDOM numMessTypes=6>
    <Seed               id=113>
    <Load               id=0.1>
    <MessageLength      id=1>
@@ -33,7 +33,7 @@
    <Network            id="M44_WH_NOC">
    <SimulationCycles   id=20000000000000000>
    <StopInjectionAfterMsg id=200000000000>
-   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
    <Seed               id=113>
    <Load               id=0.1>
    <MessageLength      id=1>
@@ -414,6 +414,36 @@
    <Load               id=0.1>
    <MessageLength      id=1>
    <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-ROTARY-UC">
+   <Network            id="T44_ROTARY">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T88-ROTARY">
+   <Network            id="T88_ROTARY">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=27000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
    <LinkWidth          id=16>
    <FlitSize           id=5>
    <NetworkClockRatio  id=1>

@@ -41,29 +41,30 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+// 	
 //*************************************************************************
 //:
-//    File: TPZMultiportIOFifo.cpp
+//    File: TPZOutputStage.cpp
 //
-//    Class:  TPZMultiportIOFifo
+//    Class: 
 //
-//    Inherited from:  TPZRunnableComponent
+//    Inherited from: 
 // :
 //*************************************************************************
 //end of header
 
+#include <TPZOutputStage.hpp>
 
-
-
-#include <TPZMultiportIOFifo.hpp>
-
-#ifndef __TPZMultiportIOFifoFlow_HPP__
-#include <TPZMultiportIOFifoFlow.hpp>
+#ifndef __TPZOutputStageFlow_HPP__
+#include <TPZOutputStageFlow.hpp>
 #endif
 
 #ifndef __TPZRouter_HPP__
 #include <TPZRouter.hpp>
+#endif
+
+#ifndef __TPZInterfaz_HPP__
+#include <TPZInterfaz.hpp>
 #endif
 
 #ifndef __TPZConst_H__
@@ -76,52 +77,24 @@
 
 //*************************************************************************
 
-IMPLEMENT_RTTI_DERIVED(TPZMultiportIOFifo,TPZRunnableComponent);
+IMPLEMENT_RTTI_DERIVED(TPZOutputStage,TPZRunnableComponent);
 
 //*************************************************************************
 //:
-//  f: inline TPZBufferControl getBufferControl () const;
-//  d:
-//
-//  f: inline unsigned getBufferSize () const;
-//  d:
-//:
-//*************************************************************************
-
-
-//*************************************************************************
-//:
-//  f: TPZMultiportIOFifo (const TPZComponentId & id);
+//  f: TPZOutputStage(const TPZComponentId& id);
 //
 //  d:
 //:
 //*************************************************************************
 
-TPZMultiportIOFifo :: TPZMultiportIOFifo( const TPZComponentId& id,
-                           unsigned bufferSize, unsigned numberInputPorts,
-                           unsigned numberOutputPorts, 
-                           unsigned missLimit, TPZBufferControl control )
+TPZOutputStage :: TPZOutputStage( const TPZComponentId& id,
+                                unsigned bufferSize,
+				unsigned inputs,
+				TPZOutputStageControl control )
                : TPZRunnableComponent(id),
                  m_BufferSize(bufferSize),
-                 m_BufferControl(control),
-                 m_inputs(numberInputPorts),
-                 m_outputs(numberOutputPorts),
-                 m_missLimit(missLimit)
-{
-     setNumberOfInputs(numberInputPorts);
-    setNumberOfOutputs(numberOutputPorts);
-}
-
-
-//*************************************************************************
-//:
-//  f: virtual ~ TPZMultiportIOFifo ();
-//
-//  d:
-//:
-//*************************************************************************
-
-TPZMultiportIOFifo :: ~TPZMultiportIOFifo()
+		 m_inputs(inputs),
+		 m_StageControl(control)
 {
 
 }
@@ -129,54 +102,80 @@ TPZMultiportIOFifo :: ~TPZMultiportIOFifo()
 
 //*************************************************************************
 //:
-//  f: virtual void buildFlowControl ();
+//  f: virtual ~TPZOutputStage();
 //
 //  d:
 //:
 //*************************************************************************
 
-void TPZMultiportIOFifo :: buildFlowControl()
+TPZOutputStage :: ~TPZOutputStage()
 {
-   if( getBufferControl() == TPZMultiportIOFifo::CT )
+
+}
+
+
+//*************************************************************************
+//:
+//  f: virtual void buildFlowControl();
+//
+//  d:
+//:
+//*************************************************************************
+
+void TPZOutputStage :: buildFlowControl()
+{
+   if( getStageControl() == TPZOutputStage::CT )
    {
-      setFlowControl (new TPZMultiportIOFifoFlow (* this));
+      setFlowControl( new TPZOutputStageFlow(*this) );
+   }
+   if( getFlowControl() )
+   {
+      getFlowControl()->initialize();
    }
    else
    {
       TPZString err;
-      err.sprintf("Only CT Flow Control implemented");
-      EXIT_PROGRAM(err);  
+      err.sprintf(ERR_TPZFIFO_001,getStageControl());
+      EXIT_PROGRAM(err);
    }
-   
-   if( getFlowControl() )
-   {
-      getFlowControl()->initialize();
-   }   
 }
 
 
 //*************************************************************************
 //:
-//  f: bufferHoles unsigned () const;
+//  f: unsigned bufferHoles() const;
 //
 //  d:
 //:
 //*************************************************************************
 
-unsigned TPZMultiportIOFifo :: bufferHoles() const
+unsigned TPZOutputStage :: bufferHoles() const
 {
-   return ((TPZMultiportIOFifoFlow*)getFlowControl())->bufferHoles();
+   return ((TPZOutputStageFlow*)getFlowControl())->bufferHoles();
 }
 
 //*************************************************************************
 //:
-//  f: bufferOccupation unsigned () const;
+//  f: unsigned bufferHoles() const;
 //
 //  d:
 //:
 //*************************************************************************
 
-unsigned TPZMultiportIOFifo :: bufferOccupation() const
+Boolean TPZOutputStage :: controlReplicationAlgorithm( unsigned index) const
+{
+   return ((TPZOutputStageFlow*)getFlowControl())->controlReplicationAlgorithm(index);
+}
+
+//*************************************************************************
+//:
+//  f: unsigned bufferOccupation() const;
+//
+//  d:
+//:
+//*************************************************************************
+
+unsigned TPZOutputStage :: bufferOccupation() const
 {
    return (getBufferSize()-bufferHoles());
 }
@@ -184,30 +183,30 @@ unsigned TPZMultiportIOFifo :: bufferOccupation() const
 
 //*************************************************************************
 //:
-//  f: void setBufferSize (unsigned size);
+//  f: void setBufferSize(unsigned size);
 //
 //  d:
 //:
 //*************************************************************************
 
-void TPZMultiportIOFifo :: setBufferSize(unsigned size)
+void TPZOutputStage :: setBufferSize(unsigned size)
 {
    m_BufferSize = size;
    if( getFlowControl() )
    {
-      ((TPZMultiportIOFifoFlow*)getFlowControl()) -> setBufferSize(size);
+      ((TPZOutputStageFlow*)getFlowControl()) -> setBufferSize(size);
    }
 }
 
 //*************************************************************************
 //:
-//  f: virtual TPZString AsString () const;
+//  f: virtual TPZString asString() const;
 //
 //  d:
 //:
 //*************************************************************************
 
-TPZString TPZMultiportIOFifo :: asString() const
+TPZString TPZOutputStage :: asString() const
 {
    TPZString string = getName();
    if( getRouter() )
@@ -218,26 +217,31 @@ TPZString TPZMultiportIOFifo :: asString() const
 
 //*************************************************************************
 //:
-//  f: static TPZMultiportIOFifo * newFrom (TPZTag const * tag, TPZComponent * owner);
+//  f: static TPZOutputStage* newFrom(const TPZTag* tag, TPZComponent* owner);
 //
 //  d:
 //:
 //*************************************************************************
 
-TPZMultiportIOFifo* TPZMultiportIOFifo :: newFrom(const TPZTag* tag, TPZComponent* owner)
+TPZOutputStage* TPZOutputStage :: newFrom(const TPZTag* tag, TPZComponent* owner)
 {
    TPZComponentId idBuffer(*tag);
-   TPZString multiportSize, bufferControl, dataDelay, inputs, outputs, wideMem, missrouting;
-   TPZString bufferShort;
-   unsigned size,sizeShort, delay=1;
-      
-   if( tag->getAttributeValueWithName(TPZ_TAG_SIZE, multiportSize) )
+   TPZString bufferSize, stageControl, dataDelay, numInputs;
+   
+   unsigned size, delay=1, inputs=2;
+   
+   if( tag->getAttributeValueWithName(TPZ_TAG_SIZE, bufferSize) )
    {
-      size = multiportSize.asInteger();
+      size = bufferSize.asInteger();
    }
    else
    {
       size = ((TPZRouter*)owner)->valueForBufferSize();
+   }
+
+   if( tag->getAttributeValueWithName(TPZ_TAG_INPUTS, numInputs) )
+   {
+      inputs = numInputs.asInteger();
    }
    
    if( tag->getAttributeValueWithName(TPZ_TAG_DATA_DELAY, dataDelay) )
@@ -245,59 +249,26 @@ TPZMultiportIOFifo* TPZMultiportIOFifo :: newFrom(const TPZTag* tag, TPZComponen
       delay = dataDelay.asInteger();
    }
 
-   if( ! (tag->getAttributeValueWithName(TPZ_TAG_CONTROL, bufferControl)) )
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_CONTROL, stageControl)))
    {
-      bufferControl = ((TPZRouter*)owner)->valueForBufferControl();
+      stageControl = ((TPZRouter*)owner)->valueForBufferControl();
    }
    
-   if( ! (tag->getAttributeValueWithName(TPZ_TAG_INPUTS, inputs)) )
+   TPZOutputStageControl control = TPZOutputStage::NIL;
+   if( stageControl == TPZ_TAG_CUTHROUGH )
    {
-      TPZString err;
-      err.sprintf(ERR_TPZCROSS_002, (char*)TPZ_TAG_INPUTS );
-      EXIT_PROGRAM(err);
+      control = TPZOutputStage::CT;
    }
+      
+   TPZOutputStage* buffer = new TPZOutputStage(idBuffer,size,inputs,control);
+   buffer->setNumberOfInputs(inputs);
+   buffer->setDataDelay(delay);
    
-   if( ! (tag->getAttributeValueWithName(TPZ_TAG_OUTPUTS, outputs)) )
-   {
-      TPZString err;
-      err.sprintf(ERR_TPZCROSS_002, (char*)TPZ_TAG_OUTPUTS );
-      EXIT_PROGRAM(err);
-   }
-
-   if( ! (tag->getAttributeValueWithName(TPZ_TAG_MISSR_LIMIT, missrouting)) )
-   {
-      TPZString err;
-      err.sprintf(ERR_TPZCROSS_002, (char*)TPZ_TAG_MISSR_LIMIT );
-      EXIT_PROGRAM(err);
-   }
-   
-   TPZBufferControl control = TPZMultiportIOFifo::NIL;
-   if( bufferControl == TPZ_TAG_CUTHROUGH )
-   {
-      control = TPZMultiportIOFifo::CT;
-   }
-   else if ( bufferControl == TPZ_TAG_WORMHOLE )
-   {
-      control = TPZMultiportIOFifo::WH;
-   }
-   else
-   {
-      TPZString err;
-      err.sprintf( ERR_TPZFIFO_002, (char*)bufferControl );
-      EXIT_PROGRAM(err);
-   }
-   
-   unsigned inp = inputs.asInteger();   
-   unsigned outp = outputs.asInteger();   
-   unsigned missl= missrouting.asInteger();
-   
-   TPZMultiportIOFifo* buffer = new TPZMultiportIOFifo(idBuffer,size,inp,outp,missl,control);
-   buffer->setDataDelay(delay);  
-   ((TPZRouter*)owner)->addMultiportIOBuffer(buffer);
+    ((TPZRouter*)owner)->addOutputStageBuffer(buffer);
    
    return buffer;
 }
 
 //*************************************************************************
 
-// end of file
+// fin del fichero

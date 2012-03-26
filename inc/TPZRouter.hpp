@@ -79,6 +79,8 @@ class TPZFifoMemory;
 class TPZMultiportFifo;
 class TPZMultiportIOFifo;
 class TPZInjector;
+class TPZInputStage;
+class TPZOutputStage;
 
 //************************************************************************
 
@@ -87,11 +89,12 @@ class TPZRouter : public TPZRunnableComponent {
 	typedef TPZSequence<TPZFifoMemory*> TPZBufferList;
 	typedef TPZSequence<TPZMultiportIOFifo*> TPZMultiportIOBufferList;
 	typedef TPZSequence<TPZMultiportFifo*> TPZMultiportBufferList;
+	typedef TPZSequence<TPZInputStage*> TPZInputStageList;
+	typedef TPZSequence<TPZOutputStage*> TPZOutputStageList;
 	typedef TPZSequence<TPZComponent*> TPZInjectorList;
 	typedef TPZSequence<TPZComponent*> TPZConsumerList;
 	typedef TPZSequence<TPZMessage*> TPZMessageList;
 	typedef TPZArray<unsigned> PAFProtocolMessages;
-	typedef TPZArray<unsigned> PAFInOrderTable;
 	typedef TPZQueue<void*> TPZExternalInfoQueue;
 
 	friend class TPZRouterBuilder;	
@@ -147,10 +150,6 @@ public:
 		m_NeighbourZminus= router;
 	}
 
-	void incrInOrderTable(TPZROUTINGTYPE tipo, TPZROUTINGTYPE valor_table);
-
-	unsigned getInOrderTable(TPZROUTINGTYPE tipo, TPZROUTINGTYPE valor_table);
-
 	//******************************************************************
 	//END OF ADDITION
 	//******************************************************************      
@@ -169,6 +168,8 @@ public:
 	void addBuffer(TPZFifoMemory* fifo);
 	void addMultiportIOBuffer(TPZMultiportIOFifo* mportio);
 	void addMultiportBuffer(TPZMultiportFifo* mport);
+	void addOutputStageBuffer (TPZOutputStage * ostage);
+	void addInputStageBuffer (TPZInputStage * istage);
 	void addInjector(TPZComponent* injector);
 	void addConsumer(TPZComponent* consumer);
 
@@ -259,8 +260,12 @@ public:
 
 	//**********************************************************
 
-	//Functions roundabout
+	//Functions Rotary
 
+        Boolean getFreeInOrder( TPZROUTINGTYPE direction );
+        void setInOrderOccupied( TPZROUTINGTYPE direction );
+        void setInOrderFree( TPZROUTINGTYPE direction );
+	
 	void incrContador(TPZROUTINGTYPE direction);
 
 	void decrContador(TPZROUTINGTYPE direction);
@@ -331,6 +336,8 @@ private:
 	TPZBufferList m_BufferList;
 	TPZMultiportIOBufferList m_MultiportIOBufferList;
 	TPZMultiportBufferList m_MultiportBufferList;
+	TPZInputStageList m_InputStageList;
+	TPZOutputStageList m_OutputStageList;
 	TPZInjectorList m_InjectorList;
 	TPZConsumerList m_ConsumerList;
 	unsigned m_InjectorRoundRobin;
@@ -350,6 +357,11 @@ private:
 	unsigned long long m_maskZminus;
 	unsigned long long m_maskLocalNode;
 
+        Boolean m_XplusFreeInOrder;
+        Boolean m_XminusFreeInOrder;
+        Boolean m_YplusFreeInOrder;
+        Boolean m_YminusFreeInOrder;
+        Boolean m_LocalNodeFreeInOrder;
 	//roll in mixture of packages for the roundabout
 
 	unsigned m_ContadorXplus;
@@ -375,12 +387,6 @@ private:
 	unsigned long m_LinkChangesDirection;
 
 	PAFProtocolMessages* m_ProtocolMessages;
-
-	PAFInOrderTable* m_InOrderTableXplus;
-	PAFInOrderTable* m_InOrderTableXminus;
-	PAFInOrderTable* m_InOrderTableYplus;
-	PAFInOrderTable* m_InOrderTableYminus;
-	PAFInOrderTable* m_InOrderTableLocalNode;
 
 	TPZRouter* m_NeighbourXplus;
 	TPZRouter* m_NeighbourXminus;
