@@ -110,7 +110,11 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
          _EXTERN _CONST TPZString TPZ_TAG_INJECT_CONTROL  _IS("injControl");
 	 
    _EXTERN _CONST TPZString TPZ_TAG_CONSUMER         _IS("Consumer");      //Component consuming messages
-         _EXTERN _CONST TPZString TPZ_TAG_TYPE_CONSUMER   _IS("typeCons");
+         _EXTERN _CONST TPZString TPZ_TAG_TYPE_CONSUMER     _IS("typeCons");
+	 _EXTERN _CONST TPZString TPZ_TAG_RSPTSIM	        _IS("RSPTSIM");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_READLAT      _IS("readLatency");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_WRITELAT     _IS("writeLatency");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_BUFFERSIZE   _IS("bufferSize");	 
 	 
    _EXTERN _CONST TPZString TPZ_TAG_SIMPLE_ROUTER    _IS("SimpleRouter");  //Monoblock router, no internal components
          _EXTERN _CONST TPZString TPZ_TAG_MESH_DOR                               _IS("MESH-DOR");
