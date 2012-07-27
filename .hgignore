@@ -1,0 +1,9 @@
+syntax: glob
+.DS_Store
+./mak/x86_64*/*
+./mak/TPZSimul
+./result*
+*.o
+*.d
+*.a
+*.so

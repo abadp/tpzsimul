@@ -1,0 +1,51 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+<!--Simple Routers-->
+<MeshNetwork id="M44_CT_NOC" sizeX=4  sizeY=4  router="MESH-CT-NOC" delay=0>
+<MeshNetwork id="M44_WH_NOC" sizeX=4  sizeY=4  router="MESH-WH-NOC" delay=0>
+<MeshNetwork id="M44_DAMQ_NOC" sizeX=4  sizeY=4  router="MESH-DAMQ-NOC" delay=0>
+<MeshNetwork id="M44_FAST_CT_NOC" sizeX=4  sizeY=4  router="MESH-CT-FAST-NOC" delay=0>
+<TorusNetwork id="T44_CT_NOC" sizeX=4  sizeY=4  router="TORUS-CT-NOC" delay=0>
+<TorusNetwork id="T44_BLESS_NOC" sizeX=4  sizeY=4  router="TORUS-BLESS" delay=0>
+<MeshNetwork id="M44-BINOC"   sizeX=4  sizeY=4  router="MESH-BINOC"   delay=0 operation="HALFDUPLEX">
+
+<MeshNetwork id="M66_CT_NOC" sizeX=6  sizeY=6  router="MESH-CT-NOC" delay=0>
+<MeshNetwork id="M66_FAST_CT_NOC" sizeX=6  sizeY=6  router="MESH-CT-FAST-NOC" delay=0>
+<TorusNetwork id="T66_CT_NOC" sizeX=6  sizeY=6  router="TORUS-CT-NOC" delay=0>
+<TorusNetwork id="T66_BLESS_NOC" sizeX=6  sizeY=6  router="TORUS-BLESS" delay=0>
+
+<MeshNetwork id="M88_CT_NOC" sizeX=8  sizeY=8  router="MESH-CT-NOC" delay=0>
+<MeshNetwork id="M88_FAST_CT_NOC" sizeX=8  sizeY=8  router="MESH-CT-FAST-NOC" delay=0>
+<TorusNetwork id="T88_CT_NOC" sizeX=8  sizeY=8  router="TORUS-CT-NOC" delay=0>
+<TorusNetwork id="T88_BLESS_NOC" sizeX=8  sizeY=8  router="TORUS-BLESS" delay=0>
+
+<!--Realistic Routers-->
+<MeshNetwork id="M44_TEST" sizeX=4  sizeY=4  router="TEST-DOR" delay=0>
+<MeshNetwork id="M44_MC_TEST" sizeX=4  sizeY=4  router="TEST-MCAST-DOR" delay=0>
+<MeshNetwork id="M44_MUXED_TEST" sizeX=4  sizeY=4  router="TEST-MUXED-DOR" delay=0>
+<TorusNetwork id="T44_MUXED_DOR" sizeX=4  sizeY=4  router="TEST-MUXED-BUBBLE-DOR" delay=0>
+<TorusNetwork id="T44_MUXED_ADAP" sizeX=4  sizeY=4  router="TEST-MUXED-BUBBLE-ADAP" delay=0>
+<TorusNetwork id="T88_MUXED_DOR" sizeX=8  sizeY=8  router="TEST-MUXED-BUBBLE-DOR" delay=0>
+<TorusNetwork id="T88_MUXED_ADAP" sizeX=8  sizeY=8  router="TEST-MUXED-BUBBLE-ADAP" delay=0>
+<TorusNetwork id="T44_TEST" sizeX=4  sizeY=4  router="TEST-BUBBLE-DOR" delay=0>
+<TorusNetwork id="T44_MC_TEST" sizeX=4  sizeY=4  router="TEST-MCAST-BUBBLE-DOR" delay=0>
+
+<MeshNetwork id="M44_WH_BASE" sizeX=4  sizeY=4  router="WH-BASE" delay=0>
+<MeshNetwork id="M44_VC_22" sizeX=4  sizeY=4  router="VC-2CH-2MT" delay=0>
+<MeshNetwork id="M44_VC_OPT_22" sizeX=4  sizeY=4  router="VC-OPT-2CH-2MT" delay=0>
+<MeshNetwork id="M44_VC_MUX_22" sizeX=4  sizeY=4  router="VC-MUX-2CH-2MT" delay=0>
+<MeshNetwork id="M44_VC_MUX_OPT_22" sizeX=4  sizeY=4  router="VC-MUX-OPT-2CH-2MT" delay=0>
+<TorusNetwork id="T44_VC_22" sizeX=4  sizeY=4  router="VC-TORUS-2CH-2MT" delay=0>
+<TorusNetwork id="T44_VC_MUX_22" sizeX=4  sizeY=4  router="VC-TORUS-MUX-2CH-2MT" delay=0>
+
+<TorusNetwork id="T44_ROTARY" sizeX=4  sizeY=4  router="ROTARY" delay=0>
+<TorusNetwork id="T88_ROTARY" sizeX=8  sizeY=8  router="ROTARY" delay=0>
+
+<!--Buffered Crossbar-->
+<MeshNetwork id="M44_CT_BUF_XBAR" sizeX=4  sizeY=4  router="CT-BUFFERED-XBAR" delay=0>
+
+<!--Midimaw Routers-->
+<MidimewNetwork id="MW16_CT_NOC" sizeX=16 sizeY=1 router="MESH-CT-NOC" delay=0>
+<MidimewNetwork id="MW32_WH_NOC" sizeX=16 sizeY=1 router="MESH-WH-NOC" delay=0>
+
+<SquareMidimewNetwork id="SMW64_CT_NOC" sizeX=64 sizeY=1 router="MESH-CT-NOC" delay=0>
+<SquareMidimewNetwork id="SMW64_VC_22" sizeX=64 sizeY=1 router="VC-2CH-2MT" delay=0>

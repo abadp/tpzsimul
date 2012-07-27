@@ -1,0 +1,61 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+
+<!-- 4x4 Torus, Bubble Flow control , with multicast support, simple router -->
+<Simulation id="T44-CT-MC">
+   <Network            id="T44_CT_NOC_MC">
+   <SimulationCycles   id=0>
+   <StopInjectionAfterMsg id=0>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<!-- 4x4 Mesh, VirtualCuthrough flow control , with multicast support, simple router -->
+<Simulation id="M44-CT-MC">
+   <Network            id="M44_CT_NOC_MC">
+   <SimulationCycles   id=0>
+   <StopInjectionAfterMsg id=0>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<!-- 4x4 Torus, Bubble Flow control , without multicast support, simple router -->
+<Simulation id="T44-CT-UC">
+   <Network            id="T44_CT_NOC_UC">
+   <SimulationCycles   id=0>
+   <StopInjectionAfterMsg id=0>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<!-- 4x4 Mesh, VirtualCuthrough flow control , without multicast support, simple router -->
+<Simulation id="M44-CT-UC">
+   <Network            id="M44_CT_NOC_UC">
+   <SimulationCycles   id=0>
+   <StopInjectionAfterMsg id=0>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>

@@ -1,0 +1,1064 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+<Router id="3D-MESH-CT-NOC" inputs=6 outputs=6 bufferSize=11 bufferControl=CT routingControl="MESH-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=5>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=5 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+<!-- ******** -->
+<Router id="3D-MESH-WH-NOC" inputs=6 outputs=6 bufferSize=10 bufferControl=WH routingControl="MESH-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="WH" numMessTypes=4>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=4 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+   
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+<Router id="3D-MESH-DAMQ-NOC" inputs=6 outputs=6 bufferSize=41 bufferControl=DAMQ routingControl="MESH-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=4>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=4 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+   
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+<!-- ******** -->
+<Router id="3D-MESH-CT-FAST-NOC" inputs=6 outputs=6 bufferSize=31 bufferControl=CT routingControl="MESH-DOR-FAST">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=4>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=4 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+   
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+<!-- ******** -->
+<Router id="3D-TORUS-CT-NOC" inputs=6 outputs=6 bufferSize=31 bufferControl=CT routingControl="TORUS-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=4>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=4 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+<!-- Router 2D BufferLess header de un solo flit -->
+<Router id="3D-TORUS-BLESS" inputs=6 outputs=6 bufferSize=1 bufferControl=NIL routingControl="TORUS-BLESS">
+   <Injector id="INJ" numHeaders=1 typeInj="WH-UC" numMessTypes=4>
+   <Consumer id="CONS" typeCons="BLESS" >
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=4>
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">      
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>
+
+
+<Router id="3D-TEST-DOR" inputs=6 outputs=6 bufferSize=21 bufferControl=WH routingControl="DOR">
+   <Injector id="INJ1" numHeaders=1 typeInj="WH-UC" numMessTypes=1>
+      
+   <Consumer id="CONS">
+      
+   <Buffer id="BUF1" type="X+"   dataDelay=2>
+   <Buffer id="BUF2" type="X-"   dataDelay=2>
+   <Buffer id="BUF3" type="Y+"   dataDelay=2>
+   <Buffer id="BUF4" type="Y-"   dataDelay=2>
+   <Buffer id="BUF5" type="Z+"   dataDelay=2>
+   <Buffer id="BUF6" type="Z-"   dataDelay=2>
+   <Buffer id="BUF7" type="Node" dataDelay=2>
+   
+   <Routing id="RTG1" type="X+"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG2" type="X-"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG3" type="Y+"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG4" type="Y-"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG5" type="Z+"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG6" type="Z-"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG7" type="Node"  channel=1 headerDelay=2 dataDelay=0>
+      
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="WH" mux="1" headerDelay=0 dataDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X-" channel=1>
+      <Input  id=3  type="Y+" channel=1>
+      <Input  id=4  type="Y-" channel=1>
+      <Input  id=5  type="Z+" channel=1>
+      <Input  id=6  type="Z-" channel=1>
+      <Input  id=7  type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+
+   <Connection id="C01" source="INJ1" destiny="BUF7">
+   
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+
+   <Connection id="C11" source="RTG1" destiny="CROSSBAR.1">
+   <Connection id="C12" source="RTG2" destiny="CROSSBAR.2">
+   <Connection id="C13" source="RTG3" destiny="CROSSBAR.3">
+   <Connection id="C14" source="RTG4" destiny="CROSSBAR.4">
+   <Connection id="C15" source="RTG5" destiny="CROSSBAR.5">
+   <Connection id="C16" source="RTG6" destiny="CROSSBAR.6">
+   <Connection id="C17" source="RTG7" destiny="CROSSBAR.7">
+
+   <Connection id="C21" source="BUF1" destiny="RTG1">
+   <Connection id="C22" source="BUF2" destiny="RTG2">
+   <Connection id="C23" source="BUF3" destiny="RTG3">
+   <Connection id="C24" source="BUF4" destiny="RTG4">
+   <Connection id="C25" source="BUF5" destiny="RTG5">
+   <Connection id="C26" source="BUF6" destiny="RTG6">
+   <Connection id="C27" source="BUF7" destiny="RTG7">
+   
+   <Input id="1"  type="X+"   wrapper="BUF1">
+   <Input id="2"  type="X-"   wrapper="BUF2">
+   <Input id="3"  type="Y+"   wrapper="BUF3">
+   <Input id="4"  type="Y-"   wrapper="BUF4">
+   <Input id="5"  type="Z+"   wrapper="BUF5">
+   <Input id="6"  type="Z-"   wrapper="BUF6">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">
+      
+</Router>
+
+
+<Router id="3D-TEST-BUBBLE-DOR" inputs=6 outputs=6 bufferSize=21 bufferControl=CT routingControl="DOR-BU">
+   <Injector id="INJ1" numHeaders=1 typeInj="CT-UC" numMessTypes=1>
+      
+   <Consumer id="CONS">
+      
+   <Buffer id="BUF1" type="X+"   dataDelay=2>
+   <Buffer id="BUF2" type="X-"   dataDelay=2>
+   <Buffer id="BUF3" type="Y+"   dataDelay=2>
+   <Buffer id="BUF4" type="Y-"   dataDelay=2>
+   <Buffer id="BUF5" type="Z+"   dataDelay=2>
+   <Buffer id="BUF6" type="Z-"   dataDelay=2>
+   <Buffer id="BUF7" type="Node" dataDelay=2>
+   
+   <Routing id="RTG1" type="X+"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG2" type="X-"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG3" type="Y+"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG4" type="Y-"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG5" type="Z+"    channel=1 headerDelay=2 dataDelay=0>   
+   <Routing id="RTG6" type="Z-"    channel=1 headerDelay=2 dataDelay=0>
+   <Routing id="RTG7" type="Node"  channel=1 headerDelay=2 dataDelay=0>
+      
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="CT" mux="1" headerDelay=0 dataDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X-" channel=1>
+      <Input  id=3  type="Y+" channel=1>
+      <Input  id=4  type="Y-" channel=1>
+      <Input  id=5  type="Z+" channel=1>
+      <Input  id=6  type="Z-" channel=1>
+      <Input  id=7  type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+
+   <Connection id="C01" source="INJ1" destiny="BUF7">
+   
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+
+   <Connection id="C11" source="RTG1" destiny="CROSSBAR.1">
+   <Connection id="C12" source="RTG2" destiny="CROSSBAR.2">
+   <Connection id="C13" source="RTG3" destiny="CROSSBAR.3">
+   <Connection id="C14" source="RTG4" destiny="CROSSBAR.4">
+   <Connection id="C15" source="RTG5" destiny="CROSSBAR.5">
+   <Connection id="C16" source="RTG6" destiny="CROSSBAR.6">
+   <Connection id="C17" source="RTG7" destiny="CROSSBAR.7">
+
+   <Connection id="C21" source="BUF1" destiny="RTG1">
+   <Connection id="C22" source="BUF2" destiny="RTG2">
+   <Connection id="C23" source="BUF3" destiny="RTG3">
+   <Connection id="C24" source="BUF4" destiny="RTG4">
+   <Connection id="C25" source="BUF5" destiny="RTG5">
+   <Connection id="C26" source="BUF6" destiny="RTG6">
+   <Connection id="C27" source="BUF7" destiny="RTG7">
+   
+   <Input id="1"  type="X+"   wrapper="BUF1">
+   <Input id="2"  type="X-"   wrapper="BUF2">
+   <Input id="3"  type="Y+"   wrapper="BUF3">
+   <Input id="4"  type="Y-"   wrapper="BUF4">
+   <Input id="5"  type="Z+"   wrapper="BUF5">
+   <Input id="6"  type="Z-"   wrapper="BUF6">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">
+      
+</Router>
+
+
+<Router id="3D-TEST-MUXED-DOR" inputs=6 outputs=6 bufferSize=21 bufferControl=CT injControl=VNET routingControl="DOR-MUX">
+   <Injector id="INJ1" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ2" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ3" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ4" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+     
+   <Consumer id="CONS">
+      
+   <Buffer id="BUF111" type="X+"   dataDelay=2>
+   <Buffer id="BUF112" type="X+"   dataDelay=2>
+   <Buffer id="BUF113" type="X+"   dataDelay=2>
+   <Buffer id="BUF114" type="X+"   dataDelay=2>
+      
+   <Buffer id="BUF211" type="X-"   dataDelay=2>
+   <Buffer id="BUF212" type="X-"   dataDelay=2>
+   <Buffer id="BUF213" type="X-"   dataDelay=2>
+   <Buffer id="BUF214" type="X-"   dataDelay=2>
+   
+   <Buffer id="BUF311" type="Y+"   dataDelay=2>
+   <Buffer id="BUF312" type="Y+"   dataDelay=2>
+   <Buffer id="BUF313" type="Y+"   dataDelay=2>
+   <Buffer id="BUF314" type="Y+"   dataDelay=2>
+   
+   <Buffer id="BUF411" type="Y-"   dataDelay=2>
+   <Buffer id="BUF412" type="Y-"   dataDelay=2>
+   <Buffer id="BUF413" type="Y-"   dataDelay=2>
+   <Buffer id="BUF414" type="Y-"   dataDelay=2>
+   
+   <Buffer id="BUF511" type="Z+"   dataDelay=2>
+   <Buffer id="BUF512" type="Z+"   dataDelay=2>
+   <Buffer id="BUF513" type="Z+"   dataDelay=2>
+   <Buffer id="BUF514" type="Z+"   dataDelay=2>
+   
+   <Buffer id="BUF611" type="Z-"   dataDelay=2>
+   <Buffer id="BUF612" type="Z-"   dataDelay=2>
+   <Buffer id="BUF613" type="Z-"   dataDelay=2>
+   <Buffer id="BUF614" type="Z-"   dataDelay=2>
+   
+   <Buffer id="BUF711" type="Node" dataDelay=2>
+   <Buffer id="BUF712" type="Node" dataDelay=2>
+   <Buffer id="BUF713" type="Node" dataDelay=2>
+   <Buffer id="BUF714" type="Node" dataDelay=2>
+         
+   <RoutingMuxed id="RTG1" type="X+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG2" type="X-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG3" type="Y+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG4" type="Y-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG5" type="Z+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG6" type="Z-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG7" type="Node"  channel=1 inputs="4" headerDelay=2 dataDelay=0>
+      
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="MUX-CT" mux="4" headerDelay=0 dataDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X-" channel=1>
+      <Input  id=3  type="Y+" channel=1>
+      <Input  id=4  type="Y-" channel=1>
+      <Input  id=5  type="Z+" channel=1>
+      <Input  id=6  type="Z-" channel=1>
+      <Input  id=7  type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+
+   <Connection id="C01a" source="INJ1" destiny="BUF711">
+   <Connection id="C01b" source="INJ2" destiny="BUF712">
+   <Connection id="C01c" source="INJ3" destiny="BUF713">
+   <Connection id="C01d" source="INJ4" destiny="BUF714">
+      
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+
+   <Connection id="C11" source="RTG1" destiny="CROSSBAR.1">
+   <Connection id="C12" source="RTG2" destiny="CROSSBAR.2">
+   <Connection id="C13" source="RTG3" destiny="CROSSBAR.3">
+   <Connection id="C14" source="RTG4" destiny="CROSSBAR.4">
+   <Connection id="C15" source="RTG5" destiny="CROSSBAR.5">
+   <Connection id="C16" source="RTG6" destiny="CROSSBAR.6">
+   <Connection id="C17" source="RTG7" destiny="CROSSBAR.7">
+
+   <Connection id="C21" source="BUF111" destiny="RTG1.1">
+   <Connection id="C22" source="BUF112" destiny="RTG1.2">
+   <Connection id="C23" source="BUF113" destiny="RTG1.3">
+   <Connection id="C24" source="BUF114" destiny="RTG1.4">
+   
+   <Connection id="C31" source="BUF211" destiny="RTG2.1">
+   <Connection id="C32" source="BUF212" destiny="RTG2.2">
+   <Connection id="C33" source="BUF213" destiny="RTG2.3">
+   <Connection id="C34" source="BUF214" destiny="RTG2.4">
+   
+   <Connection id="C41" source="BUF311" destiny="RTG3.1">
+   <Connection id="C42" source="BUF312" destiny="RTG3.2">
+   <Connection id="C43" source="BUF313" destiny="RTG3.3">
+   <Connection id="C44" source="BUF314" destiny="RTG3.4">
+   
+   <Connection id="C51" source="BUF411" destiny="RTG4.1">
+   <Connection id="C52" source="BUF412" destiny="RTG4.2">
+   <Connection id="C53" source="BUF413" destiny="RTG4.3">
+   <Connection id="C54" source="BUF414" destiny="RTG4.4">
+   
+   <Connection id="C61" source="BUF511" destiny="RTG5.1">
+   <Connection id="C62" source="BUF512" destiny="RTG5.2">
+   <Connection id="C63" source="BUF513" destiny="RTG5.3">
+   <Connection id="C64" source="BUF514" destiny="RTG5.4">
+   
+   <Connection id="C71" source="BUF611" destiny="RTG6.1">
+   <Connection id="C72" source="BUF612" destiny="RTG6.2">
+   <Connection id="C73" source="BUF613" destiny="RTG6.3">
+   <Connection id="C74" source="BUF614" destiny="RTG6.4">
+   
+   <Connection id="C81" source="BUF711" destiny="RTG7.1">
+   <Connection id="C82" source="BUF712" destiny="RTG7.2">
+   <Connection id="C83" source="BUF713" destiny="RTG7.3">
+   <Connection id="C84" source="BUF714" destiny="RTG7.4">
+   
+   <Input id="1"  type="X+"   wrapper="BUF111,BUF112,BUF113,BUF114">
+   <Input id="2"  type="X-"   wrapper="BUF211,BUF212,BUF213,BUF214">
+   <Input id="3"  type="Y+"   wrapper="BUF311,BUF312,BUF313,BUF314">
+   <Input id="4"  type="Y-"   wrapper="BUF411,BUF412,BUF413,BUF414">
+   <Input id="5"  type="Z+"   wrapper="BUF511,BUF512,BUF513,BUF514">
+   <Input id="6"  type="Z-"   wrapper="BUF611,BUF612,BUF613,BUF614">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">
+      
+</Router>
+
+
+<Router id="3D-TEST-MUXED-BUBBLE-DOR" inputs=6 outputs=6 bufferSize=21 bufferControl=CT injControl=VNET routingControl="DOR-MUX-BUBBLE">
+   <Injector id="INJ1" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ2" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ3" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ4" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+     
+   <Consumer id="CONS">
+      
+   <Buffer id="BUF111" type="X+"   dataDelay=2>
+   <Buffer id="BUF112" type="X+"   dataDelay=2>
+   <Buffer id="BUF113" type="X+"   dataDelay=2>
+   <Buffer id="BUF114" type="X+"   dataDelay=2>
+      
+   <Buffer id="BUF211" type="X-"   dataDelay=2>
+   <Buffer id="BUF212" type="X-"   dataDelay=2>
+   <Buffer id="BUF213" type="X-"   dataDelay=2>
+   <Buffer id="BUF214" type="X-"   dataDelay=2>
+   
+   <Buffer id="BUF311" type="Y+"   dataDelay=2>
+   <Buffer id="BUF312" type="Y+"   dataDelay=2>
+   <Buffer id="BUF313" type="Y+"   dataDelay=2>
+   <Buffer id="BUF314" type="Y+"   dataDelay=2>
+   
+   <Buffer id="BUF411" type="Y-"   dataDelay=2>
+   <Buffer id="BUF412" type="Y-"   dataDelay=2>
+   <Buffer id="BUF413" type="Y-"   dataDelay=2>
+   <Buffer id="BUF414" type="Y-"   dataDelay=2>
+   
+   <Buffer id="BUF511" type="Z+"   dataDelay=2>
+   <Buffer id="BUF512" type="Z+"   dataDelay=2>
+   <Buffer id="BUF513" type="Z+"   dataDelay=2>
+   <Buffer id="BUF514" type="Z+"   dataDelay=2>
+   
+   <Buffer id="BUF611" type="Z-"   dataDelay=2>
+   <Buffer id="BUF612" type="Z-"   dataDelay=2>
+   <Buffer id="BUF613" type="Z-"   dataDelay=2>
+   <Buffer id="BUF614" type="Z-"   dataDelay=2>
+   
+   <Buffer id="BUF711" type="Node" dataDelay=2>
+   <Buffer id="BUF712" type="Node" dataDelay=2>
+   <Buffer id="BUF713" type="Node" dataDelay=2>
+   <Buffer id="BUF714" type="Node" dataDelay=2>
+      
+   <RoutingMuxed id="RTG1" type="X+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG2" type="X-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG3" type="Y+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG4" type="Y-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG5" type="Z+"    channel=1 inputs="4" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG6" type="Z-"    channel=1 inputs="4" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG7" type="Node"  channel=1 inputs="4" headerDelay=2 dataDelay=0>
+      
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="MUX-CT" mux="4" headerDelay=0 dataDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X-" channel=1>
+      <Input  id=3  type="Y+" channel=1>
+      <Input  id=4  type="Y-" channel=1>
+      <Input  id=5  type="Z+" channel=1>
+      <Input  id=6  type="Z-" channel=1>
+      <Input  id=7  type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+
+   <Connection id="C01a" source="INJ1" destiny="BUF711">
+   <Connection id="C01b" source="INJ2" destiny="BUF712">
+   <Connection id="C01c" source="INJ3" destiny="BUF713">
+   <Connection id="C01d" source="INJ4" destiny="BUF714">
+      
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+
+   <Connection id="C11" source="RTG1" destiny="CROSSBAR.1">
+   <Connection id="C12" source="RTG2" destiny="CROSSBAR.2">
+   <Connection id="C13" source="RTG3" destiny="CROSSBAR.3">
+   <Connection id="C14" source="RTG4" destiny="CROSSBAR.4">
+   <Connection id="C15" source="RTG5" destiny="CROSSBAR.5">
+   <Connection id="C16" source="RTG6" destiny="CROSSBAR.6">
+   <Connection id="C17" source="RTG7" destiny="CROSSBAR.7">
+
+   <Connection id="C21" source="BUF111" destiny="RTG1.1">
+   <Connection id="C22" source="BUF112" destiny="RTG1.2">
+   <Connection id="C23" source="BUF113" destiny="RTG1.3">
+   <Connection id="C24" source="BUF114" destiny="RTG1.4">
+   
+   <Connection id="C31" source="BUF211" destiny="RTG2.1">
+   <Connection id="C32" source="BUF212" destiny="RTG2.2">
+   <Connection id="C33" source="BUF213" destiny="RTG2.3">
+   <Connection id="C34" source="BUF214" destiny="RTG2.4">
+   
+   <Connection id="C41" source="BUF311" destiny="RTG3.1">
+   <Connection id="C42" source="BUF312" destiny="RTG3.2">
+   <Connection id="C43" source="BUF313" destiny="RTG3.3">
+   <Connection id="C44" source="BUF314" destiny="RTG3.4">
+   
+   <Connection id="C51" source="BUF411" destiny="RTG4.1">
+   <Connection id="C52" source="BUF412" destiny="RTG4.2">
+   <Connection id="C53" source="BUF413" destiny="RTG4.3">
+   <Connection id="C54" source="BUF414" destiny="RTG4.4">
+      
+   <Connection id="C61" source="BUF511" destiny="RTG5.1">
+   <Connection id="C62" source="BUF512" destiny="RTG5.2">
+   <Connection id="C63" source="BUF513" destiny="RTG5.3">
+   <Connection id="C64" source="BUF514" destiny="RTG5.4">
+   
+   <Connection id="C71" source="BUF611" destiny="RTG6.1">
+   <Connection id="C72" source="BUF612" destiny="RTG6.2">
+   <Connection id="C73" source="BUF613" destiny="RTG6.3">
+   <Connection id="C74" source="BUF614" destiny="RTG6.4">
+      
+   <Connection id="C81" source="BUF711" destiny="RTG7.1">
+   <Connection id="C82" source="BUF712" destiny="RTG7.2">
+   <Connection id="C83" source="BUF713" destiny="RTG7.3">
+   <Connection id="C84" source="BUF714" destiny="RTG7.4">
+   
+   <Input id="1"  type="X+"   wrapper="BUF111,BUF112,BUF113,BUF114">
+   <Input id="2"  type="X-"   wrapper="BUF211,BUF212,BUF213,BUF214">
+   <Input id="3"  type="Y+"   wrapper="BUF311,BUF312,BUF313,BUF314">
+   <Input id="4"  type="Y-"   wrapper="BUF411,BUF412,BUF413,BUF414">
+   <Input id="5"  type="Z+"   wrapper="BUF511,BUF512,BUF513,BUF514">
+   <Input id="6"  type="Z-"   wrapper="BUF611,BUF612,BUF613,BUF614">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">
+      
+</Router>
+
+<Router id="3D-WH-BASE" inputs=6 outputs=6 bufferSize=3 bufferControl=WH routingControl="DOR">
+   <Injector id="INJ" numHeaders=1 >
+   <Consumer id="CONS">
+   
+   <Buffer id="BUF1" type="X+"   dataDelay=1>
+   <Buffer id="BUF2" type="X-"   dataDelay=1>
+   <Buffer id="BUF3" type="Y+"   dataDelay=1>
+   <Buffer id="BUF4" type="Y-"   dataDelay=1>
+   <Buffer id="BUF5" type="Z+"   dataDelay=1>
+   <Buffer id="BUF6" type="Z-"   dataDelay=1>
+   <Buffer id="BUF7" type="Node" dataDelay=1>
+   
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="WH-RTG" mux="1" NumMT="1" NumVC="1" routingDelay=1 vcarbDelay=1 swarbDelay=1>
+      <Input  id=1  type="Node">
+      <Input  id=2  type="X+" >
+      <Input  id=3  type="X-" >
+      <Input  id=4  type="Y+" >
+      <Input  id=5  type="Y-" >
+      <Input  id=6  type="Z+" >
+      <Input  id=7  type="Z-" >
+      
+            
+      <Output id=1  type="Node">
+      <Output id=2  type="X+">
+      <Output id=3  type="X-">
+      <Output id=4  type="Y+">
+      <Output id=5  type="Y-">
+      <Output id=6  type="Z+">
+      <Output id=7  type="Z-">
+      
+   </Crossbar>
+   
+   <Connection id="C01" source="INJ" destiny="BUF7">
+   <Connection id="C02" source="CROSSBAR.1" destiny="CONS">
+   
+   <Connection id="C03" source="BUF7" destiny="CROSSBAR.1">
+   <Connection id="C04" source="BUF1" destiny="CROSSBAR.2">
+   <Connection id="C05" source="BUF2" destiny="CROSSBAR.3">
+   <Connection id="C06" source="BUF3" destiny="CROSSBAR.4">
+   <Connection id="C07" source="BUF4" destiny="CROSSBAR.5">
+   <Connection id="C08" source="BUF5" destiny="CROSSBAR.6">
+   <Connection id="C09" source="BUF6" destiny="CROSSBAR.7">
+   
+   <Input id="1"  type="X+"   wrapper="BUF1">
+   <Input id="2"  type="X-"   wrapper="BUF2">
+   <Input id="3"  type="Y+"   wrapper="BUF3">
+   <Input id="4"  type="Y-"   wrapper="BUF4">
+   <Input id="5"  type="Z+"   wrapper="BUF5">
+   <Input id="6"  type="Z-"   wrapper="BUF6">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.2">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.3">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.4">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.5">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.6">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.7">   
+</Router>
+
+<Router id="3D-VC-MUX-2CH-2MT" inputs=6 outputs=6 bufferSize=10 bufferControl=WH routingControl="DOR">
+   <Injector id="INJ" numHeaders=1>
+   <Consumer id="CONS">
+   
+   <Buffer id="BUF111" type="X+"   dataDelay=1>
+   <Buffer id="BUF112" type="X+"   dataDelay=1>
+   <Buffer id="BUF121" type="X+"   dataDelay=1>
+   <Buffer id="BUF122" type="X+"   dataDelay=1>
+   
+   <Buffer id="BUF211" type="X-"   dataDelay=1>
+   <Buffer id="BUF212" type="X-"   dataDelay=1>
+   <Buffer id="BUF221" type="X-"   dataDelay=1>
+   <Buffer id="BUF222" type="X-"   dataDelay=1>
+   
+   <Buffer id="BUF311" type="Y+"   dataDelay=1>
+   <Buffer id="BUF312" type="Y+"   dataDelay=1>
+   <Buffer id="BUF321" type="Y+"   dataDelay=1>
+   <Buffer id="BUF322" type="Y+"   dataDelay=1>
+   
+   <Buffer id="BUF411" type="Y-"   dataDelay=1>
+   <Buffer id="BUF412" type="Y-"   dataDelay=1>
+   <Buffer id="BUF421" type="Y-"   dataDelay=1>
+   <Buffer id="BUF422" type="Y-"   dataDelay=1>
+   
+   <Buffer id="BUF511" type="Z+"   dataDelay=1>
+   <Buffer id="BUF512" type="Z+"   dataDelay=1>
+   <Buffer id="BUF521" type="Z+"   dataDelay=1>
+   <Buffer id="BUF522" type="Z+"   dataDelay=1>
+   
+   <Buffer id="BUF611" type="Z-"   dataDelay=1>
+   <Buffer id="BUF612" type="Z-"   dataDelay=1>
+   <Buffer id="BUF621" type="Z-"   dataDelay=1>
+   <Buffer id="BUF622" type="Z-"   dataDelay=1>
+   
+   <Buffer id="BUF7"  type="Node" dataDelay=1>
+   
+   <Crossbar id="CROSSBAR" inputs="25" outputs="7" type="VC-MUX" mux="4" NumMT="2" NumVC="2" routingDelay=1 vcarbDelay=1 swarbDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X+" channel=2>
+      <Input  id=3  type="X+" channel=3>
+      <Input  id=4  type="X+" channel=4>
+      <Input  id=5  type="X-" channel=1>
+      <Input  id=6  type="X-" channel=2>
+      <Input  id=7  type="X-" channel=3>
+      <Input  id=8  type="X-" channel=4>
+      <Input  id=9  type="Y+" channel=1>
+      <Input  id=10 type="Y+" channel=2>
+      <Input  id=11 type="Y+" channel=3>
+      <Input  id=12 type="Y+" channel=4>
+      <Input  id=13 type="Y-" channel=1>
+      <Input  id=14 type="Y-" channel=2>
+      <Input  id=15 type="Y-" channel=3>
+      <Input  id=16 type="Y-" channel=4>
+      <Input  id=17 type="Z+" channel=1>
+      <Input  id=18 type="Z+" channel=2>
+      <Input  id=19 type="Z+" channel=3>
+      <Input  id=20 type="Z+" channel=4>
+      <Input  id=21 type="Z-" channel=1>
+      <Input  id=22 type="Z-" channel=2>
+      <Input  id=23 type="Z-" channel=3>
+      <Input  id=24 type="Z-" channel=4>
+      <Input  id=25 type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+   
+   <Connection id="C01" source="INJ" destiny="BUF7">
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+   
+   <Connection id="C03" source="BUF7" destiny="CROSSBAR.25">
+   
+   <Connection id="C04" source="BUF111" destiny="CROSSBAR.1">
+   <Connection id="C05" source="BUF112" destiny="CROSSBAR.2">
+   <Connection id="C06" source="BUF121" destiny="CROSSBAR.3">
+   <Connection id="C07" source="BUF122" destiny="CROSSBAR.4">
+   
+   <Connection id="C08" source="BUF211" destiny="CROSSBAR.5">
+   <Connection id="C09" source="BUF212" destiny="CROSSBAR.6">
+   <Connection id="C10" source="BUF221" destiny="CROSSBAR.7">
+   <Connection id="C11" source="BUF222" destiny="CROSSBAR.8">
+   
+   <Connection id="C12" source="BUF311" destiny="CROSSBAR.9">
+   <Connection id="C13" source="BUF312" destiny="CROSSBAR.10">
+   <Connection id="C14" source="BUF321" destiny="CROSSBAR.11">
+   <Connection id="C15" source="BUF322" destiny="CROSSBAR.12">
+   
+   <Connection id="C16" source="BUF411" destiny="CROSSBAR.13">
+   <Connection id="C17" source="BUF412" destiny="CROSSBAR.14">
+   <Connection id="C18" source="BUF421" destiny="CROSSBAR.15">
+   <Connection id="C19" source="BUF422" destiny="CROSSBAR.16">
+   
+   <Connection id="C20" source="BUF511" destiny="CROSSBAR.17">
+   <Connection id="C21" source="BUF512" destiny="CROSSBAR.18">
+   <Connection id="C22" source="BUF521" destiny="CROSSBAR.19">
+   <Connection id="C23" source="BUF522" destiny="CROSSBAR.20">
+   
+   <Connection id="C24" source="BUF611" destiny="CROSSBAR.21">
+   <Connection id="C25" source="BUF612" destiny="CROSSBAR.22">
+   <Connection id="C26" source="BUF621" destiny="CROSSBAR.23">
+   <Connection id="C27" source="BUF622" destiny="CROSSBAR.24">
+   
+   <Input id="1"  type="X+"   wrapper="BUF111,BUF112,BUF121,BUF122">
+   <Input id="2"  type="X-"   wrapper="BUF211,BUF212,BUF221,BUF222">
+   <Input id="3"  type="Y+"   wrapper="BUF311,BUF312,BUF321,BUF322">
+   <Input id="4"  type="Y-"   wrapper="BUF411,BUF412,BUF421,BUF422">
+   <Input id="5"  type="Z+"   wrapper="BUF511,BUF512,BUF521,BUF522">
+   <Input id="6"  type="Z-"   wrapper="BUF611,BUF612,BUF621,BUF622">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">   
+</Router>
+
+
+<Router id="3D-TEST-MUXED-BUBBLE-ADAP" inputs=6 outputs=6 bufferSize=21 bufferControl=CT injControl=VNET routingControl="ADAP-MUX-BUBBLE">
+   <Injector id="INJ1" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ2" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ3" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+   <Injector id="INJ4" numHeaders=1 typeInj="CT-UC" numMessTypes=4>
+     
+   <Consumer id="CONS">
+      
+   <Buffer id="BUF111" type="X+"   dataDelay=2>
+   <Buffer id="BUF121" type="X+"   dataDelay=2>
+   <Buffer id="BUF112" type="X+"   dataDelay=2>
+   <Buffer id="BUF122" type="X+"   dataDelay=2>
+   <Buffer id="BUF113" type="X+"   dataDelay=2>
+   <Buffer id="BUF123" type="X+"   dataDelay=2>
+   <Buffer id="BUF114" type="X+"   dataDelay=2>
+   <Buffer id="BUF124" type="X+"   dataDelay=2>
+      
+   <Buffer id="BUF211" type="X-"   dataDelay=2>
+   <Buffer id="BUF221" type="X-"   dataDelay=2>
+   <Buffer id="BUF212" type="X-"   dataDelay=2>
+   <Buffer id="BUF222" type="X-"   dataDelay=2>
+   <Buffer id="BUF213" type="X-"   dataDelay=2>
+   <Buffer id="BUF223" type="X-"   dataDelay=2>
+   <Buffer id="BUF214" type="X-"   dataDelay=2>
+   <Buffer id="BUF224" type="X-"   dataDelay=2>
+   
+   <Buffer id="BUF311" type="Y+"   dataDelay=2>
+   <Buffer id="BUF321" type="Y+"   dataDelay=2>
+   <Buffer id="BUF312" type="Y+"   dataDelay=2>
+   <Buffer id="BUF322" type="Y+"   dataDelay=2>
+   <Buffer id="BUF313" type="Y+"   dataDelay=2>
+   <Buffer id="BUF323" type="Y+"   dataDelay=2>
+   <Buffer id="BUF314" type="Y+"   dataDelay=2>
+   <Buffer id="BUF324" type="Y+"   dataDelay=2>
+   
+   <Buffer id="BUF411" type="Y-"   dataDelay=2>
+   <Buffer id="BUF421" type="Y-"   dataDelay=2>
+   <Buffer id="BUF412" type="Y-"   dataDelay=2>
+   <Buffer id="BUF422" type="Y-"   dataDelay=2>
+   <Buffer id="BUF413" type="Y-"   dataDelay=2>
+   <Buffer id="BUF423" type="Y-"   dataDelay=2>
+   <Buffer id="BUF414" type="Y-"   dataDelay=2>
+   <Buffer id="BUF424" type="Y-"   dataDelay=2>
+   
+   <Buffer id="BUF511" type="Z+"   dataDelay=2>
+   <Buffer id="BUF521" type="Z+"   dataDelay=2>
+   <Buffer id="BUF512" type="Z+"   dataDelay=2>
+   <Buffer id="BUF522" type="Z+"   dataDelay=2>
+   <Buffer id="BUF513" type="Z+"   dataDelay=2>
+   <Buffer id="BUF523" type="Z+"   dataDelay=2>
+   <Buffer id="BUF514" type="Z+"   dataDelay=2>
+   <Buffer id="BUF524" type="Z+"   dataDelay=2>
+   
+   <Buffer id="BUF611" type="Z-"   dataDelay=2>
+   <Buffer id="BUF621" type="Z-"   dataDelay=2>
+   <Buffer id="BUF612" type="Z-"   dataDelay=2>
+   <Buffer id="BUF622" type="Z-"   dataDelay=2>
+   <Buffer id="BUF613" type="Z-"   dataDelay=2>
+   <Buffer id="BUF623" type="Z-"   dataDelay=2>
+   <Buffer id="BUF614" type="Z-"   dataDelay=2>
+   <Buffer id="BUF624" type="Z-"   dataDelay=2>
+   
+   <Buffer id="BUF711" type="Node" dataDelay=2>
+   <Buffer id="BUF712" type="Node" dataDelay=2>
+   <Buffer id="BUF713" type="Node" dataDelay=2>
+   <Buffer id="BUF714" type="Node" dataDelay=2>
+      
+   <RoutingMuxed id="RTG1" type="X+"    channel=1 inputs="8" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG2" type="X-"    channel=1 inputs="8" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG3" type="Y+"    channel=1 inputs="8" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG4" type="Y-"    channel=1 inputs="8" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG5" type="Z+"    channel=1 inputs="8" headerDelay=2 dataDelay=0>   
+   <RoutingMuxed id="RTG6" type="Z-"    channel=1 inputs="8" headerDelay=2 dataDelay=0>
+   <RoutingMuxed id="RTG7" type="Node"  channel=1 inputs="4" headerDelay=2 dataDelay=0>
+      
+   <Crossbar id="CROSSBAR" inputs="7" outputs="7" type="MUX-CT" mux="8" headerDelay=0 dataDelay=1>
+      <Input  id=1  type="X+" channel=1>
+      <Input  id=2  type="X-" channel=1>
+      <Input  id=3  type="Y+" channel=1>
+      <Input  id=4  type="Y-" channel=1>
+      <Input  id=5  type="Z+" channel=1>
+      <Input  id=6  type="Z-" channel=1>
+      <Input  id=7  type="Node">
+      
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </Crossbar>
+
+   <Connection id="C01a" source="INJ1" destiny="BUF711">
+   <Connection id="C01b" source="INJ2" destiny="BUF712">
+   <Connection id="C01c" source="INJ3" destiny="BUF713">
+   <Connection id="C01d" source="INJ4" destiny="BUF714">
+      
+   <Connection id="C02" source="CROSSBAR.7" destiny="CONS">
+
+   <Connection id="C11" source="RTG1" destiny="CROSSBAR.1">
+   <Connection id="C12" source="RTG2" destiny="CROSSBAR.2">
+   <Connection id="C13" source="RTG3" destiny="CROSSBAR.3">
+   <Connection id="C14" source="RTG4" destiny="CROSSBAR.4">
+   <Connection id="C15" source="RTG5" destiny="CROSSBAR.5">
+   <Connection id="C16" source="RTG6" destiny="CROSSBAR.6">
+   <Connection id="C17" source="RTG7" destiny="CROSSBAR.7">
+
+   <Connection id="C21" source="BUF111" destiny="RTG1.1">
+   <Connection id="C22" source="BUF121" destiny="RTG1.2">
+   <Connection id="C23" source="BUF112" destiny="RTG1.3">
+   <Connection id="C24" source="BUF122" destiny="RTG1.4">
+   <Connection id="C25" source="BUF113" destiny="RTG1.5">
+   <Connection id="C26" source="BUF123" destiny="RTG1.6">
+   <Connection id="C27" source="BUF114" destiny="RTG1.7">
+   <Connection id="C28" source="BUF124" destiny="RTG1.8">
+   
+   <Connection id="C31" source="BUF211" destiny="RTG2.1">
+   <Connection id="C32" source="BUF221" destiny="RTG2.2">
+   <Connection id="C33" source="BUF212" destiny="RTG2.3">
+   <Connection id="C34" source="BUF222" destiny="RTG2.4">
+   <Connection id="C35" source="BUF213" destiny="RTG2.5">
+   <Connection id="C36" source="BUF223" destiny="RTG2.6">
+   <Connection id="C37" source="BUF214" destiny="RTG2.7">
+   <Connection id="C38" source="BUF224" destiny="RTG2.8">
+   
+   <Connection id="C41" source="BUF311" destiny="RTG3.1">
+   <Connection id="C42" source="BUF321" destiny="RTG3.2">
+   <Connection id="C43" source="BUF312" destiny="RTG3.3">
+   <Connection id="C44" source="BUF322" destiny="RTG3.4">
+   <Connection id="C45" source="BUF313" destiny="RTG3.5">
+   <Connection id="C46" source="BUF323" destiny="RTG3.6">
+   <Connection id="C47" source="BUF314" destiny="RTG3.7">
+   <Connection id="C48" source="BUF324" destiny="RTG3.8">
+   
+   <Connection id="C51" source="BUF411" destiny="RTG4.1">
+   <Connection id="C52" source="BUF421" destiny="RTG4.2">
+   <Connection id="C53" source="BUF412" destiny="RTG4.3">
+   <Connection id="C54" source="BUF422" destiny="RTG4.4">
+   <Connection id="C55" source="BUF413" destiny="RTG4.5">
+   <Connection id="C56" source="BUF423" destiny="RTG4.6">
+   <Connection id="C57" source="BUF414" destiny="RTG4.7">
+   <Connection id="C58" source="BUF424" destiny="RTG4.8">
+   
+   <Connection id="C61" source="BUF511" destiny="RTG5.1">
+   <Connection id="C62" source="BUF521" destiny="RTG5.2">
+   <Connection id="C63" source="BUF512" destiny="RTG5.3">
+   <Connection id="C64" source="BUF522" destiny="RTG5.4">
+   <Connection id="C65" source="BUF513" destiny="RTG5.5">
+   <Connection id="C66" source="BUF523" destiny="RTG5.6">
+   <Connection id="C67" source="BUF514" destiny="RTG5.7">
+   <Connection id="C68" source="BUF524" destiny="RTG5.8">
+   
+   <Connection id="C71" source="BUF611" destiny="RTG6.1">
+   <Connection id="C72" source="BUF621" destiny="RTG6.2">
+   <Connection id="C73" source="BUF612" destiny="RTG6.3">
+   <Connection id="C74" source="BUF622" destiny="RTG6.4">
+   <Connection id="C75" source="BUF613" destiny="RTG6.5">
+   <Connection id="C76" source="BUF623" destiny="RTG6.6">
+   <Connection id="C77" source="BUF614" destiny="RTG6.7">
+   <Connection id="C78" source="BUF624" destiny="RTG6.8">
+   
+   <Connection id="C81" source="BUF711" destiny="RTG7.1">
+   <Connection id="C82" source="BUF712" destiny="RTG7.2">
+   <Connection id="C83" source="BUF713" destiny="RTG7.3">
+   <Connection id="C84" source="BUF714" destiny="RTG7.4">
+   
+   <Input id="1"  type="X+"   wrapper="BUF111,BUF121,BUF112,BUF122,BUF113,BUF123,BUF114,BUF124">
+   <Input id="2"  type="X-"   wrapper="BUF211,BUF221,BUF212,BUF222,BUF213,BUF223,BUF214,BUF224">
+   <Input id="3"  type="Y+"   wrapper="BUF311,BUF321,BUF312,BUF322,BUF313,BUF323,BUF314,BUF324">
+   <Input id="4"  type="Y-"   wrapper="BUF411,BUF421,BUF412,BUF422,BUF413,BUF423,BUF414,BUF424">
+   <Input id="5"  type="Z+"   wrapper="BUF511,BUF521,BUF512,BUF522,BUF513,BUF523,BUF514,BUF524">
+   <Input id="6"  type="Z-"   wrapper="BUF611,BUF621,BUF612,BUF622,BUF613,BUF623,BUF614,BUF624">
+
+   <Output id="1"  type="X+"   wrapper="CROSSBAR.1">
+   <Output id="2"  type="X-"   wrapper="CROSSBAR.2">
+   <Output id="3"  type="Y+"   wrapper="CROSSBAR.3">
+   <Output id="4"  type="Y-"   wrapper="CROSSBAR.4">
+   <Output id="5"  type="Z+"   wrapper="CROSSBAR.5">
+   <Output id="6"  type="Z-"   wrapper="CROSSBAR.6">
+      
+</Router>
+
+<!-- ROUTER PAPER  -->
+<Router id="3D-BUBBLE-SIMPLE" inputs=6 outputs=6 bufferSize=41 bufferControl=CT routingControl="TORUS-DOR">
+   <Injector id="INJ" numHeaders=1 typeInj="CT" numMessTypes=1>
+   <Consumer id="CONS">
+   
+   <SimpleRouter id="ROUTER" inputs="7" outputs="7" headerDelay=0 dataDelay=0 vnets=1 >
+      <Input  id=1  type="X+">
+      <Input  id=2  type="X-">
+      <Input  id=3  type="Y+">
+      <Input  id=4  type="Y-">
+      <Input  id=5  type="Z+">
+      <Input  id=6  type="Z-">
+      <Input  id=7  type="Node">
+      <Output id=1  type="X+">
+      <Output id=2  type="X-">
+      <Output id=3  type="Y+">
+      <Output id=4  type="Y-">
+      <Output id=5  type="Z+">
+      <Output id=6  type="Z-">
+      <Output id=7  type="Node">
+   </SimpleRouter>
+   
+   <Connection id="C01" source="INJ" destiny="ROUTER.7">
+   <Connection id="C02" source="ROUTER.7" destiny="CONS">
+
+   <Input id="1" type="X+"   wrapper="ROUTER.1">
+   <Input id="2" type="X-"   wrapper="ROUTER.2">
+   <Input id="3" type="Y+"   wrapper="ROUTER.3">
+   <Input id="4" type="Y-"   wrapper="ROUTER.4">
+   <Input id="5" type="Z+"   wrapper="ROUTER.5">
+   <Input id="6" type="Z-"   wrapper="ROUTER.6">
+   <Output id="1" type="X+"   wrapper="ROUTER.1">
+   <Output id="2" type="X-"   wrapper="ROUTER.2">
+   <Output id="3" type="Y+"   wrapper="ROUTER.3">
+   <Output id="4" type="Y-"   wrapper="ROUTER.4">
+   <Output id="5" type="Z+"   wrapper="ROUTER.5">
+   <Output id="6" type="Z-"   wrapper="ROUTER.6">
+</Router>

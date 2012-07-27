@@ -1,0 +1,26 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+<!--Simple Routers-->
+<MeshNetwork id="M444_CT_NOC" sizeX=4  sizeY=4 sizeZ=4 router="3D-MESH-CT-NOC" delay=0>
+<MeshNetwork id="M444_WH_NOC" sizeX=8  sizeY=4 sizeZ=2  router="3D-MESH-WH-NOC" delay=0>
+<MeshNetwork id="M444_DAMQ_NOC" sizeX=4  sizeY=4  sizeZ=4 router="3D-MESH-DAMQ-NOC" delay=0>
+<MeshNetwork id="M444_FAST_CT_NOC" sizeX=4  sizeY=4 sizeZ=4  router="3D-MESH-CT-FAST-NOC" delay=0>
+<TorusNetwork id="T444_CT_NOC" sizeX=4  sizeY=4 sizeZ=4  router="3D-TORUS-CT-NOC" delay=0>
+<TorusNetwork id="T444_BLESS_NOC" sizeX=4  sizeY=4  sizeZ=4  router="3D-TORUS-BLESS" delay=0>
+
+<!--Realistic Routers-->
+<MeshNetwork id="M444_TEST" sizeX=4 sizeY=4 sizeZ=4 router="3D-TEST-DOR" delay=0>
+<TorusNetwork id="T444_TEST" sizeX=4 sizeY=4 sizeZ=4 router="3D-TEST-BUBBLE-DOR" delay=0>
+<MeshNetwork id="M444_MUXED_TEST" sizeX=4 sizeY=4 sizeZ=4 router="3D-TEST-MUXED-DOR" delay=0>
+<TorusNetwork id="T444_MUXED_DOR" sizeX=4 sizeY=4 sizeZ=4 router="3D-TEST-MUXED-BUBBLE-DOR" delay=0>
+<TorusNetwork id="T444_MUXED_ADAP" sizeX=4 sizeY=4 sizeZ=4 router="3D-TEST-MUXED-BUBBLE-ADAP" delay=0>
+<MeshNetwork id="M444_WH_BASE" sizeX=4 sizeY=4 sizeZ=4 router="3D-WH-BASE" delay=0>
+<MeshNetwork id="M444_VC_MUX_22" sizeX=4 sizeY=4 sizeZ=4 router="3D-VC-MUX-2CH-2MT" delay=0>
+
+<!--PAPER Supercomputer Networks-->
+<TorusNetwork id="T64_32_16_BIG"   sizeX=64   sizeY=32 sizeZ=16  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T32_32_32_BIG"   sizeX=32   sizeY=32 sizeZ=32  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T128_32_32_BIG"  sizeX=128  sizeY=32 sizeZ=32  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T64_64_16_BIG"   sizeX=64   sizeY=64 sizeZ=32  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T128_64_32_BIG"  sizeX=128  sizeY=64 sizeZ=32  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T256_64_64_BIG"   sizeX=256   sizeY=64 sizeZ=64  router="3D-BUBBLE-SIMPLE" delay=0>
+<TorusNetwork id="T256_64_32_BIG"   sizeX=256   sizeY=64 sizeZ=32  router="3D-BUBBLE-SIMPLE" delay=0>

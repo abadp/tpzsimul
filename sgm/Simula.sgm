@@ -1,0 +1,526 @@
+<!-- See http://www.atc.unican.es/topaz/ for more information -->
+<Simulation id="M44-CT-NOC">
+   <Network            id="M44_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=200000000000>
+   <TrafficPattern     id="MODAL" type=RANDOM numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="M44-CT-MC-NOC">
+   <Network            id="M44_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=1 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-WH-NOC">
+   <Network            id="M44_WH_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=200000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+
+
+<Simulation id="M44-WH-MC-NOC">
+   <Network            id="M44_WH_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=5000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength      id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-DAMQ-NOC">
+   <Network            id="M44_DAMQ_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=20000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-DAMQ-MC-NOC">
+   <Network            id="M44_DAMQ_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=5000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-FAST-CT-NOC">
+   <Network            id="M44_FAST_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=20000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-FAST-CT-MC-NOC">
+   <Network            id="M44_FAST_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=5000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-CT-NOC">
+   <Network            id="T44_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=2000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T48-CT-MC-NOC">
+   <Network            id="T48_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=1 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-BLESS-NOC">
+   <Network            id="T44_BLESS_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=2000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-BIDIR-NOC">
+   <Network            id="M44-BINOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=2000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-TEST">
+   <Network            id="M44_TEST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-MUXED-TEST">
+   <Network            id="M44_MUXED_TEST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=500000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-MC-TEST">
+   <Network            id="M44_MC_TEST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000000000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-MUXED-DOR">
+   <Network            id="T44_MUXED_DOR">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=500000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-MUXED-ADAP">
+   <Network            id="T44_MUXED_ADAP">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=100000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T88-MUXED-DOR">
+   <Network            id="T88_MUXED_DOR">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=500000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T88-MUXED-ADAP">
+   <Network            id="T88_MUXED_ADAP">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=2000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+<Simulation id="T44-TEST">
+   <Network            id="T44_TEST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-MC-TEST">
+   <Network            id="T44_MC_TEST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-WH-BASE">
+   <Network            id="M44_WH_BASE">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=200000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-VC-22">
+   <Network            id="M44_VC_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-VC-OPT-22">
+   <Network            id="M44_VC_OPT_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=100000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-VC-MUX-22">
+   <Network            id="M44_VC_MUX_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="M44-VC-MUX-OPT-22">
+   <Network            id="M44_VC_MUX_OPT_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=100000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-VC-22">
+   <Network            id="T44_VC_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-VC-MUX-22">
+   <Network            id="T44_VC_MUX_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T44-ROTARY-UC">
+   <Network            id="T44_ROTARY">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="T88-ROTARY">
+   <Network            id="T88_ROTARY">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=27000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=1>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="MW16-CT-NOC">
+   <Network            id="MW16_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=10000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="MW32-WH-NOC">
+   <Network            id="MW32_WH_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=200000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>
+</Simulation>
+
+<Simulation id="SMW64-CT-NOC">
+   <Network            id="SMW64_CT_NOC">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=200000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=5>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="SMW64-VC-22">
+   <Network            id="SMW64_VC_22">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=1000000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="M44-CT-BUF-XBAR">
+   <Network            id="M44_CT_BUF_XBAR">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=100000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=2>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=5>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
