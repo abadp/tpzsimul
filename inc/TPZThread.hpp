@@ -58,7 +58,9 @@
    #define __TPZThread_HPP__
 
 //*************************************************************************
+   #ifndef _XOPEN_SOURCE
    #define _XOPEN_SOURCE 600
+   #endif
 
    #include <pthread.h>
     
