@@ -1412,17 +1412,17 @@
    <OutputStage id="OS4" type="Y-" inputs=2 dataDelay=1 size=31>
    <OutputStage id="OS5" type="Node" inputs=2 dataDelay=1 size=31>
    
-   <MPIOBuffer id="MPR1" type="X+" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPR2" type="Y+" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPR3" type="X-" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPR4" type="Y-" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPR5" type="Node" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
+   <MPIOBuffer id="MPR1" type="X+" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPR2" type="Y+" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPR3" type="X-" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPR4" type="Y-" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPR5" type="Node" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
    
-   <MPIOBuffer id="MPL1" type="Y-" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPL2" type="X-" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPL3" type="Y+" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPL4" type="X+" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
-   <MPIOBuffer id="MPL5" type="Node" inputs=2 outputs=2 missLimit=10 size=21 dataDelay=1>
+   <MPIOBuffer id="MPL1" type="Y-" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPL2" type="X-" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPL3" type="Y+" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPL4" type="X+" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
+   <MPIOBuffer id="MPL5" type="Node" inputs=2 outputs=2 missLimit=10 size=31 dataDelay=1>
    
       
    <Connection id="C01" source="INJ" destiny="IS5">
