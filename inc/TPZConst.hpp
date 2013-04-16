@@ -110,7 +110,11 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
          _EXTERN _CONST TPZString TPZ_TAG_INJECT_CONTROL  _IS("injControl");
 	 
    _EXTERN _CONST TPZString TPZ_TAG_CONSUMER         _IS("Consumer");      //Component consuming messages
-         _EXTERN _CONST TPZString TPZ_TAG_TYPE_CONSUMER   _IS("typeCons");
+         _EXTERN _CONST TPZString TPZ_TAG_TYPE_CONSUMER     _IS("typeCons");
+	 _EXTERN _CONST TPZString TPZ_TAG_RSPTSIM	        _IS("RSPTSIM");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_READLAT      _IS("readLatency");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_WRITELAT     _IS("writeLatency");
+	 _EXTERN _CONST TPZString TPZ_TAG_CONSUMER_BUFFERSIZE   _IS("bufferSize");	 
 	 
    _EXTERN _CONST TPZString TPZ_TAG_SIMPLE_ROUTER    _IS("SimpleRouter");  //Monoblock router, no internal components
          _EXTERN _CONST TPZString TPZ_TAG_MESH_DOR                               _IS("MESH-DOR");
@@ -118,6 +122,13 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
          _EXTERN _CONST TPZString TPZ_TAG_TORUS_DOR                              _IS("TORUS-DOR");
          _EXTERN _CONST TPZString TPZ_TAG_MESH_DOR_BINOC                         _IS("MESH-DOR-BINOC");
          _EXTERN _CONST TPZString TPZ_TAG_TORUS_BLESS                            _IS("TORUS-BLESS");
+	 _EXTERN _CONST TPZString TPZ_TAG_LIGERO                                 _IS("LIGERO");
+	 _EXTERN _CONST TPZString TPZ_TAG_LIGERO_MCAST                           _IS("LIGERO-MCAST");
+	 	_EXTERN _CONST TPZString TPZ_TAG_ISSIZE                          _IS("IsSize");
+		_EXTERN _CONST TPZString TPZ_TAG_OSSIZE                          _IS("OsSize");
+		_EXTERN _CONST TPZString TPZ_TAG_MPSIZE                          _IS("MpSize");
+		_EXTERN _CONST TPZString TPZ_TAG_MISS_LOOPS                      _IS("MissLoops");
+		_EXTERN _CONST TPZString TPZ_TAG_MISS_LIMIT                      _IS("MissLimit");
 	 
    _EXTERN _CONST TPZString TPZ_TAG_ROUTER           _IS("Router");        //Router with multiple internal components
          _EXTERN _CONST TPZString TPZ_TAG_BUFFER           _IS("Buffer");
@@ -148,7 +159,7 @@ _EXTERN _CONST TPZString TPZ_TAG_INI_SIMULATION  _IS("SimulationFile");
 
     _EXTERN _CONST TPZString ICL_TAG_BUBBLE_SIZE     _IS("bubbleSize");
     _EXTERN _CONST TPZString TPZ_TAG_WIDE_MEM        _IS("wideMemory");
-    _EXTERN _CONST TPZString TPZ_TAG_MISSR_LIMIT     _IS("missLimit");
+    _EXTERN _CONST TPZString TPZ_TAG_MISSR_LIMIT     _IS("missrtgLimit");
     _EXTERN _CONST TPZString TPZ_TAG_SIZE            _IS("size");
     _EXTERN _CONST TPZString TPZ_TAG_SIZE_SHORT      _IS("sizeShort");
     _EXTERN _CONST TPZString TPZ_TAG_CONTROL         _IS("control");

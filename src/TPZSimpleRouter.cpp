@@ -86,6 +86,14 @@
 #include <TPZSimpleRouterFlowBinoc.hpp>
 #endif
 
+#ifndef __TPZSimpleRouterFlowLigero_HPP__
+#include <TPZSimpleRouterFlowLigero.hpp>
+#endif
+
+#ifndef __TPZSimpleRouterFlowLigeroMcast_HPP__
+#include <TPZSimpleRouterFlowLigeroMcast.hpp>
+#endif
+
 #ifndef __TPZInterfaz_HPP__
 #include <TPZInterfaz.hpp>
 #endif
@@ -138,11 +146,18 @@ TPZSimpleRouter :: TPZSimpleRouter( const TPZComponentId& id,
                             unsigned inputs,
                             unsigned outputs,
                               TPZRoutingControl routingControl,
-                                TPZBufferControl bufferControl, unsigned vnets )
+                                TPZBufferControl bufferControl, unsigned vnets,
+				unsigned issize, unsigned ossize, unsigned mpsize,
+				unsigned missLoops, unsigned missLimit )
              : TPZRunnableComponent(id),
              m_RoutingControl(routingControl),
              m_BufferControl(bufferControl),
-             m_vnets(vnets)
+             m_vnets(vnets),
+	     m_ISSize(issize),
+	     m_OSSize(ossize),
+	     m_MPSize(mpsize),
+	     m_missLoops(missLoops),
+	     m_missLimit(missLimit)
 {
    setNumberOfInputs(inputs);
    setNumberOfOutputs(outputs);   
@@ -240,6 +255,14 @@ void TPZSimpleRouter :: buildFlowControl()
    else if (getRoutingControl() == TPZSimpleRouter :: TORUS_BLESS)
    {  
       setFlowControl(new TPZSimpleRouterFlowBless(*this));
+   }
+   else if (getRoutingControl() == TPZSimpleRouter :: LIGERO)
+   {  
+      setFlowControl(new TPZSimpleRouterFlowLigero(*this));
+   }
+   else if (getRoutingControl() == TPZSimpleRouter :: LIGERO_MCAST)
+   {  
+      setFlowControl(new TPZSimpleRouterFlowLigeroMcast(*this));
    }
    if(getFlowControl())
    {
@@ -479,7 +502,7 @@ TPZSimpleRouter* TPZSimpleRouter :: newFrom( const TPZTag* tag,
    
    TPZComponentId idSimpleRouter(*tag);
    TPZString inputs, outputs; 
-   TPZString dataDelay, headerDelay,virtualNets;
+   TPZString dataDelay, headerDelay,virtualNets, is_size, os_size, mp_size, miss_loops, miss_limit;
     
    if( ! (tag->getAttributeValueWithName(TPZ_TAG_INPUTS, inputs)) )
    {
@@ -515,7 +538,24 @@ TPZSimpleRouter* TPZSimpleRouter :: newFrom( const TPZTag* tag,
    unsigned inp = inputs.asInteger();
    unsigned out = outputs.asInteger();
    unsigned vnets = virtualNets.asInteger();
+   
+   unsigned ISSize, OSSize, MPSize, MissLoops, MissLimit;
 
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_ISSIZE , is_size ))) ISSize=0;
+   else ISSize=is_size.asInteger();
+   
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_OSSIZE , os_size ))) OSSize=0;
+   else OSSize=os_size.asInteger();
+   
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_MPSIZE , mp_size ))) MPSize=0;
+   else MPSize=mp_size.asInteger();
+   
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_MISS_LOOPS , miss_loops ))) MissLoops=1;
+   else MissLoops=miss_loops.asInteger();
+   
+   if( ! (tag->getAttributeValueWithName(TPZ_TAG_MISS_LIMIT , miss_limit ))) MissLimit=1;
+   else MissLimit=miss_limit.asInteger();
+   
    TPZString routingControlString = ((TPZRouter*)owner)->valueForRoutingControl();
    TPZRoutingControl routingControl = TPZSimpleRouter::NIL;
    if( routingControlString == TPZ_TAG_MESH_DOR )
@@ -537,6 +577,14 @@ TPZSimpleRouter* TPZSimpleRouter :: newFrom( const TPZTag* tag,
    else if( routingControlString == TPZ_TAG_TORUS_BLESS )
    {
       routingControl = TPZSimpleRouter::TORUS_BLESS;
+   }
+   else if( routingControlString == TPZ_TAG_LIGERO )
+   {
+      routingControl = TPZSimpleRouter::LIGERO;
+   }
+   else if( routingControlString == TPZ_TAG_LIGERO_MCAST )
+   {
+      routingControl = TPZSimpleRouter::LIGERO_MCAST;
    }
    else
    {
@@ -567,7 +615,7 @@ TPZSimpleRouter* TPZSimpleRouter :: newFrom( const TPZTag* tag,
       }
    }
    
-   TPZSimpleRouter* simpleRouter = new TPZSimpleRouter( idSimpleRouter, inp, out, routingControl, bufferControl,vnets );
+   TPZSimpleRouter* simpleRouter = new TPZSimpleRouter( idSimpleRouter, inp, out, routingControl, bufferControl,vnets, ISSize, OSSize, MPSize, MissLoops, MissLimit );
    simpleRouter->setOwner(owner);
    simpleRouter->setSimulation(owner->getSimulation());
    simpleRouter->setDataDelay(dataDelay.asInteger());

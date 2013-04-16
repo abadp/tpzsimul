@@ -138,8 +138,8 @@ void TPZInjectorFlowCTUC :: sendMessage(TPZMessage* msg)
          {
             TPZMessage* replica= new TPZMessage;
             *replica=*msg;
-            unsigned xval= i%radioY;
-            unsigned yval= i/radioX;
+            unsigned xval= i%radioX;
+            unsigned yval= (i/radioX)%radioY;
 	    unsigned zval= i/(radioX*radioY);
             TPZPosition destiny = TPZPosition(xval, yval, zval);
             replica->setDestiny(destiny);

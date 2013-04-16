@@ -44,83 +44,47 @@
 // 	
 //*************************************************************************
 //:
-//    File: TPZConsumer.hpp
+//    File: TPZSimpleRouterFlowLigeroMcast.hpp
 //
-//    Class: 
+//    Class: TPZSimpleRouterFlowLigeroMcast
 //
-//    Inherited from: 
+//    Inherited from: TPZSimpleRouterFlowLigero
 // :
 //*************************************************************************
 //end of header
 
 
-#ifndef __TPZConsumer_HPP__
-#define __TPZConsumer_HPP__
-
-//************************************************************************
-
-   #include <TPZRunnableComponent.hpp>
-
-//************************************************************************
-
-   class TPZRouterBuilder;
-   class TPZTag;
-   
-//************************************************************************
-
-   class TPZConsumer : public TPZRunnableComponent
-   {
-      typedef TPZRunnableComponent Inhereited;
-      typedef enum {CT, BLESS, REACT, RSPTSIM } TPZConsumerType; 
-      friend class TPZRouterBuilder;
-      
-   public:
-      TPZConsumer(const TPZComponentId& id, TPZConsumerType m_Type);
-      virtual ~TPZConsumer();
-      
-      virtual void      initialize();
-      virtual TPZString asString() const;
-      
-      int getReadLatency(){
-         return m_readLatency;}
-	 
-      int getWriteLatency(){
-         return m_writeLatency;}
-	 
-      int getBufferSize(){
-         return m_bufferSize;}
-
-      // Run time information
-      DEFINE_RTTI(TPZConsumer);
-   
-   protected:      
-      virtual void buildFlowControl();
-      virtual void buildInputInterfaz(unsigned number=1);
-      
-      void setReadLatency(int cycles){
-    	  m_readLatency = cycles;
-      }
-      
-      void setWriteLatency(int cycles){
-          m_writeLatency = cycles;
-      }
-      
-      void setBufferSize(int flits){
-          m_bufferSize = flits;
-      }
-      
-   private:
-      static TPZConsumer* newFrom( const TPZTag* tag, 
-                                   TPZComponent* owner );
-      TPZConsumerType m_ConsumerType;
-      
-      int m_readLatency;
-      int m_writeLatency;
-      int m_bufferSize;
-
-   };
+#ifndef __TPZSimpleRouterFlowLigeroMcast_HPP__
+#define __TPZSimpleRouterFlowLigeroMcast_HPP__
 
 //*************************************************************************
+
+   #include <TPZSimpleRouterFlowLigero.hpp>
+
+//*************************************************************************
+
+class TPZSimpleRouterFlowLigeroMcast : public TPZSimpleRouterFlowLigero
+{
+      typedef TPZSimpleRouterFlowLigero Inhereited;
+   
+   public:
+      TPZSimpleRouterFlowLigeroMcast( TPZComponent& component);
+      virtual ~TPZSimpleRouterFlowLigeroMcast();
+      
+      virtual Boolean inputReading();
+      
+      // Run time information
+      DEFINE_RTTI(TPZSimpleRouterFlowLigeroMcast);
+
+   protected:
+     TPZROUTINGTYPE  getInjectionDirection(TPZMessage* msg);
+     TPZROUTINGTYPE  getOutputDirection(TPZMessage* msg); 
+     Boolean checkHeader(unsigned inPort, TPZMessage* msg);
+        
+};
+
+//*************************************************************************
+
 
 #endif
 

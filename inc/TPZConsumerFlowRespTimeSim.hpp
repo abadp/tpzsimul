@@ -15,12 +15,12 @@
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
-//  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
-//  for your published paper to topaz@atc.unican.es
+//  website (http://www.TPZ.unican.es/topaz/) and (2) e-mail a citation
+//  for your published paper to topaz@TPZ.unican.es
 //  
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
-//  website (http://www.atc.unican.es/topaz/) or (2) collect registration
+//  website (http://www.TPZ.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
 //  
 //   --------------------------------------------------------------------
@@ -35,7 +35,7 @@
 //   General Public License for more details.
 //
 //   You should have received a copy of the GNU General Public License
-//   along with the TOPAZ simulator; if not, write to the Free Software
+//   along with the Multifacet GEMS; if not, write to the Free Software
 //   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 //   02111-1307, USA
 //
@@ -44,83 +44,68 @@
 // 	
 //*************************************************************************
 //:
-//    File: TPZConsumer.hpp
+//    File: TPZConsumerFlowRespTimeSim.hpp
 //
-//    Class: 
+//    Class: TPZConsumerFlowRespTimeSim
 //
-//    Inherited from: 
+//    Inherited from: TPZConsumerFlow
 // :
 //*************************************************************************
 //end of header
 
 
-#ifndef __TPZConsumer_HPP__
-#define __TPZConsumer_HPP__
-
-//************************************************************************
-
-   #include <TPZRunnableComponent.hpp>
-
-//************************************************************************
-
-   class TPZRouterBuilder;
-   class TPZTag;
-   
-//************************************************************************
-
-   class TPZConsumer : public TPZRunnableComponent
-   {
-      typedef TPZRunnableComponent Inhereited;
-      typedef enum {CT, BLESS, REACT, RSPTSIM } TPZConsumerType; 
-      friend class TPZRouterBuilder;
-      
-   public:
-      TPZConsumer(const TPZComponentId& id, TPZConsumerType m_Type);
-      virtual ~TPZConsumer();
-      
-      virtual void      initialize();
-      virtual TPZString asString() const;
-      
-      int getReadLatency(){
-         return m_readLatency;}
-	 
-      int getWriteLatency(){
-         return m_writeLatency;}
-	 
-      int getBufferSize(){
-         return m_bufferSize;}
-
-      // Run time information
-      DEFINE_RTTI(TPZConsumer);
-   
-   protected:      
-      virtual void buildFlowControl();
-      virtual void buildInputInterfaz(unsigned number=1);
-      
-      void setReadLatency(int cycles){
-    	  m_readLatency = cycles;
-      }
-      
-      void setWriteLatency(int cycles){
-          m_writeLatency = cycles;
-      }
-      
-      void setBufferSize(int flits){
-          m_bufferSize = flits;
-      }
-      
-   private:
-      static TPZConsumer* newFrom( const TPZTag* tag, 
-                                   TPZComponent* owner );
-      TPZConsumerType m_ConsumerType;
-      
-      int m_readLatency;
-      int m_writeLatency;
-      int m_bufferSize;
-
-   };
+#ifndef __TPZConsumerFlowRespTimeSim_HPP__
+#define __TPZConsumerFlowRespTimeSim_HPP__
 
 //*************************************************************************
+
+#include <TPZConsumerFlow.hpp>
+
+ 
+//*************************************************************************
+
+   
+//*************************************************************************   
+   class TPZConsumerFlowRespTimeSim : public TPZConsumerFlow
+   {
+      typedef TPZConsumerFlow Inhereited;
+      typedef TPZQueue<TPZMessage*> TPZMessageQueue;
+   
+   public:
+      TPZConsumerFlowRespTimeSim( TPZComponent& component);
+      virtual ~TPZConsumerFlowRespTimeSim();
+
+      virtual Boolean inputReading();
+      virtual Boolean stateChange();
+      
+      // Run time information
+      DEFINE_RTTI(TPZConsumerFlowRespTimeSim);
+   
+   private:
+      //Contencion de acceso a L2: 
+      //  -Buffer de entrada necesario para consumidores Cut-through. 
+      TPZMessageQueue m_fifo;
+      // -Tamano de dicho buffer se coge de TPZConsumer
+
+      
+      //  -Flag que permite el consumo de un flit del buffer de entrada.
+      Boolean m_readBuffer;
+      
+      //  -Paquete que entra al consumidor y se inserta al final de la cola.
+      // Sirve para diferenciar m_inputData y se necesita para enlazar 
+      // inputInterfaz()->getData(datoDeEntrada) y m_fifo.enqueue(datoDeEntrada)
+      TPZMessage* m_inputPacket;
+      
+      //  -Contador de ciclos de espera.
+      int m_stopCycles;
+      
+      //  -Flag que indica si el ultimo mensaje fue una peticion 
+      //de lectura (true) o de escritura (false).
+      Boolean m_wasReadNotWrite;
+};
+
+//*************************************************************************
+
 
 #endif
 

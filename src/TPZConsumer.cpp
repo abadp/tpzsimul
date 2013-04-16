@@ -70,6 +70,10 @@
 #include <TPZConsumerFlowBless.hpp>
 #endif
 
+#ifndef __TPZConsumerFlowRespTimeSim_HPP__
+#include <TPZConsumerFlowRespTimeSim.hpp>
+#endif
+
 #ifndef __TPZRouter_HPP__
 #include <TPZRouter.hpp>
 #endif
@@ -146,7 +150,9 @@ void TPZConsumer :: buildFlowControl()
    else if (m_ConsumerType == TPZConsumer::REACT )
       setFlowControl(new TPZConsumerFlowReactive(*this));
    else if (m_ConsumerType == TPZConsumer::BLESS )
-      setFlowControl(new TPZConsumerFlowBless(*this));   
+      setFlowControl(new TPZConsumerFlowBless(*this));
+   else if (m_ConsumerType == TPZConsumer::RSPTSIM)
+      setFlowControl(new TPZConsumerFlowRespTimeSim(*this));   
    else
       setFlowControl(new TPZConsumerFlow(*this));
    
@@ -207,8 +213,11 @@ TPZConsumer* TPZConsumer :: newFrom(const TPZTag* tag, TPZComponent* owner)
 {
    TPZComponentId idConsumer(*tag);
    TPZString type;
-   TPZString dataDelay, consumerInputs;
+   TPZString dataDelay, consumerInputs, readLatency, writeLatency, bufferSize;;
    uTIME delay = 1;
+   int cycles_read=0;
+   int cycles_write=0;
+   int buffer_size=1;
    
    TPZConsumer* consumer = 0;
 
@@ -222,6 +231,10 @@ TPZConsumer* TPZConsumer :: newFrom(const TPZTag* tag, TPZComponent* owner)
    {
       consumer = new TPZConsumer(idConsumer,TPZConsumer::BLESS);
    }
+   else if (type == TPZ_TAG_RSPTSIM) 
+   {
+      consumer = new TPZConsumer(idConsumer, TPZConsumer::RSPTSIM);
+   }
    else
    {
       consumer = new TPZConsumer(idConsumer,TPZConsumer::CT);
@@ -231,9 +244,26 @@ TPZConsumer* TPZConsumer :: newFrom(const TPZTag* tag, TPZComponent* owner)
    {
       delay = dataDelay.asInteger();
    }
-      
    consumer->setDataDelay(delay);
-
+   
+   if (tag->getAttributeValueWithName(TPZ_TAG_CONSUMER_READLAT, readLatency)) 
+   {
+      cycles_read = readLatency.asInteger();
+   }
+   consumer->setReadLatency(cycles_read);
+   
+   if (tag->getAttributeValueWithName(TPZ_TAG_CONSUMER_WRITELAT, writeLatency)) 
+   {
+      cycles_write = writeLatency.asInteger();
+   }
+   consumer->setWriteLatency(cycles_write);
+    
+   if (tag->getAttributeValueWithName(TPZ_TAG_CONSUMER_BUFFERSIZE, bufferSize)) 
+   {
+      buffer_size = bufferSize.asInteger();
+   }
+   consumer->setBufferSize(buffer_size);
+   
    if( tag->getAttributeValueWithName(TPZ_TAG_INPUTS, consumerInputs) )
    {
       unsigned size = consumerInputs.asInteger();

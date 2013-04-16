@@ -693,6 +693,7 @@ TPZString TPZSimulation :: writeSimulationStatus()
              TPZString("\n Messages generated      = ") + TPZString(m_Network->getMessagesTx()) +
              TPZString("\n Messages received       = ") + TPZString(m_Network->getMessagesRx()) +
              TPZString("\n Messages to inject      = ") + TPZString(m_Network->getMessagesToTx()) +
+	     TPZString("\n Messages on Escape      = ") + TPZString(m_Network->getMessagesEscape()) +
              TPZString("\n Total message latency   = ") + TPZString(latMediaMsgTotal) +
              TPZString("\n Network message latency = ") + TPZString(latMediaMsgNetwork) +
              TPZString("\n Buffer message latency  = ") + TPZString(latMediaMsgBuffer) +

@@ -177,6 +177,7 @@ TPZRouter::TPZRouter(const TPZComponentId& id) :
             m_ProtocolMessages(0), m_maskXplus(0), m_maskXminus(0),
             m_maskYplus(0), m_maskYminus(0), 
 	    m_maskZplus(0), m_maskZminus(0), m_maskLocalNode(0),
+	    m_escapePathFree(true),
             m_XplusFreeInOrder(true), m_XminusFreeInOrder(true),
 	    m_YplusFreeInOrder(true), m_YminusFreeInOrder(true),
 	    m_LocalNodeFreeInOrder(true),m_ContadorLinkX(0), m_ContadorLinkY(0),
