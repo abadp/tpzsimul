@@ -1,5 +1,11 @@
 <!-- See http://www.atc.unican.es/topaz/ for more information -->
 <!--Simple Routers-->
+
+<TorusNetwork id="T44_LIGERO" sizeX=4  sizeY=4  router="LIGERO" delay=0>
+<TorusNetwork id="T88_LIGERO" sizeX=8  sizeY=8  router="LIGERO" delay=0>
+<TorusNetwork id="T44_LIGERO_MCAST" sizeX=4  sizeY=4  router="LIGERO-MCAST" delay=0>
+<TorusNetwork id="T88_LIGERO_MCAST" sizeX=8  sizeY=8  router="LIGERO-MCAST" delay=0>
+
 <MeshNetwork id="M44_CT_NOC" sizeX=4  sizeY=4  router="MESH-CT-NOC" delay=0>
 <MeshNetwork id="M44_WH_NOC" sizeX=4  sizeY=4  router="MESH-WH-NOC" delay=0>
 <MeshNetwork id="M44_DAMQ_NOC" sizeX=4  sizeY=4  router="MESH-DAMQ-NOC" delay=0>
