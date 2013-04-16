@@ -248,11 +248,17 @@ TPZMessage* TPZTrafficPattern::generateBasicMessage(const TPZPosition& source)
    {
       if (drand48()<m_ProbMulticast)
       {
-         unsigned sizex=getSimulation().getNetwork()->getSizeX();
+         unsigned srcX= source.valueForCoordinate(TPZPosition::X);
+	 unsigned srcY= source.valueForCoordinate(TPZPosition::Y);
+	 unsigned srcZ= source.valueForCoordinate(TPZPosition::Z);
+	 unsigned sizex=getSimulation().getNetwork()->getSizeX();
          unsigned sizey=getSimulation().getNetwork()->getSizeY();
 	 unsigned sizez=getSimulation().getNetwork()->getSizeZ();
          unsigned Numnodes= sizex*sizey*sizez;
-         message->setMulticast();
+         unsigned absPos= srcZ*sizex*sizey+srcY*sizex+srcX;
+	 unsigned long long masksrc=1;
+	 masksrc= masksrc << absPos;
+	 message->setMulticast();
          unsigned long long mask=0;
           
          //Random multicast destination
@@ -262,9 +268,9 @@ TPZMessage* TPZTrafficPattern::generateBasicMessage(const TPZPosition& source)
 	    unsigned candidate=(rand())%Numnodes;
 	    unsigned long long maskaux=1;
             maskaux= maskaux << candidate;
-	    if ((maskaux & mask) == 0)
+	    if ( (maskaux & mask)==0 && (maskaux & masksrc)==0 ) 
 	    {
-	       //This destination was not previously selected
+	       //This destination was not previously selected and is different to src
 	       mask=mask|maskaux;
 	       counter--;		
 	    }
@@ -423,6 +429,19 @@ TPZTrafficPattern* TPZTrafficPattern::createTrafficPattern(const TPZTag& tag, TP
       {
          TPZString err;
          err.sprintf(ERR_TPZTRAFI_001, (char*)TPZ_TAG_MSGBIMODAL );
+         EXIT_PROGRAM(err);
+      }
+      
+      TPZString types;
+      if (tag.getAttributeValueWithName(TPZ_TAG_NUM_MESS_TYPES, types)) 
+      {
+         pattern -> setNumMessTypes(types.asInteger());
+         simul.setProtocolMessTypes(types.asInteger() );
+      }
+      else 
+      {
+         TPZString err;
+         err.sprintf(ERR_TPZTRAFI_001, (char*)TPZ_TAG_NUM_MESS_TYPES );
          EXIT_PROGRAM(err);
       }
    } 

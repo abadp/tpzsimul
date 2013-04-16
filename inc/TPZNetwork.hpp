@@ -223,6 +223,8 @@
       { return m_MessagesTx; }
 
       unsigned long getMessagesRx() const;
+      
+      unsigned long getMessagesEscape() const;
 
       unsigned long getPacketsTx() const
       { return m_PacketsTx; }
@@ -413,6 +415,7 @@
       uTIME            m_CurrentTime;
       uTIME            m_clockRestartStats;
 #ifdef PTOPAZ     
+      TPZVectorMessages          m_MessagesEscape;
       unsigned long              m_MessagesTx;
       TPZVectorMessages          m_MessagesRx;
       unsigned long              m_PacketsTx;
@@ -431,6 +434,7 @@
       TPZVectorMessagesDelay     m_PacketDelayBuffer;
       TPZPendindMessages         m_messagesToRelease;
 #else
+      unsigned long    m_MessagesEscape;
       unsigned long    m_MessagesTx;
       unsigned long    m_MessagesRx;
       unsigned long    m_PacketsTx;

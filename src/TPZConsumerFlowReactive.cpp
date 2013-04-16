@@ -143,7 +143,7 @@ Boolean TPZConsumerFlowReactive :: stateChange()
          if (m_InputData->isHeadTail()) m_State = Header;
           else m_State = Information;
 
-         if( m_InputData->destiny() != getOwnerRouter().getPosition() && !m_InputData->isBCast() && !m_InputData->isMulticast() )
+         if( m_InputData->destiny() != getOwnerRouter().getPosition() && !m_InputData->isMulticast() )
          {
             TPZString err;
             err.sprintf( ERR_TPZCOFLO_001,(char*)getComponent().asString(),(char*)m_InputData->asString() );

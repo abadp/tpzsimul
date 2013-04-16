@@ -1,4 +1,64 @@
 <!-- See http://www.atc.unican.es/topaz/ for more information -->
+<Simulation id="T44-LIGERO">
+   <Network            id="T44_LIGERO">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=100000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="T88-LIGERO">
+   <Network            id="T88_LIGERO">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=500000000000>
+   <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=6>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="T44-LIGERO-MCAST">
+   <Network            id="T44_LIGERO_MCAST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=500000000000000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=6 probMulticast=0.5 lengthMulticast=12>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
+<Simulation id="T88-LIGERO-MCAST">
+   <Network            id="T88_LIGERO_MCAST">
+   <SimulationCycles   id=20000000000000000>
+   <StopInjectionAfterMsg id=5000000000000>
+   <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=6 probMulticast=0.5 lengthMulticast=12>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
 <Simulation id="M44-CT-NOC">
    <Network            id="M44_CT_NOC">
    <SimulationCycles   id=20000000000000000>
@@ -17,7 +77,7 @@
 <Simulation id="M44-CT-MC-NOC">
    <Network            id="M44_CT_NOC">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=10000>
+   <StopInjectionAfterMsg id=100000000000000>
    <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=1 lengthMulticast=8>
    <Seed               id=113>
    <Load               id=0.1>
@@ -49,7 +109,7 @@
 <Simulation id="M44-WH-MC-NOC">
    <Network            id="M44_WH_NOC">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=5000>
+   <StopInjectionAfterMsg id=50000000000000>
    <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
    <Seed               id=113>
    <Load               id=0.1>
@@ -79,7 +139,7 @@
 <Simulation id="M44-DAMQ-MC-NOC">
    <Network            id="M44_DAMQ_NOC">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=5000>
+   <StopInjectionAfterMsg id=500000000000>
    <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
    <Seed               id=113>
    <Load               id=0.1>
@@ -109,7 +169,7 @@
 <Simulation id="M44-FAST-CT-MC-NOC">
    <Network            id="M44_FAST_CT_NOC">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=5000>
+   <StopInjectionAfterMsg id=500000000000>
    <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=0.5 lengthMulticast=8>
    <Seed               id=113>
    <Load               id=0.1>
@@ -139,7 +199,7 @@
 <Simulation id="T48-CT-MC-NOC">
    <Network            id="T48_CT_NOC">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=10000>
+   <StopInjectionAfterMsg id=1000000000000>
    <TrafficPattern     id="MULTICAST" type=RANDOM numMessTypes=4 probMulticast=1 lengthMulticast=8>
    <Seed               id=113>
    <Load               id=0.1>
@@ -199,7 +259,7 @@
 <Simulation id="M44-MUXED-TEST">
    <Network            id="M44_MUXED_TEST">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=500000>
+   <StopInjectionAfterMsg id=5000000000>
    <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
    <Seed               id=113>
    <Load               id=0.1>
@@ -229,7 +289,7 @@
 <Simulation id="T44-MUXED-DOR">
    <Network            id="T44_MUXED_DOR">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=500000>
+   <StopInjectionAfterMsg id=5000000000>
    <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
    <Seed               id=113>
    <Load               id=0.1>
@@ -244,7 +304,7 @@
 <Simulation id="T44-MUXED-ADAP">
    <Network            id="T44_MUXED_ADAP">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=100000>
+   <StopInjectionAfterMsg id=10000000000>
    <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
    <Seed               id=113>
    <Load               id=0.1>
@@ -259,7 +319,7 @@
 <Simulation id="T88-MUXED-DOR">
    <Network            id="T88_MUXED_DOR">
    <SimulationCycles   id=20000000000000000>
-   <StopInjectionAfterMsg id=500000>
+   <StopInjectionAfterMsg id=50000000000>
    <TrafficPattern     id="MODAL" type=EMPTY numMessTypes=4>
    <Seed               id=113>
    <Load               id=0.1>

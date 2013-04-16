@@ -273,6 +273,12 @@ public:
 	unsigned getContador(TPZROUTINGTYPE direction);
 
 	TPZRouter* getNeighbour(TPZROUTINGTYPE direction);
+	
+	void setEscapePath( Boolean value)
+	{ m_escapePathFree=value;}
+	
+	Boolean getEscapePath()
+	{ return m_escapePathFree;}
 
 	void incrContadorTotal() {
 		m_ContadorTotal++;
@@ -356,6 +362,8 @@ private:
 	unsigned long long m_maskZplus;
 	unsigned long long m_maskZminus;
 	unsigned long long m_maskLocalNode;
+	
+	Boolean m_escapePathFree;
 
         Boolean m_XplusFreeInOrder;
         Boolean m_XminusFreeInOrder;

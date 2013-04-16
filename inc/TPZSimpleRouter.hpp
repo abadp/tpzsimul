@@ -88,7 +88,9 @@
                      MESH_DOR_FAST,
 		     TORUS_DOR,
 		     TORUS_BLESS,
-                     MESH_DOR_BINOC		     
+                     MESH_DOR_BINOC,
+		     LIGERO,
+		     LIGERO_MCAST		     
 		   } 
                      TPZRoutingControl;
       typedef enum { BC_NIL, BC_WH, BC_CT, BC_DAMQ } TPZBufferControl;
@@ -99,7 +101,9 @@
                    unsigned inputs,
                    unsigned outputs,
 	                TPZRoutingControl routingControl,
-		             TPZBufferControl bufferControl, unsigned vnets);
+		             TPZBufferControl bufferControl, unsigned vnets,
+			     unsigned issize, unsigned ossize, unsigned mpsize,
+			     unsigned missLoops, unsigned missLimit);
                    
       virtual ~TPZSimpleRouter();
       virtual void terminate();
@@ -122,6 +126,11 @@
       TPZBufferControl getBufferControl() const
       { return m_BufferControl; }
       unsigned getVnets() const {return m_vnets;}
+      unsigned getISSize() const {return m_ISSize;}
+      unsigned getOSSize() const {return m_OSSize;}
+      unsigned getMPSize() const {return m_MPSize;}
+      unsigned getMissLoops() const {return m_missLoops;}
+      unsigned getMissLimit() const {return m_missLimit;}
       
       unsigned numberOfLocalPorts() const;
       void setNumberOfLocalPorts(unsigned number);
@@ -144,6 +153,11 @@
         TPZRoutingControl m_RoutingControl;
         TPZBufferControl m_BufferControl;
         unsigned m_vnets;
+	unsigned m_ISSize;
+	unsigned m_OSSize;
+	unsigned m_MPSize;
+	unsigned m_missLoops;
+	unsigned m_missLimit;
 	
    };
 
