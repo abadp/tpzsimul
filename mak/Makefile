@@ -10,7 +10,7 @@ POOL_OFF      = -DNO_POOL    #Disables static flit pool (empty to enable pool)
 
 TRACE_OFF     = -DNO_TRAZA   #Disables trace debugging (empty to enable trace)
  
-DEBUG =                     #Enables debugger ready exec (empty to disable)
+DEBUG =                    #Enables debugger ready exec (empty to disable)
 
 #*****************************************************************************
 
@@ -186,6 +186,8 @@ MODULES = TPZAttribute  \
 	  TPZSimpleRouterFlowBless \
 	  TPZSimpleRouterFlowDAMQ \
 	  TPZSimpleRouterFlowFast \
+	  TPZSimpleRouterFlowLigero \
+	  TPZSimpleRouterFlowLigeroMcast \
 	  TPZSimpleRouterFlowTorus \
 	  TPZSimpleRouterFlowWH \
 	  TPZSimulation \

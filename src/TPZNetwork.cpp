@@ -164,7 +164,7 @@ IMPLEMENT_RTTI_DERIVED(TPZNetwork, TPZComponent);
 TPZNetwork::TPZNetwork(const TPZComponentId& id, const TPZString& routerId,
         unsigned x, unsigned y, unsigned z) :
             TPZComponent(id), m_RouterId(routerId), m_SizeX(x), m_SizeY(y), m_SizeZ(z),
-            m_CurrentTime((uTIME)0.0), m_MessagesTx(0), m_MessagesRx(0),
+            m_CurrentTime((uTIME)0.0), m_MessagesTx(0), m_MessagesRx(0), m_MessagesEscape(0),
             m_PacketsTx(0), m_PacketsRx(0), m_FlitsTx(0), m_FlitsRx(0),
             m_MessageDelayTotal((uTIME)0.0), m_MessageDelayNetwork((uTIME)0.0),
             m_MessageDelayBuffer((uTIME)0.0), m_PacketDelayTotal((uTIME)0.0),
@@ -329,6 +329,7 @@ void TPZNetwork::postInitialize() {
   
   // Each threads with its own statistics in order to avoid collisions
    
+   m_MessagesEscape.setSize(m_numThreads);
    m_MessagesRx.setSize(m_numThreads);
    m_PacketsRx.setSize(m_numThreads);
    m_FlitsRx.setSize(m_numThreads);
@@ -350,6 +351,7 @@ void TPZNetwork::postInitialize() {
       if (m_process[n] -> Start(n, m_SizeX, m_SizeY, m_SizeZ, this, m_numThreads))
          perror("Error when creating thread\n");
       m_process[n] -> setConnectionThread(m_ConnectionCursor[n]);
+      m_MessagesEscape[n]=0;
       m_MessagesRx[n]=0;
       m_PacketsRx[n]=0;
       m_FlitsRx[n]=0;
@@ -363,6 +365,7 @@ void TPZNetwork::postInitialize() {
    }
       
 #else
+   m_MessagesEscape=0;
    m_MessagesRx=0;
    m_PacketsRx=0;
    m_FlitsRx=0;
@@ -870,6 +873,7 @@ void TPZNetwork::initializeStats(uTIME timeRestart) {
 #ifdef PTOPAZ
 for (int n=0; n<m_numThreads; n++)
 { 
+   m_MessagesEscape[n]=0;
    m_MessagesRx[n]=0;
    m_PacketsRx[n]=0;
    m_FlitsRx[n]=0;
@@ -883,6 +887,7 @@ for (int n=0; n<m_numThreads; n++)
 }
 
 #else
+    m_MessagesEscape=0;
     m_MessagesRx=0;
     m_PacketsRx=0;
     m_FlitsRx=0;
@@ -1161,6 +1166,7 @@ void TPZNetwork::onMessageReceived(const TPZMessage* msg) {
     uTIME totalTime = t3 - t1;
 
     incrementRx(Message);
+    if (msg->isOnScape()==true) m_MessagesEscape++;
     
     incrProtocolMessagesRx(msg->getVnet());
     incrProtocolMessagesDelayNetwork(msg->getVnet(), t3-t2);
@@ -1501,6 +1507,27 @@ unsigned long TPZNetwork::getMessagesRx() const {
     return rc;
 }
 
+//*************************************************************************
+//:
+//  f: unsigned long getMessagesEscape() const;
+//
+//  d:
+//:
+//*************************************************************************
+
+unsigned long TPZNetwork::getMessagesEscape() const {
+    unsigned long rc = 0;
+#ifdef PTOPAZ
+    for (int i = 0; i<m_numThreads; i++)
+    {
+       rc+=m_MessagesEscape[i];
+    }
+#else
+        rc = m_MessagesEscape;
+#endif
+
+    return rc;
+}
 //*************************************************************************
 //:
 //  f: unsigned long getPacketsRx() const;

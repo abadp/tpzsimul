@@ -213,14 +213,6 @@ public:
 		m_Delta[header] = delt;
 	}
 
-	void setMissRouting(int short delt, int short header=0) {
-		m_MissRouting[header] = delt;
-	}
-
-	int short getMissRouting(int short header=0) {
-		return m_MissRouting[header];
-	}
-
 	Boolean getLastMissRouted() {
 		return m_lastMissRouted;
 	}
@@ -265,18 +257,6 @@ public:
 		m_ExternalInfo = ptr;
 	}
 
-	void setRequest() {
-		m_isRequest = true;
-	}
-
-	void clearRequest() {
-		m_isRequest = false;
-	}
-
-	Boolean isRequest() const {
-		return m_isRequest;
-	}
-
 	void destroyPortList();
 
 	unsigned getMessageLength() const {
@@ -306,19 +286,23 @@ public:
 	void clearOrdered() {
 		m_nonAdap=true;
 	}
-
-	void setBCast() {
-		m_broadcast=true;
+        
+	Boolean isOnScape() const {
+		return m_onScape;
 	}
 
-	void clearBCast() {
-		m_broadcast=false;
+	void setOnScape() {
+		m_onScape=true;
 	}
-
-	Boolean isBCast() const {
-		return m_broadcast;
+	
+	unsigned getTimesMiss() const {
+	        return m_timesMiss;
 	}
-
+	
+	void incrTimesMiss() {
+	        m_timesMiss++;
+	}
+        
 	void setMulticast() {
 		m_multicast=true;
 	}
@@ -338,25 +322,6 @@ public:
 	unsigned long long getMsgmask() const {
 		return m_Msgmask;
 	}
-
-	void setPathmask(unsigned long long mascara) {
-		m_Pathmask=mascara;
-	}
-
-	unsigned long long getPathmask() const {
-		return m_Pathmask;
-	}
-        void setRingCast(unsigned shift) {
-                m_ringCast=shift;
-        }
-      
-        Boolean isRingCast() const { 
-	        return m_ringCast!=0; 
-	}   
-      
-        unsigned getRingCastShift() const { 
-                return m_ringCast;
-        }
 	
 	unsigned long getHopCount() const {
 		return m_HopCount;
@@ -387,20 +352,16 @@ public:
 		m_LastDirMiss = port;
 	}
 
+	void resetMultiportNumber() {
+		m_multiportNumber=0;
+	}
+	
 	void incrMultiportNumber() {
 		m_multiportNumber++;
 	}
 
 	unsigned long getMultiportNumber() const {
 		return m_multiportNumber;
-	}
-
-	unsigned getInNodeMessageOrder() const {
-		return m_InNodeMessageOrder;
-	}
-
-	void setInNodeMessageOrder(unsigned orden) {
-		m_InNodeMessageOrder = orden;
 	}
 
 	void setInOrderInputDirection(TPZROUTINGTYPE direction) {
@@ -410,13 +371,13 @@ public:
 	TPZROUTINGTYPE getInOrderInputDirection() {
 		return m_InOrderInputDirection;
 	}
-
-	void setConsumir(Boolean aux) {
-		m_Consumir = aux;
+	
+	void setInputInterfaz(unsigned interfaz) {
+		m_inputInterfaz = interfaz;
 	}
 
-	Boolean getConsumir() const {
-		return m_Consumir;
+	unsigned getInputInterfaz() {
+		return m_inputInterfaz;
 	}
 #ifdef PTOPAZ
 	unsigned getPoolIndex() const
@@ -444,37 +405,35 @@ private:
 	uTIME m_DelayMultiport;
 	TPZPosition m_SourcePosition;
 	TPZPosition m_DestinyPosition;
+	unsigned long m_distance;
 	TPZROUTINGTYPE m_RoutingPort;
 	int short m_Delta[3];
 	unsigned short m_Channel;
+	int m_vnet;
+	Boolean m_nonAdap;
 	unsigned long m_Identifier;
+	static unsigned long sm_Identifier;
 	TPortList* m_PortList;
 	void* m_ExternalInfo;
-	//ccNUMA Support
-	Boolean m_isRequest;
-
+	
 	//Miss Routing Suport.
 	TPZROUTINGTYPE m_LastDirMiss;
 	unsigned long m_HopCount;
 	unsigned long m_multiportNumber;
-	int short m_MissRouting[3];
 	Boolean m_lastMissRouted;
-	static unsigned long sm_Identifier;
-	unsigned long m_distance;
-	int m_vnet;
-	Boolean m_nonAdap;
-	Boolean m_broadcast;
-	unsigned m_ringCast;
+	Boolean m_onScape;
+	unsigned m_timesMiss;
+		
+	TPZROUTINGTYPE m_InOrderInputDirection;
+	unsigned       m_inputInterfaz;
+	
+	//Multicast Support
 	Boolean m_multicast;
-	Boolean m_Consumir;
-	unsigned long long m_Msgmask;
-	unsigned long long m_Pathmask;
+	unsigned long long m_Msgmask;	
+	
 #ifdef PTOPAZ
 	unsigned  m_PoolIndex;
 #endif	
-
-	unsigned m_InNodeMessageOrder;
-	TPZROUTINGTYPE m_InOrderInputDirection;
 	
 };
 

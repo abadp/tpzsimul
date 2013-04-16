@@ -161,25 +161,22 @@ unsigned long TPZMessage::sm_Identifier = 0;
 
 TPZMessage::TPZMessage() :
     m_Type(INFO),
-            m_InNodeMessageOrder(0),
             m_Identifier(0),
             m_FlitNumber(1),
             m_PacketNumber(1),
             m_MessageSize(0),
             m_PacketSize(0),
-            m_isRequest(false),
             m_GenerationTime((uTIME)0.0),
             m_InjectionTime((uTIME)0.0),
             m_DelayMultiport((uTIME)0.0),
             m_RoutingPort(_Unknow_), m_Channel(1), m_HopCount(0), m_PortList(0),
             m_ExternalInfo(0), m_distance(0), m_lastMissRouted(false),
-            m_vnet(1), m_nonAdap(false),
-            m_broadcast(false), m_multicast(false), m_Consumir(false), m_Msgmask(0),
-            m_Pathmask(0), m_ringCast(0), m_multiportNumber(0) {
+            m_vnet(1), m_nonAdap(false), m_onScape(false), m_timesMiss(0),
+            m_multicast(false), m_Msgmask(0),
+            m_multiportNumber(0) {
  
 #ifndef NO_TRAZA 
     m_Type=INFO;
-    m_InNodeMessageOrder=0;
     m_Identifier=0;
     m_FlitNumber=1;
     m_PacketNumber=1;
@@ -197,8 +194,7 @@ TPZMessage::TPZMessage() :
     //m_distance (0),
 
 #endif
-    m_Delta[0] = m_Delta[1] = m_Delta[2] = -10;
-    m_MissRouting[0]=m_MissRouting[1]=m_MissRouting[2]=0;
+    m_Delta[0] = m_Delta[1] = m_Delta[2] = -10;    
 #ifdef PTOPAZ
     m_PoolIndex=599;
 #endif    
@@ -214,12 +210,11 @@ TPZMessage::TPZMessage() :
 
 TPZMessage::TPZMessage(const TPZMessage& aMessage) :
     m_Type(aMessage.type() ),
-            m_InNodeMessageOrder(aMessage.getInNodeMessageOrder() ),
             m_Identifier(aMessage.getIdentifier() ),
             m_FlitNumber(aMessage.flitNumber() ),
             m_PacketNumber(aMessage.packetNumber() ),
             m_MessageSize(aMessage.messageSize() ),
-            m_PacketSize(aMessage.packetSize() ), m_isRequest(aMessage.isRequest()),
+            m_PacketSize(aMessage.packetSize() ), 
             m_GenerationTime(aMessage.generationTime() ),
             m_InjectionTime(aMessage.packetInjectionTime() ),
             m_SourcePosition(aMessage.source() ),
@@ -230,18 +225,15 @@ TPZMessage::TPZMessage(const TPZMessage& aMessage) :
             m_lastMissRouted(aMessage.m_lastMissRouted),
             m_HopCount(aMessage.getHopCount()), m_distance(aMessage.getDistance()),
             m_vnet(aMessage.getVnet()), m_nonAdap(aMessage.isOrdered()),
-            m_broadcast(aMessage.isBCast()), m_multicast(aMessage.isMulticast()),
-            m_Msgmask(aMessage.getMsgmask()), m_Pathmask(aMessage.getPathmask()),
-            m_Consumir(aMessage.getConsumir()), m_ringCast(aMessage.isRingCast()),
+	    m_onScape(aMessage.isOnScape()), m_timesMiss(aMessage.getTimesMiss()),
+            m_multicast(aMessage.isMulticast()),
+            m_Msgmask(aMessage.getMsgmask()), 
             m_multiportNumber(aMessage.getMultiportNumber()) {
 
     m_Delta[0] = aMessage.delta(0);
     m_Delta[1] = aMessage.delta(1);
     m_Delta[2] = aMessage.delta(2);
-    m_MissRouting[0]=aMessage.m_MissRouting[0];
-    m_MissRouting[1]=aMessage.m_MissRouting[1];
-    m_MissRouting[2]=aMessage.m_MissRouting[2];
-
+    
 }
 
 //*************************************************************************
@@ -270,7 +262,6 @@ TPZMessage::~TPZMessage() {
 TPZMessage& TPZMessage::operator=(const TPZMessage& aMessage)
 {
     m_Type = aMessage.type();
-    m_InNodeMessageOrder = aMessage.getInNodeMessageOrder();
     m_Identifier = aMessage.getIdentifier();
     m_FlitNumber = aMessage.flitNumber();
     m_PacketNumber = aMessage.packetNumber();
@@ -281,26 +272,21 @@ TPZMessage& TPZMessage::operator=(const TPZMessage& aMessage)
     m_SourcePosition = aMessage.source();
     m_DestinyPosition = aMessage.destiny();
     m_RoutingPort = aMessage.getRoutingPort();
-    m_isRequest = aMessage.isRequest();
     m_Delta[0] = aMessage.delta(0);
     m_Delta[1] = aMessage.delta(1);
     m_Delta[2] = aMessage.delta(2);
     m_Channel = aMessage.getChannel();
     m_PortList = aMessage.getPortList();
     m_ExternalInfo = aMessage.getExternalInfo();
-    m_MissRouting[0] = aMessage.m_MissRouting[0];
-    m_MissRouting[1] = aMessage.m_MissRouting[1];
-    m_MissRouting[2] = aMessage.m_MissRouting[2];
     m_HopCount = aMessage.m_HopCount;
     m_distance = aMessage.m_distance;
     m_lastMissRouted = aMessage.m_lastMissRouted;
     m_vnet = aMessage.getVnet();
     m_nonAdap = aMessage.isOrdered();
-    m_broadcast = aMessage.isBCast();
+    m_onScape = aMessage.isOnScape();
+    m_timesMiss = aMessage.getTimesMiss();
     m_multicast = aMessage.isMulticast();
     m_Msgmask = aMessage.getMsgmask();
-    m_Pathmask = aMessage.getPathmask();
-    m_ringCast = aMessage.isRingCast();
     m_multiportNumber = aMessage.getMultiportNumber();
     return *this;
 }
@@ -333,7 +319,6 @@ void TPZMessage::destroyPortList() {
 Boolean TPZMessage::operator==(const TPZMessage& aMessage) const
 {
     if( ( type() == aMessage.type() ) &&
-            ( getInNodeMessageOrder() == aMessage.getInNodeMessageOrder() )&&
             ( getIdentifier() == aMessage.getIdentifier() ) &&
             ( flitNumber() == aMessage.flitNumber() ) &&
             ( packetNumber() == aMessage.packetNumber() ) &&
@@ -345,8 +330,7 @@ Boolean TPZMessage::operator==(const TPZMessage& aMessage) const
             ( source() == aMessage.source() ) &&
             ( destiny() == aMessage.destiny() ) &&
             ( getRoutingPort() == aMessage.getRoutingPort() ) &&
-            ( getChannel() == aMessage.getChannel() ) &&
-            ( isRequest() == aMessage.isRequest() ) )             
+            ( getChannel() == aMessage.getChannel() ) )             
     return true;
 
     return false;
@@ -386,12 +370,16 @@ TPZString TPZMessage::asString() const {
     {
        rs+=TPZString(" IsOrdered ")+ "/";
     }
+    if (isOnScape())
+    {
+       rs+=TPZString(" OnScape ")+ "/";
+    }
     if (m_multicast) {
         rs+=TPZString(" IsMulticast ")+ "/";
         rs+=TPZString(" Mask=")+ TPZString(m_Msgmask) + "/";
         
     }
-    rs += TPZString("ExternalInfo=") + (long long unsigned)(m_ExternalInfo) + "/";
+    //rs += TPZString("ExternalInfo=") + (long long unsigned)(m_ExternalInfo) + "/";
     return rs;
 }
 
