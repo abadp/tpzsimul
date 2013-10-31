@@ -59,6 +59,21 @@
    <UnifyNetworks      id=1>      
 </Simulation>
 
+<Simulation id="T44-LIGERO-FILE">
+   <Network            id="T44_LIGERO">
+   <SimulationCycles   id=20000>
+   <StopInjectionAfterMsg id=10000>
+   <TrafficPattern     id="MODAL" type=TRACE traceFile=test.trace>
+   <Seed               id=113>
+   <Load               id=0.1>
+   <MessageLength      id=1>
+   <PacketLength       id=5>
+   <LinkWidth          id=16>
+   <FlitSize           id=16>
+   <NetworkClockRatio  id=1>
+   <UnifyNetworks      id=1>      
+</Simulation>
+
 <Simulation id="M44-CT-NOC">
    <Network            id="M44_CT_NOC">
    <SimulationCycles   id=20000000000000000>
