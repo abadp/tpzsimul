@@ -1177,7 +1177,10 @@ TPZTrafficPatternFile::TPZTrafficPatternFile(const TPZString& fileName, TPZSimul
       TPZString err;
       err.sprintf(ERR_TPZTRAFI_005, (char*)m_FileName );
       EXIT_PROGRAM(err);
-   }   
+   } 
+   
+   m_eof=false;
+   m_first=true;
 }
 
 //*************************************************************************
@@ -1217,7 +1220,6 @@ Boolean TPZTrafficPatternFile::readNextMessage()
    m_Message.setDestiny(TPZPosition(x_dst, y_dst, z_dst));
    m_Message.setPacketSize(getSimulation().getPacketLength());
    m_Message.setMessageSize(size);
-
    return true;
 }
 
@@ -1232,10 +1234,20 @@ Boolean TPZTrafficPatternFile::readNextMessage()
 Boolean TPZTrafficPatternFile::injectMessage(const TPZPosition& source) 
 {
    uTIME currentTime = getSimulation().getNetwork()->getCurrentTime();
+   if(m_first)
+   {
+     m_first=false;
+     if ( !readNextMessage() ) m_eof=true;
+   }
+   if(m_eof) return false;
    while (currentTime >= m_Message.generationTime() ) 
    {
-      if ( !readNextMessage() ) return false;
       getSimulation().getNetwork()->sendMessage(m_Message);      
+      if ( !readNextMessage() ) 
+      {
+        m_eof=true;
+        return false;
+      }
    }
    return true;
 }

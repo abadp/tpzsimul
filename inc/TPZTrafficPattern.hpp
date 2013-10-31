@@ -465,6 +465,8 @@
       TPZMessage m_Message;
       TPZString  m_FileName;
       ifstream*  m_File;
+      Boolean    m_eof;
+      Boolean    m_first;
    };
 
       
