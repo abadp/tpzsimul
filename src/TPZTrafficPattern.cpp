@@ -679,7 +679,6 @@ Boolean TPZTrafficPatternPermutation::injectMessage(const TPZPosition& source)
    unsigned x = source.valueForCoordinate(TPZPosition::X);
    unsigned y = source.valueForCoordinate(TPZPosition::Y);
 
-   if (x == y) return false;
    msg->setDestiny(TPZPosition(y, x, 0));
 
    unsigned byteSize = (unsigned)ceil( (float)(log((float)numberOfNodes())/log(2.0)));
@@ -687,15 +686,16 @@ Boolean TPZTrafficPatternPermutation::injectMessage(const TPZPosition& source)
    unsigned nodoOrigen = x + y*getX();
    unsigned nodoDestino = 0;
 
-   unsigned kk=nodoOrigen<<((int)floor((float)(byteSize/2)));
-   unsigned temp=nodoOrigen>>((int)ceil((float)(byteSize/2)));
+   unsigned kk=nodoOrigen<<((int)floor(((float)byteSize/2)));
+   unsigned temp=nodoOrigen>>((int)ceil(((float)byteSize/2)));
+   
    nodoDestino=kk|temp;
 
-   if ( (nodoOrigen==nodoDestino)) return false;
-
    unsigned destX = nodoDestino % getX();
-   unsigned destY = (nodoDestino / getY())%getY();
+   unsigned destY = (nodoDestino / getX())%getY();
     
+   if (destX == x && destY == y) return false;
+   
    msg->setDestiny(TPZPosition(destX, destY, 0));
    getSimulation().getNetwork()->sendMessage(msg);
    return true;
@@ -808,12 +808,14 @@ Boolean TPZTrafficPatternBitReversal::injectMessage(const TPZPosition& source)
    unsigned x = source.valueForCoordinate(TPZPosition::X);
    unsigned y = source.valueForCoordinate(TPZPosition::Y);
 
-   unsigned byteSize = (unsigned)ceil(log((float)numberOfNodes()) / log(2.0) );
+   unsigned byteSize =   (unsigned)ceil((float)(log((float)numberOfNodes())/log(2.0)));
+    
    static unsigned mask[] = { 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020,
    0x0040, 0x0080, 0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000 };
 
    unsigned nodoOrigen = x + y*getX();
    unsigned nodoDestino = 0;
+   
    //Midimew Protect:
    if (getY()==1) nodoOrigen=x;
    for (int i=0; i<byteSize; i++) 
@@ -822,9 +824,8 @@ Boolean TPZTrafficPatternBitReversal::injectMessage(const TPZPosition& source)
    }
 
    unsigned destX = nodoDestino % getX();
-   unsigned destY = nodoDestino / getY();
-
-   if (destY>getY()-1) destY=nodoDestino/getX();
+   unsigned destY = (nodoDestino / getX())%getY();
+   
    if ( (nodoOrigen==nodoDestino) || (nodoDestino>numberOfNodes())) return false;
 
    msg->setDestiny(TPZPosition(destX, destY, 0));
@@ -942,6 +943,7 @@ Boolean TPZTrafficPatternLocal::injectMessage(const TPZPosition& source)
 
    double n1, n2, modulo2;
    unsigned distancia;
+   // Here it is suposing that the network is squared
    unsigned radio = getSimulation().getRadius();
 
    do {
@@ -1177,10 +1179,7 @@ TPZTrafficPatternFile::TPZTrafficPatternFile(const TPZString& fileName, TPZSimul
       TPZString err;
       err.sprintf(ERR_TPZTRAFI_005, (char*)m_FileName );
       EXIT_PROGRAM(err);
-   } 
-   
-   m_eof=false;
-   m_first=true;
+   }   
 }
 
 //*************************************************************************
@@ -1220,6 +1219,7 @@ Boolean TPZTrafficPatternFile::readNextMessage()
    m_Message.setDestiny(TPZPosition(x_dst, y_dst, z_dst));
    m_Message.setPacketSize(getSimulation().getPacketLength());
    m_Message.setMessageSize(size);
+
    return true;
 }
 
@@ -1234,20 +1234,10 @@ Boolean TPZTrafficPatternFile::readNextMessage()
 Boolean TPZTrafficPatternFile::injectMessage(const TPZPosition& source) 
 {
    uTIME currentTime = getSimulation().getNetwork()->getCurrentTime();
-   if(m_first)
-   {
-     m_first=false;
-     if ( !readNextMessage() ) m_eof=true;
-   }
-   if(m_eof) return false;
    while (currentTime >= m_Message.generationTime() ) 
    {
+      if ( !readNextMessage() ) return false;
       getSimulation().getNetwork()->sendMessage(m_Message);      
-      if ( !readNextMessage() ) 
-      {
-        m_eof=true;
-        return false;
-      }
    }
    return true;
 }
