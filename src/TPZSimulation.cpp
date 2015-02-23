@@ -179,7 +179,8 @@ TPZSimulation :: TPZSimulation(const TPZComponentId& id)
                  m_isRafagaMode(false),
                  m_pipelineNormal(0),
                  m_discardTraffic(false),
-                 m_pipelineBypass(0)
+                 m_pipelineBypass(0),
+                 m_LastMessage(0)
 {
    setSimulation(this);
    disableNotification();
