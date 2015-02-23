@@ -77,8 +77,6 @@
 #include <TPZSimpleRouter.hpp>
 #endif
 
-#define CYC_TRAZA 100000
-
 //*************************************************************************
 
 IMPLEMENT_RTTI_DERIVED(TPZSimpleRouterFlowLigero,TPZSimpleRouterFlow);
@@ -141,6 +139,10 @@ void TPZSimpleRouterFlowLigero :: initialize()
    //Escape
    m_interfazOnEscape=new Boolean[ports];
    m_latch_escape=0;
+   m_latch_pre_escape=0;
+   m_latch_inj_escape=0;
+   m_escAvailable=true;
+   m_clearPreEsc=false;
 
    //Ordered
    m_interfazInOrder=new Boolean[ports];
@@ -259,6 +261,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    // PART 0: ESCAPE PATH
    //**********************************************************************************************************
    //**********************************************************************************************************
+
+   //**********************************************************************************
+   // Part 0-a: fifo escape
+   //**********************************************************************************
    if( (! m_latch_escape ) && (m_fifo_escape.numberOfElements()!=0) )
    {
       m_fifo_escape.dequeue(m_latch_escape);
@@ -268,6 +274,11 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 
    if(m_latch_escape)
    {
+#ifndef NO_TRAZA
+      TPZString texto = txt_comp + " LATCH-ESCAPE " + m_latch_escape->asString();
+      texto += TPZString(" Occupation:") + TPZString(m_fifo_escape.numberOfElements());
+      TPZWRITE2LOG(texto);
+#endif
       Boolean checkFlow=true;
 
       if (m_latch_escape->isHeader() || m_latch_escape->isHeadTail())
@@ -289,38 +300,113 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
          if (m_escape_ctrl==_LocalNode_)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	       TPZString texto = txt_comp + " ESCAPE->CONS " + m_latch_escape->asString();
-               TPZWRITE2LOG(texto);
-	    }
+            TPZString texto = txt_comp + " ESCAPE->CONS " + m_latch_escape->asString();
+            TPZWRITE2LOG(texto);	
 #endif
             m_fifos_cons[0].enqueue(m_latch_escape);
 	    m_escape_ctrl=_LocalNode_;
-	    m_latch_escape=0;
+	    m_latch_escape=0;	
 	 }
 	 else
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-               TPZString texto2 = txt_comp + " LINK TRAVERSAL (ESCAPE) " + m_latch_escape->asString();
-               TPZWRITE2LOG(texto2);
-            }
-#endif
+            TPZString texto2 = txt_comp + " LINK TRAVERSAL (ESCAPE) " + TPZString(outPort) + m_latch_escape->asString();
+            TPZWRITE2LOG(texto2);
+#endif	
 	    outPort=extractOutputPortNumber(m_escape_ctrl);
 	    if (m_latch_escape->isHeader() || m_latch_escape->isHeadTail()) m_linkAvailable[outPort]=false;
-
+	
 	    outputInterfaz(outPort)->sendData(m_latch_escape,virtualChannel);
             ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::OStageTraversal);
             getOwnerRouter().incrLinkUtilization();
             ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::LinkTraversal);
-
+	
 	    // Clear the latch and the connection if necessary
             if( m_latch_escape->isHeadTail() || m_latch_escape->isTail()) m_clearEscConnection=true;
             m_latch_escape=0;
 	 }
       }
+   }
+   //**********************************************************************************
+   // Part 0-b: fifo reading to fill latches
+   //**********************************************************************************
+   if( (! m_latch_pre_escape ) && (m_fifo_pre_escape.numberOfElements()!=0) )
+   {
+      m_fifo_pre_escape.dequeue(m_latch_pre_escape);
+   }
+   if( (! m_latch_inj_escape ) && (m_fifo_inj_escape.numberOfElements()!=0) )
+   {
+      m_fifo_inj_escape.dequeue(m_latch_inj_escape);
+   }
+
+   //**********************************************************************************
+   // Part 0-c: arbitration to access escape fifo
+   //**********************************************************************************
+
+   //first messages trying to access escape path for the first time
+   if(m_latch_inj_escape)
+   {
+#ifndef NO_TRAZA
+      TPZString texto = txt_comp + " LATCH-INJ-ESCAPE " + m_latch_inj_escape->asString();
+      texto += TPZString(" Occupation:") + TPZString(m_fifo_inj_escape.numberOfElements());
+      TPZWRITE2LOG(texto);
+#endif
+      Boolean checkFlow=true;
+
+      if (m_latch_inj_escape->isHeader() || m_latch_inj_escape->isHeadTail())
+      {
+         //bubble check to access the escape path
+	 if( (checkEscapeFlowControl()==false) || m_escAvailable==false) checkFlow=false;
+	 else m_escAvailable=false;	
+      }
+
+      if (checkFlow==true)
+      {
+#ifndef NO_TRAZA
+         TPZString texto = txt_comp + " INJ-ESCAPE->ESCAPE " + m_latch_inj_escape->asString();
+         TPZWRITE2LOG(texto);
+#endif
+	 m_fifo_escape.enqueue(m_latch_inj_escape);
+	 if (m_latch_inj_escape->isTail() || m_latch_inj_escape->isHeadTail()) m_clearPreEsc=true;
+	 m_latch_inj_escape=0;	
+      }
+   }
+
+   //Then we arbitrate messages in transit through escape path
+   if(m_latch_pre_escape)
+   {
+#ifndef NO_TRAZA
+      TPZString texto = txt_comp + " LATCH-PRE-ESCAPE " + m_latch_pre_escape->asString();
+      texto += TPZString(" Occupation:") + TPZString(m_fifo_pre_escape.numberOfElements());
+      TPZWRITE2LOG(texto);
+#endif
+      Boolean checkFlow=true;
+
+      if (m_latch_pre_escape->isHeader() || m_latch_pre_escape->isHeadTail())
+      {
+         //simple CT check for messages in transit
+	 if( (m_fifo_escape.numberOfElements()>2) || m_escAvailable==false) checkFlow=false;
+	 else m_escAvailable=false;	
+      }
+
+      if (checkFlow==true)
+      {
+#ifndef NO_TRAZA
+         TPZString texto = txt_comp + " PRE-ESCAPE->ESCAPE " + m_latch_pre_escape->asString();
+         TPZWRITE2LOG(texto);
+#endif
+	 m_fifo_escape.enqueue(m_latch_pre_escape);
+	 if (m_latch_pre_escape->isTail() || m_latch_pre_escape->isHeadTail()) m_clearPreEsc=true;
+	 m_latch_pre_escape=0;
+	
+      }
+   }
+
+   //Finally, we check mux status
+   if (m_clearPreEsc==true)
+   {
+      m_escAvailable=true;
+      m_clearPreEsc=false;
    }
 
    //**********************************************************************************************************
@@ -350,22 +436,19 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
       {
          //First we check if the link is in use
 	 if(m_consAvailable==false) continue;
-
+	
 	 if( outputInterfaz(m_ports)->isStopActive(virtualChannel) ) continue;
-
+	
 	 //reserve the link for the remaining flits
 	 m_consAvailable=false;
       }
 
       //send the message
       outputInterfaz(m_ports)->sendData(m_latch_cons[inPort],virtualChannel);
-
+      	
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
-         TPZString texto = txt_comp + " TO CONSUMER " + m_latch_cons[inPort]->asString();
-         TPZWRITE2LOG(texto);
-      }
+      TPZString texto = txt_comp + " TO CONSUMER " + m_latch_cons[inPort]->asString();
+      TPZWRITE2LOG(texto);
 #endif
 
       // Clear the latch and the connection if necessary
@@ -415,27 +498,19 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    {
       if( ! m_latch_out_byp[outPort] ) continue;
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto = txt_comp + " LATCH-OUT-BYPASS " + m_latch_out_byp[outPort]->asString();
       texto += TPZString(" outPort:") + TPZString(outPort);
       texto += TPZString(" Occupation:") + TPZString(m_fifos_out_byp[outPort].numberOfElements());
       TPZWRITE2LOG(texto);
-      }
 #endif
       if( m_latch_out_byp[outPort]->isHeader() || m_latch_out_byp[outPort]->isHeadTail() )
       {
-         //First we check if the link is in use
-	 if(m_linkAvailable[outPort]==false) continue;
-
-	 //Check the bubble is not consumed in the escape path
-	 //if(checkFlowControl(outPort, m_fifos_out_turn, 2, m_bufferSize)==false) continue;
-
+         //First we check if the link is in use and if the next router has buffers available
+	 if(m_linkAvailable[outPort]==false) continue;	
 	 if( outputInterfaz(outPort)->isStopActive(virtualChannel) ) continue;
-
+	
 	 //reserve the link for the remaining flits
-	 m_linkAvailable[outPort]=false;
-
+	 m_linkAvailable[outPort]=false;	
       }
 
       //send the message
@@ -448,20 +523,17 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
          getOwnerRouter().incrLinkUtilization();
          ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::LinkTraversal);
       }
-
+	
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto2 = txt_comp + " LINK TRAVERSAL (BYPASS) " + m_latch_out_byp[outPort]->asString();
       TPZWRITE2LOG(texto2);
-      }
 #endif
 
       // Clear the latch and the connection if necessary
       if( m_latch_out_byp[outPort]->isHeadTail() || m_latch_out_byp[outPort]->isTail() )
       {
          m_clearConnection[outPort]=true;
-
+	
 	 //If the message is ordered, clear the input port restriction
 	 if(m_latch_out_byp[outPort]->isOrdered()) m_interfazInOrder[m_latch_out_byp[outPort]->getInputInterfaz()]=false;
       }
@@ -475,24 +547,21 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    {
       if( ! m_latch_out_turn[outPort] ) continue;
  #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto = txt_comp + " LATCH-OUT-TURN " + m_latch_out_turn[outPort]->asString();
       texto += TPZString(" outPort:") + TPZString(outPort);
       texto += TPZString(" Occupation:") + TPZString(m_fifos_out_turn[outPort].numberOfElements());
       TPZWRITE2LOG(texto);
-      }
 #endif
       if( m_latch_out_turn[outPort]->isHeader() || m_latch_out_turn[outPort]->isHeadTail() )
       {
          //First we check if the link is in use
 	 if(m_linkAvailable[outPort]==false) continue;
-
+	
 	 if( outputInterfaz(outPort)->isStopActive(virtualChannel) ) continue;
-
+	
 	 //If the msg is on Escape, bubble must be checked
 	 if ( (m_latch_out_turn[outPort]->isOnScape()==true) && (checkEscapeFlowControl()==false) ) continue;
-
+	
 	 //reserve the link for the remaining flits
 	 m_linkAvailable[outPort]=false;
       }
@@ -507,20 +576,17 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
          getOwnerRouter().incrLinkUtilization();
          ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::LinkTraversal);
       }
-
+	
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
-      TPZString texto2 = txt_comp + " LINK TRAVERSAL (RING) " + m_latch_out_turn[outPort]->asString();
+     TPZString texto2 = txt_comp + " LINK TRAVERSAL (RING) " + m_latch_out_turn[outPort]->asString();
       TPZWRITE2LOG(texto2);
-      }
 #endif
 
       // Clear the latch and the connection if necessary
       if( m_latch_out_turn[outPort]->isHeadTail() || m_latch_out_turn[outPort]->isTail() )
       {
          m_clearConnection[outPort]=true;
-
+	
 	 //If the message is ordered, clear the input port restriction
 	 if(m_latch_out_turn[outPort]->isOrdered()) m_interfazInOrder[m_latch_out_turn[outPort]->getInputInterfaz()]=false;
       }
@@ -534,23 +600,17 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    {
       if( ! m_latch_out_inj[outPort] ) continue;
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto = txt_comp + " LATCH-OUT-INJ " + m_latch_out_inj[outPort]->asString();
       texto += TPZString(" outPort:") + TPZString(outPort);
       texto += TPZString(" Occupation:") + TPZString(m_fifos_out_inj[outPort].numberOfElements());
       TPZWRITE2LOG(texto);
-      }
 #endif
       if( m_latch_out_inj[outPort]->isHeader() || m_latch_out_inj[outPort]->isHeadTail() )
       {
          //First we check if the link is in use
 	 if(m_linkAvailable[outPort]==false) continue;
-
-	 //if(checkFlowControl(outPort, m_fifos_out_turn, 2, m_bufferSize)==false) continue;
-
 	 if( outputInterfaz(outPort)->isStopActive(virtualChannel) ) continue;
-
+	
 	 //reserve the link for the remaining flits
 	 m_linkAvailable[outPort]=false;
       }
@@ -565,13 +625,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
          getOwnerRouter().incrLinkUtilization();
          ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::LinkTraversal);
       }
-
+	
 #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto2 = txt_comp + " LINK TRAVERSAL (INJ) " + m_latch_out_inj[outPort]->asString();
       TPZWRITE2LOG(texto2);
-      }
 #endif
 
       // Clear the latch and the connection if necessary
@@ -623,7 +680,11 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    for( inPort = 1; inPort < m_ports; inPort++)
    {
       if( !m_latch_mp_one[inPort] ) continue;
-
+      //********************************************************
+      // BORRAR, INJECTION ON SCAPE ALWAYS
+      //********************************************************
+      //m_latch_mp_one[inPort]->setOnScape();
+      //********************************************************
       if( m_latch_mp_one[inPort]->isHeader() || m_latch_mp_one[inPort]->isHeadTail() )
       {
          //First we check if the message can leave the ring
@@ -633,13 +694,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	    if ( checkHead==true )
 	    {
 #ifndef NO_TRAZA
-               if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-               {
-	       TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_one[inPort]->asString();
+               TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_one[inPort]->asString();
 	       texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
                TPZWRITE2LOG(texto);
-	       }
-#endif
+#endif	
                m_fifos_out_turn[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_one[inPort]);
 	       m_mp_one_ctrl[inPort]=Leave;
 	       m_ringExitAvailable[inPort]=false;
@@ -648,22 +706,19 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	       continue;
 	    }
 	 }
-
+	
 	 //If not, we request the next multiport. As we are entering the internal router ring
 	 //two conditions: two holes on mp_two[inPort] and one hole on mp_two[(inPort%(m_ports-1))+1]
 	 Boolean BubbleFlowControl=checkFlowControl(inPort, m_fifos_mp_two, 2, m_MPSize );
 	 Boolean CTFlowControl=checkFlowControl((inPort%(m_ports-1))+1, m_fifos_mp_two, 1, m_MPSize);
-
+	
 	 if(m_ringAdvanceAvailable[inPort]==true && BubbleFlowControl==true && CTFlowControl==true)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " MP->MP " + m_latch_mp_one[inPort]->asString();
+            TPZString texto = txt_comp + " MP->MP " + m_latch_mp_one[inPort]->asString();
 	    texto += TPZString(" NextMP= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
 	    m_fifos_mp_two[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_one[inPort]);
 	    m_mp_one_ctrl[inPort]=Advance;
 	    m_ringAdvanceAvailable[inPort]=false;
@@ -677,13 +732,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
          if ( m_mp_one_ctrl[inPort]==Leave)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
             TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_one[inPort]->asString();
 	    texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
 	    m_fifos_out_turn[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_one[inPort]);
 	    if(m_latch_mp_one[inPort]->isTail()) m_clearRingExit[inPort]=true;
 	    m_latch_mp_one[inPort]=0;
@@ -691,13 +743,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	 else
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
             TPZString texto = txt_comp + " MP->MP " + m_latch_mp_one[inPort]->asString();
 	    texto += TPZString(" NextMP= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
 	    m_fifos_mp_two[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_one[inPort]);
 	    if(m_latch_mp_one[inPort]->isTail()) m_clearRingAdvance[inPort]=true;
 	    m_latch_mp_one[inPort]=0;
@@ -713,20 +762,34 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 
       if( m_latch_mp_two[inPort]->isHeader() || m_latch_mp_two[inPort]->isHeadTail() )
       {
-         //First we check if the message can leave the ring
+         //First we check if the message must go to escape path
+	 if( (inPort==1) && m_latch_mp_two[inPort]->isOnScape() )
+	 {
+	    if(m_fifo_inj_escape.numberOfElements()<=2)
+	    {
+#ifndef NO_TRAZA
+               TPZString texto = txt_comp + " MP->ESCAPE " + m_latch_mp_two[inPort]->asString();
+	       texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
+               TPZWRITE2LOG(texto);
+#endif 	
+	       m_fifo_inj_escape.enqueue(m_latch_mp_two[inPort]);
+	       m_mp_two_ctrl[inPort]=Escape;
+	       m_latch_mp_two[inPort]=0;
+	       continue;
+	    }
+	 }
+	
+	 //Then we check if the message can leave the ring
 	 if(m_ringExitAvailable[inPort]==true && checkFlowControl((inPort%(m_ports-1))+1, m_fifos_out_turn, 1, m_OSSize)==true)
 	 {
 	    Boolean checkHead=checkHeader(inPort, m_latch_mp_two[inPort]);
 	    if ( checkHead==true )
 	    {
 #ifndef NO_TRAZA
-               if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-               {
-	       TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_two[inPort]->asString();
+               TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_two[inPort]->asString();
 	       texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
                TPZWRITE2LOG(texto);
-	       }
-#endif
+#endif 	
 	       m_fifos_out_turn[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_two[inPort]);
 	       m_mp_two_ctrl[inPort]=Leave;
 	       m_ringExitAvailable[inPort]=false;
@@ -735,23 +798,20 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	       continue;
 	    }
 	 }
-
+	
 	 //If not, we request the next multiport
 	 if(m_ringAdvanceAvailable[inPort]==true && checkFlowControl((inPort%(m_ports-1))+1, m_fifos_mp_two, 1, m_MPSize)==true)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " MP->MP " + m_latch_mp_two[inPort]->asString();
+            TPZString texto = txt_comp + " MP->MP " + m_latch_mp_two[inPort]->asString();
 	    texto += TPZString(" NextMP= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
 	    m_fifos_mp_two[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_two[inPort]);
 	    m_mp_two_ctrl[inPort]=Advance;
 	    m_ringAdvanceAvailable[inPort]=false;
 	    if(m_latch_mp_two[inPort]->isHeadTail()) m_clearRingAdvance[inPort]=true;
-
+	
 	    //Normal messages must check the number of multiports to move to missrtg or escape
 	    if (!m_latch_mp_two[inPort]->isOrdered())
 	    {
@@ -772,16 +832,23 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
       }
       else
       {
-         if ( m_mp_two_ctrl[inPort]==Leave)
+         if ( m_mp_two_ctrl[inPort]==Escape)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_two[inPort]->asString();
+            TPZString texto = txt_comp + " MP->ESCAPE " + m_latch_mp_two[inPort]->asString();
 	    texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
+	    m_fifo_inj_escape.enqueue(m_latch_mp_two[inPort]);
+	    m_latch_mp_two[inPort]=0;
+	 }
+	 else if ( m_mp_two_ctrl[inPort]==Leave)
+	 {
+#ifndef NO_TRAZA
+            TPZString texto = txt_comp + " MP->OSTAGE " + m_latch_mp_two[inPort]->asString();
+	    texto += TPZString(" OutPort= ") + TPZString((inPort%(m_ports-1))+1);
+            TPZWRITE2LOG(texto);
+#endif	
 	    m_fifos_out_turn[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_two[inPort]);
 	    if(m_latch_mp_two[inPort]->isTail()) m_clearRingExit[inPort]=true;
 	    m_latch_mp_two[inPort]=0;
@@ -789,13 +856,10 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	 else
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " MP->MP " + m_latch_mp_two[inPort]->asString();
+            TPZString texto = txt_comp + " MP->MP " + m_latch_mp_two[inPort]->asString();
 	    texto += TPZString(" NextMP= ") + TPZString((inPort%(m_ports-1))+1);
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif	
 	    m_fifos_mp_two[(inPort%(m_ports-1))+1].enqueue(m_latch_mp_two[inPort]);
 	    if(m_latch_mp_two[inPort]->isTail()) m_clearRingAdvance[inPort]=true;
 	    m_latch_mp_two[inPort]=0;
@@ -837,31 +901,25 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
       // If the routing is empty, go to the next
       if( ! m_routing[inPort] ) continue;
  #ifndef NO_TRAZA
-      if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-      {
       TPZString texto = txt_comp + " LATCH-ISTAGE " + m_routing[inPort]->asString();
       texto += TPZString(" inPort: ") + TPZString(inPort);
       texto += TPZString(" Occupation: ") + TPZString(m_fifos[inPort].numberOfElements());
       TPZWRITE2LOG(texto);
-      }
 #endif
 
       if( m_routing[inPort]->isHeader() || m_routing[inPort]->isHeadTail() )
       {
          TPZROUTINGTYPE direction= getOutputDirection(m_routing[inPort]);
 	 outPort = extractOutputPortNumber(direction);
-
+	
 	 // First we check if it must be consumed
 	 if( outPort == m_ports )
 	 {
 	    if(checkFlowControl(inPort, m_fifos_cons, 1, m_bufferSize)==true)
 	    {
 #ifndef NO_TRAZA
-               if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-               {
-	       TPZString texto = txt_comp + " ISTAGE->CONS " + m_routing[inPort]->asString();
+               TPZString texto = txt_comp + " ISTAGE->CONS " + m_routing[inPort]->asString();
                TPZWRITE2LOG(texto);
-	       }
 #endif
                m_fifos_cons[inPort].enqueue(m_routing[inPort]);
 	       m_istage_ctrl[inPort]= Consume;
@@ -873,24 +931,18 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	 if( m_routing[inPort]->isOrdered() && m_interfazInOrder[inPort]==true)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " STOP-ORDERED " + m_routing[inPort]->asString();
+            TPZString texto = txt_comp + " STOP-ORDERED " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto);
-	    }
-#endif
+#endif 	
 	    continue;
 	 }
-
+	
 	 //Second we try the bypass path
 	 if( (outPort == inPort) && (checkFlowControl(outPort, m_fifos_out_byp, 1, m_OSSize)==true) && !m_routing[inPort]->isOnScape() )
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " ISTAGE->OSTAGE " + m_routing[inPort]->asString();
+            TPZString texto = txt_comp + " ISTAGE->OSTAGE " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto);
-	    }
 #endif
             m_fifos_out_byp[outPort].enqueue(m_routing[inPort]);
 	    m_istage_ctrl[inPort]= Bypass;
@@ -902,16 +954,13 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	    m_routing[inPort]=0;
 	    continue;
 	 }
-
+	
 	 //Next we try to enter the internal router ring
 	 if( checkFlowControl(inPort, m_fifos_mp_one, 1, m_MPSize)==true )
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto = txt_comp + " ISTAGE->MP " + m_routing[inPort]->asString();
+            TPZString texto = txt_comp + " ISTAGE->MP " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto);
-	    }
 #endif
             m_fifos_mp_one[inPort].enqueue(m_routing[inPort]);
 	    m_istage_ctrl[inPort]= Turn;
@@ -923,19 +972,16 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	    m_routing[inPort]=0;
 	    continue;
 	 }
-
+	
       }
       else
       {
          if(m_istage_ctrl[inPort]==Bypass)
          {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto1 = txt_comp + " ISTAGE->OSTAGE " + m_routing[inPort]->asString();
+            TPZString texto1 = txt_comp + " ISTAGE->OSTAGE " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto1);
-	    }
-#endif
+#endif	
 	    m_routing[inPort]->setInputInterfaz(inPort);
 	    m_fifos_out_byp[inPort].enqueue(m_routing[inPort]);
 	    m_routing[inPort]=0;
@@ -943,12 +989,9 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	 else if(m_istage_ctrl[inPort]==Turn)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto2 = txt_comp + " ISTAGE->MP " + m_routing[inPort]->asString();
+           TPZString texto2 = txt_comp + " ISTAGE->MP " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto2);
-	    }
-#endif
+#endif 	
             m_routing[inPort]->setInputInterfaz(inPort);
 	    m_fifos_mp_one[inPort].enqueue(m_routing[inPort]);
 	    m_routing[inPort]=0;
@@ -956,12 +999,9 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	 else if (m_istage_ctrl[inPort]==Consume)
 	 {
 #ifndef NO_TRAZA
-            if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-            {
-	    TPZString texto3 = txt_comp + " ISTAGE->CONS " + m_routing[inPort]->asString();
+            TPZString texto3 = txt_comp + " ISTAGE->CONS " + m_routing[inPort]->asString();
             TPZWRITE2LOG(texto3);
-	    }
-#endif
+#endif 	
 	    m_fifos_cons[inPort].enqueue(m_routing[inPort]);
 	    m_routing[inPort]=0;
 	 }
@@ -983,13 +1023,7 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
    {
      if( m_routing[m_ports]->isHeader() || m_routing[m_ports]->isHeadTail() )
      {
-
-	//********************************************************
-	// BORRAR, INJECTION ON SCAPE ALWAYS
-	//********************************************************
-	//m_routing[m_ports]->setOrdered();
-	//********************************************************
-	//ordered messages are routed through a mesh
+        //ordered messages are routed through a mesh
 	if( m_routing[m_ports]->isOrdered())
 	{
 	   int deltaX;
@@ -1009,26 +1043,18 @@ Boolean TPZSimpleRouterFlowLigero :: inputReading()
 	if (checkFlowControl(outPort, m_fifos_out_inj, 1, m_bufferSize)==true)
 	{
 #ifndef NO_TRAZA
-           if (getOwnerRouter().getCurrentTime()> CYC_TRAZA)
-           {
-	   TPZString texto = txt_comp + " INJECTION " + m_routing[inPort]->asString();
+           TPZString texto = txt_comp + " INJECTION " + m_routing[inPort]->asString();
 	   texto += TPZString(" O-PORT: ") + TPZString(outPort);
            TPZWRITE2LOG(texto);
-	   }
 #endif
            m_fifos_out_inj[outPort].enqueue(m_routing[m_ports]);
 	   m_injection_ctrl=outPort;
 	   m_routing[m_ports]=0;
-	}
+	}	
      }
      else
      {
-        //********************************************************
-	// BORRAR, INJECTION ON SCAPE ALWAYS
-	//********************************************************
-	//m_routing[m_ports]->setOrdered();
-	//********************************************************
-	m_fifos_out_inj[m_injection_ctrl].enqueue(m_routing[m_ports]);
+        m_fifos_out_inj[m_injection_ctrl].enqueue(m_routing[m_ports]);
         m_routing[m_ports]=0;
      }
    }
@@ -1066,7 +1092,6 @@ TPZROUTINGTYPE TPZSimpleRouterFlowLigero :: getInjectionDirection(TPZMessage* ms
       if ((msg->delta(1) >1) ) return _Yplus_;
       if ((msg->delta(1) <-1) ) return _Yminus_;
    }
-   return _Unknow_;
 }
 
 //*************************************************************************
@@ -1094,48 +1119,7 @@ Boolean TPZSimpleRouterFlowLigero :: checkHeader (unsigned inPort, TPZMessage* m
 
    if(msg->getLastMissRouted()==true) return true;
 
-   if(msg->isOnScape())
-   {
-      TPZPosition pos=getOwnerRouter().getPosition();
-      TPZPosition dest=msg->destiny();
-      int posX=pos.valueForCoordinate(TPZPosition::X);
-      int posY=pos.valueForCoordinate(TPZPosition::Y);
-      int destX=dest.valueForCoordinate(TPZPosition::X);
-      int destY=dest.valueForCoordinate(TPZPosition::Y);
-
-      unsigned size_x= ((TPZNetwork*)(getOwnerRouter().getOwner()))->getSizeX();
-      unsigned size_y= ((TPZNetwork*)(getOwnerRouter().getOwner()))->getSizeY();
-
-      unsigned followPort;
-
-      if(posX==0)
-      {
-         if (posY==0) followPort=1;
-	 else followPort=4;
-      }
-      else if (posX==1)
-      {
-         if (posY%2==0) followPort=1;
-	 else
-	 {
-	    if (posY==(size_y-1)) followPort=3;
-	    else followPort=2;
-	 }
-      }
-      else if (posX==(size_x-1))
-      {
-         if (posY%2==0) followPort=2;
-	 else followPort=3;
-      }
-      else
-      {
-         if (posY%2==0) followPort=1;
-	 else followPort=3;
-      }
-
-      if (followPort==oPort) return true;
-      else return false;
-   }
+   if(msg->isOnScape()) return false;
 
    if (deltaX>1 && oPort==1) return true;
    if (deltaY>1 && oPort==2) return true;
@@ -1215,7 +1199,7 @@ Boolean TPZSimpleRouterFlowLigero :: checkEscapeFlowControl() const
    unsigned BufferSize = 3*sizeForCT;
    unsigned bubble = 2*sizeForCT;
 
-   if(BufferSize - m_fifo_escape.numberOfElements() < bubble) return false;
+   if(BufferSize - m_fifo_pre_escape.numberOfElements() < bubble) return false;
 
    return true;
 }
@@ -1276,7 +1260,7 @@ Boolean TPZSimpleRouterFlowLigero :: onReadyUp(unsigned interfaz, unsigned cv)
    {
       //Body and Tail flits are also marked as onEscape
       if(msg->isOnScape()==false) msg->setOnScape();
-      m_fifo_escape.enqueue(msg);
+      m_fifo_pre_escape.enqueue(msg);
    }
    else
    {
@@ -1324,7 +1308,7 @@ Boolean TPZSimpleRouterFlowLigero :: outputWriting()
    }
 
    //We also arbitrate here Escape Path
-   if( (3*sizeForCT - m_fifo_escape.numberOfElements()) <= sizeForCT)
+   if( (3*sizeForCT - m_fifo_pre_escape.numberOfElements()) <= sizeForCT)
    {
       getOwnerRouter().setEscapePath(false);
    }
