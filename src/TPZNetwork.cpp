@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZNetwork.cpp
@@ -174,10 +174,10 @@ TPZNetwork::TPZNetwork(const TPZComponentId& id, const TPZString& routerId,
             m_FlitsRcvLast(0), m_LastTime(0), m_AverageDistanceold(0),
             m_buffPrint(TPZString("")), m_LastTotalLatency(0),
             m_clockRestartStats(0), m_numberCyclesToReport(~0),
-            m_dumpMapInjectors(~0), 
+            m_dumpMapInjectors(~0),
             m_ProtocolMessagesTx(0), m_ProtocolMessagesInj(0),
             m_BufferWrite(0), m_BufferRead(0), m_VCArbitration(0),
-            m_SWArbitration(0), m_SWTraversal(0), m_LinkTraversal(0), 
+            m_SWArbitration(0), m_SWTraversal(0), m_LinkTraversal(0),
 	    m_RouterBypass(0), m_IStageTraversal(0), m_OStageTraversal(0),
 	    m_MPTraversal(0),
             m_ProtocolMessagesRx(0), m_ProtocolAverageDistance(0),
@@ -191,7 +191,7 @@ TPZNetwork::TPZNetwork(const TPZComponentId& id, const TPZString& routerId,
     m_ReceivedFlitsMap = new TPZUnsignedMatrix(m_SizeX, m_SizeY, m_SizeZ);
     m_InjectedFlitsMap->initialize(0);
     m_ReceivedFlitsMap->initialize(0);
-#ifdef PTOPAZ 
+#ifdef PTOPAZ
     m_firstTime = true;
     m_kill=false;
     pthread_mutex_init(&m_MessagesKey, NULL);
@@ -210,7 +210,7 @@ TPZNetwork::~TPZNetwork() {
     delete [] m_Histogram;
     delete m_InjectedFlitsMap;
     delete m_ReceivedFlitsMap;
-#ifdef PTOPAZ    
+#ifdef PTOPAZ
     pthread_mutex_unlock(&m_MessagesKey);
     pthread_mutex_destroy(&m_MessagesKey);
 #endif
@@ -234,14 +234,14 @@ void TPZNetwork::postInitialize() {
     loop_end=m_numThreads;
 
     //Ceil is important with large number of threads. Tha light thread is the last one
-    unsigned int routersPerThread = (unsigned int)std::ceil(1.0*m_SizeX*m_SizeY*m_SizeZ/m_numThreads); 
+    unsigned int routersPerThread = (unsigned int)std::ceil(1.0*m_SizeX*m_SizeY*m_SizeZ/m_numThreads);
     if ( routersPerThread * (m_numThreads - 1 ) > m_SizeX*m_SizeY*m_SizeZ)
     {
         TPZString err;
         err.sprintf(" Awkaward combination of Threads and Nodes. Last thread will be too loaded... exiting\n");
         EXIT_PROGRAM(err);
     }
-    if ( m_SizeX*m_SizeY*m_SizeZ < m_numThreads   ) 
+    if ( m_SizeX*m_SizeY*m_SizeZ < m_numThreads   )
     {
         TPZString err;
         err.sprintf(" The number of threads is too high\n");
@@ -306,7 +306,7 @@ void TPZNetwork::postInitialize() {
 		#ifdef PTOPAZ
                 int linearindex=i+j*m_SizeX+k*m_SizeX*m_SizeY;
 		router->setThreadNumber(linearindex/routersPerThread);
-                if (router->getThreadNumber() >= m_numThreads   ) 
+                if (router->getThreadNumber() >= m_numThreads   )
                 {
                    TPZString err;
                    err.sprintf(" The number of threads is not comptible with the number of routers");
@@ -319,16 +319,16 @@ void TPZNetwork::postInitialize() {
 #ifdef PTOPAZ
    assert(m_numThreads>0);
    TPZConnectionSet::Cursor connectionCursor(m_ConnectionSet);
-   //Asign connections to each slave thread   
+   //Asign connections to each slave thread
    forCursor(connectionCursor)
    {
       TPZConnection *Elemento = connectionCursor.element();
       int outputId=((TPZRouter*)Elemento->getOutputPort()->getOwner()->getOwner()->getRouter())->getThreadNumber();
       m_ConnectionCursor[outputId].addAsLast(Elemento); //All conections outgoing the router
    }
-  
+
   // Each threads with its own statistics in order to avoid collisions
-   
+
    m_MessagesEscape.setSize(m_numThreads);
    m_MessagesRx.setSize(m_numThreads);
    m_PacketsRx.setSize(m_numThreads);
@@ -341,12 +341,12 @@ void TPZNetwork::postInitialize() {
    m_PacketDelayBuffer.setSize(m_numThreads);
    m_AverageDistance.setSize(m_numThreads);
 
-   pthread_barrier_init(&m_barrierRouters,NULL,m_numThreads+1); 
+   pthread_barrier_init(&m_barrierRouters,NULL,m_numThreads+1);
    //Slaves does not need father for this (so, this barrier does not involves master thread)
-   pthread_barrier_init(&m_barrierConnections,NULL,m_numThreads); 
- 
+   pthread_barrier_init(&m_barrierConnections,NULL,m_numThreads);
+
    for (int n=0; n<m_numThreads; n++)
-   {   
+   {
       m_process[n] = new TPZThread;
       if (m_process[n] -> Start(n, m_SizeX, m_SizeY, m_SizeZ, this, m_numThreads))
          perror("Error when creating thread\n");
@@ -363,7 +363,7 @@ void TPZNetwork::postInitialize() {
       m_PacketDelayBuffer[n]=0;
       m_AverageDistance[n]=0;
    }
-      
+
 #else
    m_MessagesEscape=0;
    m_MessagesRx=0;
@@ -391,11 +391,11 @@ void TPZNetwork::postInitialize() {
 //*dtermina************************************************************************
 
 void TPZNetwork::terminate() {
-#ifdef PTOPAZ  
+#ifdef PTOPAZ
     int rc;
     pthread_barrier_wait(&m_barrierRouters);
     for (int n=0; n<m_numThreads; n++)
-    {   
+    {
        m_process[n]->terminate();
     }
     if ((rc = pthread_barrier_destroy(&m_barrierRouters))!=0)
@@ -409,7 +409,7 @@ void TPZNetwork::terminate() {
       return ;
     }
     for (int n=0; n<m_numThreads; n++)
-    {   
+    {
       delete m_process[n];
     }
 #endif
@@ -433,7 +433,7 @@ void TPZNetwork::terminate() {
 //  f: void addRoute (TPZPosition const & pos, TPZRouter * router);
 //
 //  d:
-//: 
+//:
 //*************************************************************************
 
 void TPZNetwork::addRouter(TPZRouter* router) {
@@ -521,7 +521,7 @@ int TPZNetwork::getThreadID(long id)
 
 void TPZNetwork::messageRelease (TPZMessage* msg)
 {
-    unsigned n=getThreadID(pthread_self()); 
+    unsigned n=getThreadID(pthread_self());
     m_messagesToRelease[n].enqueue(msg);
 }
 
@@ -547,7 +547,7 @@ void TPZNetwork::run(uTIME runTime) {
          return;
       }
       for (register int i=0; i<m_numThreads; i++)
-      {  
+      {
          m_process[i] -> clockEdge(runTime);
       }
 
@@ -565,7 +565,7 @@ void TPZNetwork::run(uTIME runTime) {
           }
        }
 #endif
-        
+
 #else
     m_CurrentTime = runTime;
     for (register int i=0; i<m_SizeX; i++)
@@ -590,7 +590,7 @@ void TPZNetwork::run(uTIME runTime) {
     forCursor(connectionCursor) {
         connectionCursor.element()->run(runTime);
     }
-    
+
 #endif
 }
 
@@ -641,14 +641,14 @@ void TPZNetwork::setBufferSize(unsigned size) {
     //then I can inject without problems.
     TPZRouter* router = getRouterAt(0, 0, 0);
     router->setPoolSize(m_SizeX*m_SizeY*m_SizeZ);
-    
+
 }
 
 //*************************************************************************
 //:
 //  f: void sendMessage (const TPZMessage & msg);
 //
-//  d: 
+//  d:
 //:
 //*************************************************************************
 
@@ -682,21 +682,21 @@ Boolean TPZNetwork::sendMessage(TPZMessage* msg) {
         EXIT_PROGRAM(text);
     }
 
-    if (msg->getExternalInfo()==0) 
+    if (msg->getExternalInfo()==0)
     {
        msg->setGenerationTime(getCurrentTime());
     }
-#ifndef NO_TRAZA 
-   
+#ifndef NO_TRAZA
+
 #ifdef PTOPAZ
    pthread_mutex_lock(&m_MessagesKey);  //To avoid multiple messages with same ID. May be avoidable but some routing uses this ids for work
-#endif	
+#endif
 
     TPZMessage::assignUniqueId(msg);
-    
+
 #ifdef PTOPAZ
    pthread_mutex_unlock(&m_MessagesKey);
-#endif	
+#endif
 
 #endif
 
@@ -708,10 +708,10 @@ Boolean TPZNetwork::sendMessage(TPZMessage* msg) {
     incrementTx(Message);
     incrementTx(Packet, msg->messageSize());
     incrementTx(Flit, msg->messageSize()*msg->packetSize());
-    
-    
+
+
     return true;
-    
+
 }
 
 //*************************************************************************
@@ -872,7 +872,7 @@ TPZString TPZNetwork::printHistogram() {
 void TPZNetwork::initializeStats(uTIME timeRestart) {
 #ifdef PTOPAZ
 for (int n=0; n<m_numThreads; n++)
-{ 
+{
    m_MessagesEscape[n]=0;
    m_MessagesRx[n]=0;
    m_PacketsRx[n]=0;
@@ -1060,7 +1060,7 @@ void TPZNetwork::onHeaderPacketReceived(const TPZMessage* msg) {
 //:
 //*************************************************************************
 void TPZNetwork::onPacketReceived(const TPZMessage* msg) {
-    
+
     uTIME t1 = msg->generationTime();
     uTIME t2 = msg->packetInjectionTime();
     uTIME t3 = getCurrentTime();
@@ -1095,12 +1095,12 @@ void TPZNetwork::onPacketReceived(const TPZMessage* msg) {
 
     if (totalTime > getMaximLatency(Packet) )
         setMaximLatency(Packet, totalTime);
-    
-  
+
+
     if (((getPacketsRx()-m_pckRcvLast)>=m_numberMsg) || (getCurrentTime()-m_LastTime)>=m_numberCyclesToReport) {
-#ifdef PTOPAZ   
+#ifdef PTOPAZ
         if(getThreadID(pthread_self())!=0) return;
-#endif  
+#endif
 
         if (m_LastTime==0) {
             m_buffPrint
@@ -1133,7 +1133,7 @@ void TPZNetwork::onPacketReceived(const TPZMessage* msg) {
 
             temp.sprintf("%6.3f\n", double(getTotalDistance()-m_AverageDistanceold)/double(getPacketsRx()-m_pckRcvLast));
             m_buffPrint+=temp;
-            
+
         }
 
         //Reset Stats
@@ -1147,7 +1147,7 @@ void TPZNetwork::onPacketReceived(const TPZMessage* msg) {
 
     }
 
-    
+
 }
 
 //*************************************************************************
@@ -1159,7 +1159,7 @@ void TPZNetwork::onPacketReceived(const TPZMessage* msg) {
 //*************************************************************************
 
 void TPZNetwork::onMessageReceived(const TPZMessage* msg) {
-   
+
     uTIME t1 = msg->generationTime();
     uTIME t2 = msg->packetInjectionTime();
     uTIME t3 = getCurrentTime();
@@ -1167,7 +1167,7 @@ void TPZNetwork::onMessageReceived(const TPZMessage* msg) {
 
     incrementRx(Message);
     if (msg->isOnScape()==true) m_MessagesEscape++;
-    
+
     incrProtocolMessagesRx(msg->getVnet());
     incrProtocolMessagesDelayNetwork(msg->getVnet(), t3-t2);
     incrProtocolMessagesDelayTotal(msg->getVnet(), totalTime);
@@ -1314,9 +1314,9 @@ void TPZNetwork::incrementRx(int type, unsigned number) {
    if (type == TPZNetwork::Flit) {
       m_FlitsRx[n]+=number;
     } else if (type == TPZNetwork::Packet) {
-      m_PacketsRx[n]+=number;        
+      m_PacketsRx[n]+=number;
     } else if (type == TPZNetwork::Message) {
-      m_MessagesRx[n]+=number;       
+      m_MessagesRx[n]+=number;
     }
 #else
     if (type == TPZNetwork::Flit) {
@@ -1445,7 +1445,7 @@ double TPZNetwork::getNetworkDelay(int type) const {
     }
 #else
         rc = m_MessageDelayNetwork;
-#endif	
+#endif
     }
 
     return rc;
@@ -1640,12 +1640,12 @@ void TPZNetwork::initializeConnectionsFor(const TPZPosition& pos) {
     unsigned oYm = router->getInputWithType(_Yminus_);
     unsigned oZp = router->getInputWithType(_Zplus_);
     unsigned oZm = router->getInputWithType(_Zminus_);
-    
-        if (m_channelOperationMode == TPZString("HALFDUPLEX"))  
+
+        if (m_channelOperationMode == TPZString("HALFDUPLEX"))
         {
            if( iXp && oXp )
            {
-               
+
            TPZConnection::connectInterfaces( this,
                                            router->getOutputInterfaz(oXp),
                                            routerXp->getInputInterfaz(iXp),
@@ -1658,7 +1658,7 @@ void TPZNetwork::initializeConnectionsFor(const TPZPosition& pos) {
 
             if( iXm && oXm )
             {
-               
+
            TPZConnection::connectInterfaces( this,
                                            router->getOutputInterfaz(oXm),
                                            routerXm->getInputInterfaz(iXm),
@@ -1670,7 +1670,7 @@ void TPZNetwork::initializeConnectionsFor(const TPZPosition& pos) {
             }
             if( iYp && oYp )
             {
-               
+
            TPZConnection::connectInterfaces( this,
                                            router->getOutputInterfaz(oYp),
                                            routerYp->getInputInterfaz(iYp),
@@ -1682,7 +1682,7 @@ void TPZNetwork::initializeConnectionsFor(const TPZPosition& pos) {
             }
             if( iYm && oYm )
             {
-               
+
            TPZConnection::connectInterfaces( this,
                                            router->getOutputInterfaz(oYm),
                                            routerYm->getInputInterfaz(iYm),
@@ -1765,6 +1765,8 @@ TPZPosition TPZNetwork::positionOf(TPZROUTINGTYPE dir, const TPZPosition& pos) {
     case _Zminus_:
         rp = rp - TPZPosition(0, 0, 1);
         break;
+    default:
+        EXIT_PROGRAM("error");
     }
 
     if (rp.valueForCoordinate(TPZPosition::X) < 0)
@@ -1847,7 +1849,7 @@ unsigned long TPZNetwork::flitSentsAt(TPZPosition pos) const {
 //
 //  d:
 //:
-//*************************************************************************      
+//*************************************************************************
 TPZString TPZNetwork::printMapInjectors(unsigned long clock) const {
     TPZString format;
     TPZString
@@ -1876,12 +1878,12 @@ TPZString TPZNetwork::printMapInjectors(unsigned long clock) const {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::incrProtocolMessagesTx(unsigned index) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesTx[n][index]++;
-    
+
 #else
     m_ProtocolMessagesTx[0][index]++;
 #endif
@@ -1893,7 +1895,7 @@ void TPZNetwork::incrProtocolMessagesTx(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getProtocolMessagesTx(unsigned index) {
     unsigned long data=0;
 #ifdef PTOPAZ
@@ -1913,7 +1915,7 @@ unsigned long TPZNetwork::getProtocolMessagesTx(unsigned index) {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::cleanProtocolMessagesTx(unsigned index) {
 #ifdef PTOPAZ
     for (int i=0; i< m_numThreads; i++)
@@ -1931,12 +1933,12 @@ void TPZNetwork::cleanProtocolMessagesTx(unsigned index) {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::incrProtocolMessagesRx(unsigned index) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesRx[n][index]++;
-    
+
 #else
     m_ProtocolMessagesRx[0][index]++;
 #endif
@@ -1949,7 +1951,7 @@ void TPZNetwork::incrProtocolMessagesRx(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getProtocolMessagesRx(unsigned index) {
     unsigned long data=0;
 #ifdef PTOPAZ
@@ -1969,7 +1971,7 @@ unsigned long TPZNetwork::getProtocolMessagesRx(unsigned index) {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::cleanProtocolMessagesRx(unsigned index) {
 #ifdef PTOPAZ
     for (int i=0; i< m_numThreads; i++)
@@ -1987,12 +1989,12 @@ void TPZNetwork::cleanProtocolMessagesRx(unsigned index) {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::incrProtocolMessagesInj(unsigned index) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesInj[n][index]++;
-    
+
 #else
     m_ProtocolMessagesInj[0][index]++;
 #endif
@@ -2004,12 +2006,12 @@ void TPZNetwork::incrProtocolMessagesInj(unsigned index) {
 //
 //  d:
 //:
-//*************************************************************************    
+//*************************************************************************
 void TPZNetwork::decrProtocolMessagesInj(unsigned index) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesInj[n][index]--;
-    
+
 #else
     m_ProtocolMessagesInj[0][index]--;
 #endif
@@ -2021,7 +2023,7 @@ void TPZNetwork::decrProtocolMessagesInj(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getProtocolMessagesInj(unsigned index) {
     unsigned long data=0;
 #ifdef PTOPAZ
@@ -2041,15 +2043,15 @@ unsigned long TPZNetwork::getProtocolMessagesInj(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::incrProtocolAverageDistance(unsigned index, unsigned long dist) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolAverageDistance[n][index]+=dist;
-    
+
 #else
     m_ProtocolAverageDistance[0][index]+=dist;
-#endif    
+#endif
 }
 
 //*************************************************************************
@@ -2058,7 +2060,7 @@ void TPZNetwork::incrProtocolAverageDistance(unsigned index, unsigned long dist)
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getProtocolAverageDistance(unsigned index) {
     unsigned long data=0;
 #ifdef PTOPAZ
@@ -2068,7 +2070,7 @@ unsigned long TPZNetwork::getProtocolAverageDistance(unsigned index) {
     }
 #else
     data=m_ProtocolAverageDistance[0][index];
-#endif 
+#endif
     return data;
 }
 
@@ -2078,7 +2080,7 @@ unsigned long TPZNetwork::getProtocolAverageDistance(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::cleanProtocolAverageDistance(unsigned index) {
 #ifdef PTOPAZ
     for (int i=0; i< m_numThreads; i++)
@@ -2101,7 +2103,7 @@ void TPZNetwork::incrProtocolMessagesDelayNetwork(unsigned index, uTIME delay) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesDelayNetwork[n][index]+=delay;
-    
+
 #else
     m_ProtocolMessagesDelayNetwork[0][index]+=delay;
 #endif
@@ -2156,7 +2158,7 @@ void TPZNetwork::incrProtocolMessagesDelayTotal(unsigned index, uTIME delay) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesDelayTotal[n][index]+=double(delay);
-    
+
 #else
     m_ProtocolMessagesDelayTotal[0][index]+=double(delay);
 #endif
@@ -2211,7 +2213,7 @@ void TPZNetwork::incrProtocolMessagesDelayBuffer(unsigned index, uTIME delay) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
     m_ProtocolMessagesDelayBuffer[n][index]+=double(delay);
-    
+
 #else
     m_ProtocolMessagesDelayBuffer[0][index]+=double(delay);
 #endif
@@ -2261,7 +2263,7 @@ void TPZNetwork::cleanProtocolMessagesDelayBuffer(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::setProtocolMaxMessagesLatency(unsigned index, uTIME delay) {
 #ifdef PTOPAZ
     int n=getThreadID(pthread_self());
@@ -2299,7 +2301,7 @@ uTIME TPZNetwork::getProtocolMaxMessagesLatency(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::cleanProtocolMaxMessagesLatency(unsigned index) {
 
 #ifdef PTOPAZ
@@ -2317,7 +2319,7 @@ void TPZNetwork::cleanProtocolMaxMessagesLatency(unsigned index) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned TPZNetwork::getInjectedFlitsAt(unsigned x, unsigned y, unsigned z) {
     unsigned valueTemp;
     m_InjectedFlitsMap->valueAt(x, y, z, valueTemp);
@@ -2330,7 +2332,7 @@ unsigned TPZNetwork::getInjectedFlitsAt(unsigned x, unsigned y, unsigned z) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::clearInjectedFlitsAt(unsigned x, unsigned y, unsigned z) {
     unsigned valueTemp=0;
     m_InjectedFlitsMap->setValueAt(x, y, z, valueTemp);
@@ -2342,7 +2344,7 @@ void TPZNetwork::clearInjectedFlitsAt(unsigned x, unsigned y, unsigned z) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork::incrInjectedFlitsAt(unsigned x, unsigned y, unsigned z,
         unsigned number) {
     unsigned valueTemp;
@@ -2357,7 +2359,7 @@ void TPZNetwork::incrInjectedFlitsAt(unsigned x, unsigned y, unsigned z,
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned TPZNetwork::getReceivedFlitsAt(unsigned x, unsigned y, unsigned z) {
     unsigned valueTemp;
     m_ReceivedFlitsMap->valueAt(x, y, z, valueTemp);
@@ -2370,7 +2372,7 @@ unsigned TPZNetwork::getReceivedFlitsAt(unsigned x, unsigned y, unsigned z) {
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getLinkUtilizationAt(unsigned x, unsigned y, unsigned z) {
     unsigned long valueTemp;
     TPZRouter* router = getRouterAt(x,y,z);
@@ -2384,7 +2386,7 @@ unsigned long TPZNetwork::getLinkUtilizationAt(unsigned x, unsigned y, unsigned 
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 unsigned long TPZNetwork::getLinkChangesDirectionAt(unsigned x, unsigned y, unsigned z) {
     unsigned long valueTemp;
     TPZRouter* router = getRouterAt(x,y,z);
@@ -2401,7 +2403,7 @@ unsigned long TPZNetwork::getLinkChangesDirectionAt(unsigned x, unsigned y, unsi
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 TPZQueue<TPZROUTINGTYPE> TPZNetwork::multiCastPorts(
         unsigned long long maskXplus, unsigned long long maskXminus,
         unsigned long long maskYplus, unsigned long long maskYminus,
@@ -2451,17 +2453,17 @@ TPZQueue<TPZROUTINGTYPE> TPZNetwork::multiCastPorts(
 //
 //  d:
 //:
-//************************************************************************* 
-void TPZNetwork::generateDORMasks(TPZRouter* router) 
+//*************************************************************************
+void TPZNetwork::generateDORMasks(TPZRouter* router)
 {
     TPZPosition pos=router->getPosition();
-    
+
     unsigned sx=getSizeX();
     unsigned sy=getSizeY();
-    
+
     unsigned posx=pos.valueForCoordinate(TPZPosition::X);
     unsigned posy=pos.valueForCoordinate(TPZPosition::Y);
-    
+
     unsigned numNodes=sx*sy;
 
     unsigned nodeNumber= posx+posy*sx;
@@ -2470,31 +2472,31 @@ void TPZNetwork::generateDORMasks(TPZRouter* router)
     unsigned long long maskYplus=0;
     unsigned long long maskYminus=0;
     unsigned long long maskLocalNode=0;
-    
+
     unsigned long long maskprimamesh=1;
-    
+
     maskLocalNode=(maskprimamesh << nodeNumber);
-    
-    for (int i=posy+1; i<sy; i++) 
+
+    for (int i=posy+1; i<sy; i++)
     {
 	unsigned long long maskaux=1;
 	unsigned aux= (nodeNumber + sx*(i-posy));
 	maskYplus= maskYplus + (maskaux << aux);
     }
 
-    for (int j=0; j<posy; j++) 
+    for (int j=0; j<posy; j++)
     {
 	unsigned long long maskaux2=1;
 	unsigned aux= (nodeNumber - sx*(j+1));
 	maskYminus= maskYminus + (maskaux2 << aux);
     }
 
-    for (unsigned col=posx+1; col<sx; col++) 
+    for (unsigned col=posx+1; col<sx; col++)
     {
 	unsigned long long Mascara=0;
 	unsigned long long Mascara_aux2=0;
 	unsigned long long Mascara_aux=1;
-	for (unsigned fil=0; fil<sy; fil++) 
+	for (unsigned fil=0; fil<sy; fil++)
 	{
 	   unsigned Position=fil*sx+(col%sx);
 	   Mascara_aux2=Mascara_aux<<Position;
@@ -2502,25 +2504,25 @@ void TPZNetwork::generateDORMasks(TPZRouter* router)
 	}
     }
 
-    for (unsigned col2=0; col2<posx; col2++) 
+    for (unsigned col2=0; col2<posx; col2++)
     {
 	unsigned long long Mascara=0;
 	unsigned long long Mascara_aux2=0;
 	unsigned long long Mascara_aux=1;
-	for (unsigned fil2=0; fil2<sy; fil2++) 
+	for (unsigned fil2=0; fil2<sy; fil2++)
 	{
 	   unsigned Position=fil2*sx+(col2%sx);
 	   Mascara_aux2=Mascara_aux<<Position;
 	   maskXminus=maskXminus|Mascara_aux2;
 	}
     }
-         
+
     router->setMask(_Xplus_ , maskXplus);
     router->setMask(_Xminus_ , maskXminus);
     router->setMask(_Yplus_ , maskYplus);
     router->setMask(_Yminus_ , maskYminus);
     router->setMask(_LocalNode_ , maskLocalNode);
-        
+
 }
 
 //*************************************************************************
@@ -2529,7 +2531,7 @@ void TPZNetwork::generateDORMasks(TPZRouter* router)
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 void TPZNetwork :: incrEventCount( TPZTipoEvento evento)
 {
    switch (evento)
@@ -2553,16 +2555,16 @@ void TPZNetwork :: incrEventCount( TPZTipoEvento evento)
          m_LinkTraversal++;
      return;
       case RouterBypass:
-         m_RouterBypass++; 
+         m_RouterBypass++;
      return;
      case IStageTraversal:
-         m_IStageTraversal++; 
+         m_IStageTraversal++;
      return;
      case OStageTraversal:
-         m_OStageTraversal++; 
+         m_OStageTraversal++;
      return;
      case MPTraversal:
-         m_MPTraversal++; 
+         m_MPTraversal++;
      return;
    }
 }
@@ -2573,38 +2575,38 @@ void TPZNetwork :: incrEventCount( TPZTipoEvento evento)
 //
 //  d:
 //:
-//************************************************************************* 
+//*************************************************************************
 double TPZNetwork :: getEventCount( TPZTipoEvento evento)
 {
    switch (evento)
    {
       case BufferWrite:
          return m_BufferWrite;
-     
+
       case BufferRead:
          return m_BufferRead;
-     
+
       case VCArbitration:
          return m_VCArbitration;
-     
+
       case SWArbitration:
          return m_SWArbitration;
-     
+
       case SWTraversal:
          return m_SWTraversal;
-     
+
       case LinkTraversal:
          return m_LinkTraversal;
-      
+
       case RouterBypass:
          return m_RouterBypass;
-      
+
      case IStageTraversal:
          return m_IStageTraversal;
-	 
+
       case OStageTraversal:
          return m_OStageTraversal;
-      
+
       case MPTraversal:
          return m_MPTraversal;
    }

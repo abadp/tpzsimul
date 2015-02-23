@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZSimpleRouterFlowBinoc.cpp
@@ -121,7 +121,7 @@ void TPZSimpleRouterFlowBinoc :: initialize()
    Inhereited :: initialize();
    m_vnets=((TPZSimpleRouter&)getComponent()).getVnets();
    m_ports=((TPZSimpleRouter&)getComponent()).numberOfInputs();
-   
+
    unsigned ports=m_vnets*m_ports+1;
    m_connections=new unsigned[m_ports+1];
    m_routing=new TPZMessage*[ports];
@@ -131,7 +131,7 @@ void TPZSimpleRouterFlowBinoc :: initialize()
    m_fifos=new TPZMessageQueue[ports];
    m_shortcut=new unsigned[ports];
    m_connEstablished=new Boolean[ports];
-   
+
    m_token = 1;
    for(int i=0; i<m_ports+1; i++)
    {
@@ -170,7 +170,7 @@ void TPZSimpleRouterFlowBinoc :: terminate()
    delete[] m_fifos;
    delete[] m_shortcut;
    delete[] m_connEstablished;
-} 
+}
 
 //*************************************************************************
 //:
@@ -180,44 +180,44 @@ void TPZSimpleRouterFlowBinoc :: terminate()
 //:
 //*************************************************************************
 Boolean TPZSimpleRouterFlowBinoc :: inputReading()
-{  
+{
    unsigned outPort;
    unsigned inPort;
    unsigned virtualChannel;
    cleanOutputInterfaces();
-   
+
    //**********************************************************************************************************
    // PART 4: Loop through all output ports.
    // We move the data flits for already established connections
    //**********************************************************************************************************
    for( outPort = 1; outPort <= m_ports; outPort++)
-   {   
+   {
       // Find the input port assigned to outport.
       // If not assigned, go to the next.
       if( ! (inPort = m_connections[outPort] ) ) continue;
-           
+
       // If no message routing through to the next
       if( ! m_routing[inPort] ) continue;
-      
+
 #ifndef NO_TRAZA
       TPZString texto = getComponent().asString() + " CONEXION ESTABLECIDA ";
       texto += TPZString(" inPort: ") + TPZString(inPort) + TPZString(" outPort: ") + TPZString(outPort);
       TPZWRITE2LOG(texto);
-#endif     
-      virtualChannel=(inPort-1)/m_ports+1; 
-      if( inPort % m_ports == 0  ) 
+#endif
+      virtualChannel=(inPort-1)/m_ports+1;
+      if( inPort % m_ports == 0  )
       {
-         virtualChannel=m_routing[inPort]->getVnet(); 
+         virtualChannel=m_routing[inPort]->getVnet();
 	 if(inPort>m_ports)continue;
       }
       if(outPort == m_ports) virtualChannel=1;
-      
+
       // If there is a message routing
       if( ! ( m_routingtime[inPort]-- ) )
       {
          TPZROUTINGTYPE tipo=((TPZSimpleRouter&)getComponent()).getTypeForHDOutput(outPort);
-         TPZROUTINGTYPE tipoReverse=getTipoReverse(tipo); 
-         
+         TPZROUTINGTYPE tipoReverse=getTipoReverse(tipo);
+
          // The corresponding output control
          outputInterfaz(outPort)->sendData(m_routing[inPort],virtualChannel);
          ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::SWTraversal);
@@ -260,10 +260,10 @@ Boolean TPZSimpleRouterFlowBinoc :: inputReading()
 #endif
          }
          // Quito routing the message to come over
-         m_routing[inPort] = 0;    
+         m_routing[inPort] = 0;
       }
    }
-   
+
    //******************************************************************************************************************
    // PART 3 A: Process the connection of the crossbar, we only arbitrate for NORMAL ports
    // the token is to be round robin arbitration
@@ -275,31 +275,31 @@ Boolean TPZSimpleRouterFlowBinoc :: inputReading()
    {
       //Implementation without CV
       virtualChannel=(inPort-1)/m_ports+1;
-      
+
       if( ! m_routing[inPort] ) continue;
-      
+
       if( (! m_routing[inPort]->isHeader()) && (! m_routing[inPort]->isHeadTail()) ) continue;
-      
+
       if( m_connEstablished[inPort]==true ) continue;
-        
+
       // Remove the output port
-      outPort = extractOutputPortNumber(m_routing[inPort], false); 
-      
+      outPort = extractOutputPortNumber(m_routing[inPort], false);
+
       if(outPort == m_ports) virtualChannel=1;
-      if(inPort == m_ports) 
+      if(inPort == m_ports)
       {
-         virtualChannel=m_routing[inPort]->getVnet(); 
+         virtualChannel=m_routing[inPort]->getVnet();
 	 if(inPort>m_ports)continue;
       }
       //*****************************************************************************************************
       //Here we change the verification of stop signal and link availability.
       //*****************************************************************************************************
-      if( outputInterfaz(outPort)->isStopActive(virtualChannel) ) 
+      if( outputInterfaz(outPort)->isStopActive(virtualChannel) )
       {
          if( ! m_token ) m_token = inPort;
          continue;
       }
-      
+
       TPZROUTINGTYPE tipo=((TPZSimpleRouter&)getComponent()).getTypeForHDOutput(outPort);
       if(tipo!=_LocalNode_)
       {
@@ -308,16 +308,16 @@ Boolean TPZSimpleRouterFlowBinoc :: inputReading()
             if( ! m_token ) m_token = inPort;
             continue;
          }
-      }   
+      }
       //**********************************************************************************************************
-      
+
       if( ! m_connections[outPort] )
       {
          // Take the normal port
          m_connections[outPort] = inPort;
          m_connEstablished[inPort] = true;
          getOwnerRouter().setStateLink(tipo, true);
-          
+
 #ifndef NO_TRAZA
          TPZString texto = getComponent().asString() + " SW ARB [GRANT] [NORM]";
          texto +=  " From  ";
@@ -347,10 +347,10 @@ Boolean TPZSimpleRouterFlowBinoc :: inputReading()
    }
    // Has not neglected any port, start where possible.
    if( ! m_token )
-       m_token = inPort; 
-   
-   
-   return true;   
+       m_token = inPort;
+
+
+   return true;
 }
 
 
@@ -367,7 +367,7 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
    unsigned outPortReverse;
    unsigned inPort;
    unsigned virtualChannel;
-   
+
    //******************************************************************************************************************
    // PART 3 B: We process the connection of the crossbar for REVERSE links
    // the token is to be round robin arbitration
@@ -379,53 +379,53 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
    {
       //Implementation without CV
       virtualChannel=(inPort-1)/m_ports+1;
-      
+
       if( ! m_routing[inPort] ) continue;
-      
+
       if( (! m_routing[inPort]->isHeader()) && (! m_routing[inPort]->isHeadTail()) ) continue;
-      
+
       if( m_connEstablished[inPort]==true ) continue;
-        
+
       if( m_routing[inPort]->isOrdered() ) continue;
-            
+
       // Remove the output port
       outPortReverse = extractOutputPortNumber(m_routing[inPort], true);
-      
+
       if(outPortReverse == m_ports) virtualChannel=1;
-      if(inPort == m_ports) 
+      if(inPort == m_ports)
       {
-         virtualChannel=m_routing[inPort]->getVnet(); 
+         virtualChannel=m_routing[inPort]->getVnet();
 	 if(inPort>m_ports)continue;
       }
       //*****************************************************************************************************
       //Here we change the verification of stop signal and link availability.
       //*****************************************************************************************************
-      if( outputInterfaz(outPortReverse)->isStopActive(virtualChannel) ) 
+      if( outputInterfaz(outPortReverse)->isStopActive(virtualChannel) )
       {
          if( ! m_token ) m_token = inPort;
          continue;
       }
-      
+
       TPZROUTINGTYPE tipo=((TPZSimpleRouter&)getComponent()).getTypeForHDOutput(outPortReverse);
       TPZROUTINGTYPE tipoReverse=getTipoReverse(tipo);
-      
+
       if( (tipo!=_LocalNode_) && (((TPZRouter*)(getOwnerRouter().getNeighbour(tipo)))->getStateLink(tipoReverse)==true) )
       {
          if( ! m_token ) m_token = inPort;
          continue;
       }
-      
+
       //**********************************************************************************************************
       //change order
       //**********************************************************************************************************
-           
+
       if( (! m_connections[outPortReverse]) )
       {
          // Occupy the port reverse
          m_connections[outPortReverse] = inPort;
          m_connEstablished[inPort] = true;
          ((TPZRouter*)(getOwnerRouter().getNeighbour(tipo)))->setStateLink(tipoReverse,true);
-     
+
 #ifndef NO_TRAZA
          TPZString texto = getComponent().asString() + " SW ARB [GRANT] [REV]";
          texto +=  " From  ";
@@ -456,8 +456,8 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
    }
    // Has not neglected any port, start where possible.
    if( ! m_token )
-       m_token = inPort; 
-   
+       m_token = inPort;
+
    //****************************************************************************************************************
    // PART 2: Loop through all the routing
    // Filling those that are empty with data from the fifo
@@ -475,7 +475,7 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
             TPZString texto = getComponent().asString() + " BUFFER-READ ";
             texto +=  m_routing[inPort]->asString()+ " TIME: " + TPZString(getOwnerRouter().getCurrentTime());
             TPZWRITE2LOG(texto);
-#endif               
+#endif
             // If the message header
             if( m_routing[inPort]->isHeader() || m_routing[inPort]->isHeadTail())
             {
@@ -491,7 +491,7 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
          }
       }
    }
-   
+
    //**********************************************************************************************************
    // PART 1: Loop through all sync.
    //**********************************************************************************************************
@@ -506,12 +506,12 @@ Boolean TPZSimpleRouterFlowBinoc :: stateChange()
          TPZString texto = getComponent().asString() + " BUFFER-WRITE ";
          texto +=  m_sync[inPort]->asString()+ " TIME: " + TPZString(getOwnerRouter().getCurrentTime());
          TPZWRITE2LOG(texto);
-#endif            
+#endif
          // and remove it syncs
          m_sync[inPort]=0;
       }
    }
-   
+
    return true;
 }
 
@@ -529,15 +529,15 @@ Boolean TPZSimpleRouterFlowBinoc :: outputWriting()
    unsigned inPort;
    unsigned sizeForCT = ((TPZSimulation*)getComponent().getSimulation())->
                         getPacketLength((TPZNetwork*)getOwnerRouter().getOwner());
-   unsigned virtualChannel; 
-  
+   unsigned virtualChannel;
+
 
    // Through all the buffers.
    for( inPort = 1; inPort <= m_ports*m_vnets; inPort++)
    {
       // If there is no room for another package, send stop signal.
       //Only an injection virtual channel
-      
+
       //Implementation without CV
       virtualChannel=(inPort-1)/m_ports+1;
       if( inPort%m_ports == 0 ) {virtualChannel=1; if(inPort>m_ports)continue;} //Injection provided a channel
@@ -547,7 +547,7 @@ Boolean TPZSimpleRouterFlowBinoc :: outputWriting()
       }
       else
       {
-         inputInterfaz((inPort-1)%m_ports+1)->clearStopRightNow(virtualChannel); 
+         inputInterfaz((inPort-1)%m_ports+1)->clearStopRightNow(virtualChannel);
       }
    }
    return true;
@@ -575,16 +575,16 @@ Boolean TPZSimpleRouterFlowBinoc :: propagateStop()
 //*************************************************************************
 
 Boolean TPZSimpleRouterFlowBinoc :: updateMessageInfo(TPZMessage* msg)
-{  
+{
    int deltaX = msg->delta(0);
    int deltaY = msg->delta(1);
    if( msg->isHeader() || msg->isHeadTail() )
-   {  
+   {
       if( deltaX > 1 )
       {
          msg->setDelta(deltaX-1,0);
          if(msg->getRoutingPort() == _Xplus_) return false; // no change of direction
-         msg->setRoutingPort(_Xplus_);         
+         msg->setRoutingPort(_Xplus_);
       }
       else if( deltaX < -1 )
       {
@@ -596,7 +596,7 @@ Boolean TPZSimpleRouterFlowBinoc :: updateMessageInfo(TPZMessage* msg)
       {
          msg->setDelta(deltaY-1,1);
          if(msg->getRoutingPort() == _Yplus_) return false; // no change of direction
-         msg->setRoutingPort(_Yplus_);         
+         msg->setRoutingPort(_Yplus_);
       }
       else if(deltaY < -1)
       {
@@ -609,7 +609,7 @@ Boolean TPZSimpleRouterFlowBinoc :: updateMessageInfo(TPZMessage* msg)
          msg->setRoutingPort(_LocalNode_);
          return false; // Not to do flow control.
       }
-   } 
+   }
    if(!((TPZSimulation*)(getComponent().getSimulation()))->getNetwork()->isDORDeadlockable()) return false;
    return true; // No change of direction
 }
@@ -623,27 +623,27 @@ Boolean TPZSimpleRouterFlowBinoc :: updateMessageInfo(TPZMessage* msg)
 //*************************************************************************
 
 TPZROUTINGTYPE  TPZSimpleRouterFlowBinoc :: getOutputDirection(TPZMessage* msg)
-{  
+{
    int deltaX = msg->delta(0);
    int deltaY = msg->delta(1);
 
    if( msg->isHeader() || msg->isHeadTail())
-   {  
+   {
       if( deltaX > 1 )
       {
-         return _Xplus_;                 
+         return _Xplus_;
       }
       else if( deltaX < -1 )
       {
-         return _Xminus_;                 
+         return _Xminus_;
       }
       else if( deltaY > +1 )
       {
-         return _Yplus_;           
+         return _Yplus_;
       }
       else if(deltaY < -1)
       {
-        return  _Yminus_;                
+        return  _Yminus_;
       }
       else
       {
@@ -683,7 +683,7 @@ unsigned TPZSimpleRouterFlowBinoc :: extractOutputPortNumber( TPZROUTINGTYPE dir
    unsigned channel=1;
    if ( dir == _LocalNode_ ) reverse=false;
    unsigned oPort = ((TPZSimpleRouter&)getComponent()).getHDOutputWith( dir, channel, reverse );
-   
+
    if( !oPort )
    {
       TPZString err;
@@ -693,7 +693,7 @@ unsigned TPZSimpleRouterFlowBinoc :: extractOutputPortNumber( TPZROUTINGTYPE dir
                    0 );
       EXIT_PROGRAM(err);
    }
-   
+
    return oPort;
 }
 
@@ -720,7 +720,7 @@ unsigned TPZSimpleRouterFlowBinoc :: extractOutputChannel(TPZMessage* msg) const
 
 Boolean TPZSimpleRouterFlowBinoc :: dispatchEvent(const TPZEvent& event)
 {
-   return true; 
+   return true;
 }
 
 
@@ -738,7 +738,7 @@ void TPZSimpleRouterFlowBinoc :: cleanOutputInterfaces()
    {
       unsigned i,j;
       TPZSimpleRouter& simpleRouter = (TPZSimpleRouter&)getComponent();
-   
+
       forInterfaz(i,simpleRouter.numberOfOutputs())
       {
          forInterfaz(j,outputInterfaz(i)->numberOfCV() )
@@ -764,7 +764,7 @@ void TPZSimpleRouterFlowBinoc :: cleanInputInterfaces()
       forInterfaz(i,simpleRouter.numberOfInputs())
       {
           forInterfaz(j,outputInterfaz(i)->numberOfCV() )
-            inputInterfaz(i)->clearStop(j);         
+            inputInterfaz(i)->clearStop(j);
       }
    }
 }
@@ -793,9 +793,9 @@ Boolean TPZSimpleRouterFlowBinoc :: controlAlgoritm(Boolean info, int delta)
 //*************************************************************************
 
 Boolean TPZSimpleRouterFlowBinoc :: onReadyUp(unsigned interfaz, unsigned cv)
-{  
+{
    TPZMessage* msg;
-   inputInterfaz(interfaz)->getData(&msg,cv); 
+   inputInterfaz(interfaz)->getData(&msg,cv);
    //Hardwired here the virtual network selection
    //account of events
    ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::BufferWrite);
@@ -805,10 +805,10 @@ Boolean TPZSimpleRouterFlowBinoc :: onReadyUp(unsigned interfaz, unsigned cv)
       cv=1;
    }
    m_sync[m_ports*(cv-1)+interfaz]=msg;
-   return true;      
+   return true;
 }
 
-      
+
 //*************************************************************************
 //:
 //  f: virtual Boolean onStopUp (unsigned interface, unsigned cv)
@@ -864,12 +864,12 @@ TPZString TPZSimpleRouterFlowBinoc :: getStatus() const
             rs+= TPZString("O") + TPZString(i) + " ";
       }
 
-      else 
+      else
       {
          channel=1;
          if( outputInterfaz(i)->isStopActive(channel) )
             rs+= TPZString("O") + TPZString(i) + TPZString(channel) + " ";
-      } 
+      }
    }
 
    return rs;
@@ -886,7 +886,7 @@ TPZString TPZSimpleRouterFlowBinoc :: getStatus() const
 void TPZSimpleRouterFlowBinoc :: run(uTIME runTime)
 {
    inputReading();
-   
+
 }
 
 
@@ -931,20 +931,22 @@ TPZROUTINGTYPE TPZSimpleRouterFlowBinoc :: getTipoReverse(TPZROUTINGTYPE tipo)
 {
    switch(tipo)
       {
-        case _Xplus_: 
+        case _Xplus_:
     return _Xminus_;
     break;
-    case _Xminus_: 
+    case _Xminus_:
     return _Xplus_;
     break;
-    case _Yplus_: 
+    case _Yplus_:
     return _Yminus_;
     break;
-    case _Yminus_: 
+    case _Yminus_:
     return _Yplus_;
     case _LocalNode_:
     return _LocalNode_;
     break;
+    default:
+    EXIT_PROGRAM("error");
       }
 }
 

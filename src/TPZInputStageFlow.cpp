@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZInputStageFlow.cpp
@@ -102,12 +102,12 @@ TPZInputStageFlow :: TPZInputStageFlow(TPZComponent& component)
 //  f: virtual void initialize();
 //
 //  d:
-//: 
+//:
 //*************************************************************************
 
 void TPZInputStageFlow :: initialize()
 {
-   m_Size = ((TPZInputStage&)getComponent()).getBufferSize();  
+   m_Size = ((TPZInputStage&)getComponent()).getBufferSize();
    m_outputs =  ((TPZInputStage&)getComponent()).numberOfOutputs();
    Inhereited::initialize();
 }
@@ -117,14 +117,14 @@ void TPZInputStageFlow :: initialize()
 //  f: virtual void postInitialize();
 //
 //  d:
-//: 
+//:
 //*************************************************************************
 
 void TPZInputStageFlow :: postInitialize()
 {
    TPZROUTINGTYPE rType=getComponent().getRoutingDirection();
    TPZString NameLeft, NameRight;
-   
+
    switch (rType)
    {
       case _Xplus_:
@@ -147,10 +147,14 @@ void TPZInputStageFlow :: postInitialize()
          NameLeft= TPZString("MPL5");
          NameRight= TPZString("MPR5");
          break;
+      default:
+         TPZString err;
+         err.sprintf("Unknown rType");
+         EXIT_PROGRAM(err);
    }
    TPZComponent* compoBuffer1 = getOwnerRouter().componentWithName(NameLeft);
    TPZComponent* compoBuffer2 = getOwnerRouter().componentWithName(NameRight);
-   
+
    m_BufferLeft=POINTERCAST(TPZMultiportIOFifo, compoBuffer1);
    m_BufferRight=POINTERCAST(TPZMultiportIOFifo, compoBuffer2);
 }
@@ -169,7 +173,7 @@ Boolean TPZInputStageFlow :: onReadyUp(unsigned interfaz, unsigned cv)
 
 #ifndef NO_TRAZA
    uTIME delayTime = getOwnerRouter().getCurrentTime() ;
-   TPZString texto = getComponent().asString() + " Flit Rx on Time" +  TPZString(delayTime) 
+   TPZString texto = getComponent().asString() + " Flit Rx on Time" +  TPZString(delayTime)
                      + " # " + msg->asString() + ") holes= " + TPZString(bufferHoles());
    TPZWRITE2LOG( texto );
 #endif
@@ -180,21 +184,21 @@ Boolean TPZInputStageFlow :: onReadyUp(unsigned interfaz, unsigned cv)
       updateMessageInfo(msg);
       getOwnerRouter().incrProtocolNumber(msg->getVnet());
    }
-   
+
    if( ! bufferHoles())
    {
       TPZString err;
       err.sprintf("Buffer Exhausted, revision needed");
       EXIT_PROGRAM(err);
    }
-   
-   uTIME delay = getOwnerRouter().getCurrentTime() + getDataDelay(); 
+
+   uTIME delay = getOwnerRouter().getCurrentTime() + getDataDelay();
    TPZEvent event(_BufferData_,msg);
    getEventQueue().enqueue(event,delay);
-   
+
    return true;
 }
-   
+
 //*************************************************************************
 //:
 //  f: virtual Boolean inputReading();
@@ -202,9 +206,9 @@ Boolean TPZInputStageFlow :: onReadyUp(unsigned interfaz, unsigned cv)
 //  d:
 //:
 //*************************************************************************
- 
+
 Boolean TPZInputStageFlow :: inputReading()
-{  
+{
    return true;
 }
 
@@ -234,12 +238,12 @@ Boolean TPZInputStageFlow :: stateChange()
 Boolean TPZInputStageFlow :: outputWriting()
 {
    uTIME ciclo=getOwnerRouter().getCurrentTime();
-   
+
    for (int i=1; i<=m_outputs; i++)
    {
       outputInterfaz(i)->clearData();
    }
-   
+
    uTIME timeStamp;
    if( getEventQueue().firstElementTimeStamp(timeStamp) )
    {
@@ -250,7 +254,7 @@ Boolean TPZInputStageFlow :: outputWriting()
          dispatchEvent(event);
       }
    }
-         
+
    if(!controlAlgoritm())
    {
       inputInterfaz()->sendStopRightNow();
@@ -264,9 +268,9 @@ Boolean TPZInputStageFlow :: outputWriting()
    else
    {
       inputInterfaz()->clearStop();
-       
+
    }
-   return true;   
+   return true;
 }
 
 
@@ -274,7 +278,7 @@ Boolean TPZInputStageFlow :: outputWriting()
 //:
 //  f: virtual Boolean dispatchEvent(const TPZEvent& event);
 //
-//  d: 
+//  d:
 //:
 //*************************************************************************
 
@@ -285,7 +289,7 @@ Boolean TPZInputStageFlow :: dispatchEvent(const TPZEvent& event)
       TPZMessage* msg;
       msg = event.message();
       unsigned oPort;
-      
+
       if (msg->isHeader() || msg->isHeadTail())
       {
          oPort=calculateOptimalOutput(msg);
@@ -303,7 +307,7 @@ Boolean TPZInputStageFlow :: dispatchEvent(const TPZEvent& event)
 	       getOwnerRouter().setInOrderOccupied(dir);
 	    }
 	    sendFlit(msg, oPort);
-	    
+
 	    static TPZEvent event;
             getEventQueue().dequeue(event);
 	    setOptimalOutput(oPort);
@@ -315,7 +319,7 @@ Boolean TPZInputStageFlow :: dispatchEvent(const TPZEvent& event)
 #endif
 	 }
       }
-      
+
       else
       {
          oPort=getOptimalOutput();
@@ -328,7 +332,7 @@ Boolean TPZInputStageFlow :: dispatchEvent(const TPZEvent& event)
          texto += TPZString(delayTime) + " # " + msg->asString() + ") holes= " + TPZString(bufferHoles());
          TPZWRITE2LOG( texto );
 #endif
-      } 
+      }
    }
    return true;
 }
@@ -345,19 +349,19 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
 {
    TPZROUTINGTYPE Direction = getComponent().getRoutingDirection();
    unsigned optimalOut;
-   
+
    if (msg->isOrdered())
    {
       if (getOwnerRouter().getFreeInOrder(Direction)==false) return 0;
       if ((outputInterfaz(1)->isStopActive()) && (outputInterfaz(2)->isStopActive())) return 0;
-      
+
       else if ((outputInterfaz(1)->isStopActive()) && (!(outputInterfaz(2)->isStopActive())))
       {
          if ( Direction==_Xplus_ )return 0;
 	 else if ( Direction==_Xminus_ )return 2;
 	 else if ( Direction==_Yplus_ )return 0;
 	 else if ( Direction==_Yminus_ ) return 2;
-	 else if ( Direction==_LocalNode_ ) return 0;	 	 
+	 else if ( Direction==_LocalNode_ ) return 0;
       }
       else if ((!(outputInterfaz(1)->isStopActive())) && (outputInterfaz(2)->isStopActive()))
       {
@@ -365,7 +369,7 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
 	 else if ( Direction==_Xminus_ )return 0;
 	 else if ( Direction==_Yplus_ )return 1;
 	 else if ( Direction==_Yminus_ ) return 0;
-	 else if ( Direction==_LocalNode_ ) return 0;	 
+	 else if ( Direction==_LocalNode_ ) return 0;
       }
       else
       {
@@ -373,10 +377,10 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
 	 else if ( Direction==_Xminus_ )return 2;
 	 else if ( Direction==_Yplus_ )return 1;
 	 else if ( Direction==_Yminus_ ) return 2;
-	 else if ( Direction==_LocalNode_ ) return 1;	 
+	 else if ( Direction==_LocalNode_ ) return 1;
       }
    }
-   
+
    else
    {
       if ((outputInterfaz(1)->isStopActive()) && (outputInterfaz(2)->isStopActive())) return 0;
@@ -386,15 +390,15 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
       {
          if (m_BufferRight->bufferHoles() < m_BufferLeft->bufferHoles()) return 2;
          else if (m_BufferLeft->bufferHoles() < m_BufferRight->bufferHoles())return 1;
-         else 
-	 { 
+         else
+	 {
 	    int deltaX = msg->delta(0);
             int deltaY = msg->delta(1);
-	    
+
 	    switch( Direction )
             {
                case _Xplus_ :
-               
+
                if ((deltaX>1) && (deltaY>1)) optimalOut=2;
 	       else if ((deltaX>1) && (deltaY==1 || deltaY==-1)) optimalOut=2;
                else if ((deltaX==-1 || deltaX==1) &&  (deltaY>1)) optimalOut=2;
@@ -402,9 +406,9 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
                else if ((deltaX==-1 || deltaX==1) && (deltaY==1 || deltaY==-1))	optimalOut=1;
 	       else optimalOut=(rand()%2)+1;
                break;
-     
+
                case _Xminus_ :
-               
+
                if ( (deltaX<-1) && (deltaY>1) )optimalOut=1;
                else if ( (deltaX<-1) && (deltaY<-1)) optimalOut=2;
                else if ( (deltaX<-1) && (deltaY==1 || deltaY==-1)) optimalOut=1;
@@ -413,9 +417,9 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
                else if ((deltaX==1 || deltaX==-1) &&  deltaY<-1) optimalOut=2;
 	       else optimalOut=(rand()%2)+1;
                break;
-     
+
                case _Yplus_ :
-	       
+
                if ( (deltaX>1) && (deltaY>1)) optimalOut=1;
                else if ((deltaX>1) && (deltaY==-1 || deltaY==1)) optimalOut=1;
                else if (deltaX<-1 && (deltaY==1 || deltaY==-1)) optimalOut=2;
@@ -423,18 +427,18 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
 	       else if ((deltaX==1 || deltaX==-1) && (deltaY==1 || deltaY==-1)) optimalOut=2;
                else optimalOut=(rand()%2)+1;
                break;
-    
+
                case _Yminus_ :
-               
+
                if ( deltaX>1 && (deltaY<-1)) optimalOut=2;
 	       if ( deltaX>1 && (deltaY==1 || deltaY==-1)) optimalOut=2;
                else if (deltaX<-1 && deltaY<-1) optimalOut=1;
-               else if (deltaX<-1 && (deltaY==1 || deltaY==-1)) optimalOut=1; 
+               else if (deltaX<-1 && (deltaY==1 || deltaY==-1)) optimalOut=1;
 	       else if ((deltaX==1 || deltaX==-1) && deltaY<-1) optimalOut=2;
                else if ((deltaX==1 || deltaX==-1) && (deltaY==1 || deltaY==-1)) optimalOut=1;
                else optimalOut=(rand()%2)+1;
                break;
-    
+
                case _LocalNode_ :
                if (deltaX>1 && deltaY<-1) optimalOut=1;
                else if (deltaX>1 && (deltaY==1 || deltaY==-1)) optimalOut=1;
@@ -444,12 +448,15 @@ unsigned TPZInputStageFlow :: calculateOptimalOutput(TPZMessage *msg)
                else if ((deltaX==1 || deltaX==-1) && deltaY<-1) optimalOut=1;
                else optimalOut=(rand()%2)+1;
                break;
+         default:
+             return _Unknow_;
             }
 	 }
-	    
+
       }
       return optimalOut;
    }
+   return _Unknow_;
 }
 //*************************************************************************
 //:
@@ -474,7 +481,7 @@ Boolean TPZInputStageFlow :: onStopUp(unsigned interfaz, unsigned cv)
 //*************************************************************************
 
 Boolean TPZInputStageFlow :: onStopDown(unsigned interfaz, unsigned cv)
-{      
+{
    return true;
 }
 
@@ -517,10 +524,10 @@ Boolean TPZInputStageFlow :: updateMessageInfo(TPZMessage* msg)
    int deltaX = msg->delta(0);
    int deltaY =msg->delta(1);
    TPZROUTINGTYPE Direction = getComponent().getRoutingDirection();
-   
+
    msg->flushHopCount();
    msg->setLastDirMiss(getComponent().getRoutingDirection());
-   
+
    if ( msg->getLastMissRouted()==true)
    {
       if (msg->isOrdered() )
@@ -529,7 +536,7 @@ Boolean TPZInputStageFlow :: updateMessageInfo(TPZMessage* msg)
          err.sprintf("An ordered message cannot be missrouted");
          EXIT_PROGRAM(err);
       }
-      
+
       //RECALCULATE ROUTING RECORD
       int deltaX;
       int deltaY;
@@ -541,12 +548,12 @@ Boolean TPZInputStageFlow :: updateMessageInfo(TPZMessage* msg)
       msg->setLastMissRouted(false);
       return true;
    }
-   
+
    if ( Direction==_Xplus_ ) msg->setDelta(deltaX-1,0);
    else if ( Direction==_Xminus_ ) msg->setDelta(deltaX+1,0);
    else if ( Direction==_Yplus_ ) msg->setDelta(deltaY-1,1);
    else if ( Direction==_Yminus_ ) msg->setDelta(deltaY+1,1);
-   
+
    if ( msg->isOrdered() )
    {
       msg->setInOrderInputDirection(Direction);
@@ -557,17 +564,17 @@ Boolean TPZInputStageFlow :: updateMessageInfo(TPZMessage* msg)
          TPZPosition src=msg->source();
 	 TPZPosition dst=msg->destiny();
 	 TPZPosition deltaPos = dst - src;
-	 
+
          int deltaX = deltaPos.valueForCoordinate(TPZPosition::X);
          int deltaY = deltaPos.valueForCoordinate(TPZPosition::Y);
          deltaX = (deltaX>=0) ? deltaX+1 : deltaX-1;
          deltaY = (deltaY>=0) ? deltaY+1 : deltaY-1;
-         
+
 	 msg->setDelta(deltaX,0);
          msg->setDelta(deltaY,1);
       }
-   }	
-   
+   }
+
    return true;
 }
 

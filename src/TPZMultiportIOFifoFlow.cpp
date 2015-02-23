@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZMultiportIOFifoFlow.cpp
@@ -109,9 +109,9 @@ TPZMultiportIOFifoFlow :: TPZMultiportIOFifoFlow(TPZComponent& component)
 	m_outPortSelected(0),
 	m_sizeInPackets(0),
 	m_missroutingLimit(0)
-	
+
 {
-  
+
 }
 
 //*************************************************************************
@@ -132,7 +132,7 @@ TPZMultiportIOFifoFlow :: ~TPZMultiportIOFifoFlow()
 //  d:
 //:
 //*************************************************************************
-   
+
 void TPZMultiportIOFifoFlow :: initialize()
 {
    m_Size = ((TPZMultiportIOFifo&)getComponent()).getBufferSize();
@@ -154,10 +154,10 @@ void TPZMultiportIOFifoFlow :: initialize()
       m_inOcupado[j]=false;
       m_inMemSelected[j]=0;
       }
-      
+
    Inhereited::initialize();
 }
-   
+
 
 
 //*************************************************************************
@@ -170,11 +170,11 @@ void TPZMultiportIOFifoFlow :: initialize()
 
 void TPZMultiportIOFifoFlow :: postInitialize()
 {
-   
+
    m_inputDirection=getComponent().getRoutingDirection();
    TPZString texto=getComponent().getName();
    TPZString Name_next_mp, Name_out_stage;
-   
+
    if (texto==TPZString("MPR1"))
    {
       m_outputDirection= _LocalNode_;
@@ -186,7 +186,7 @@ void TPZMultiportIOFifoFlow :: postInitialize()
       m_outputDirection= _Xplus_;
       Name_next_mp= TPZString("MPR3");
       Name_out_stage= TPZString("OS1");
-   } 
+   }
    else if (texto==TPZString("MPR3"))
    {
       m_outputDirection= _Yplus_;
@@ -241,7 +241,7 @@ void TPZMultiportIOFifoFlow :: postInitialize()
       err.sprintf("Bad naming for Rotary multiports");
       EXIT_PROGRAM(err);
    }
-   
+
    TPZComponent* compoSalida = getOwnerRouter().componentWithName(Name_out_stage);
    TPZComponent* compoMulti = getOwnerRouter().componentWithName(Name_next_mp);
    m_NextMulti=POINTERCAST(TPZMultiportIOFifo, compoMulti);
@@ -270,14 +270,14 @@ Boolean TPZMultiportIOFifoFlow :: onReadyUp( unsigned interfaz, unsigned cv)
       err.sprintf("Multiport Buffer Overflow");
       EXIT_PROGRAM(err);
    }
-      
+
    inputInterfaz(interfaz)->getData(&msg);
 #ifndef NO_TRAZA
-   TPZString texto=getComponent().asString() + "Flit Rx ( Time=" + TPZString(delayTime) + " # " + msg->asString() 
+   TPZString texto=getComponent().asString() + "Flit Rx ( Time=" + TPZString(delayTime) + " # " + msg->asString()
                    + ") holes=" + TPZString(bufferHoles());
    TPZWRITE2LOG( texto );
 #endif
-   
+
    if (msg->isHeader() || msg->isHeadTail())
    {
       msg->setDelayMultiport(delayTime+getDataDelay());
@@ -291,7 +291,7 @@ Boolean TPZMultiportIOFifoFlow :: onReadyUp( unsigned interfaz, unsigned cv)
       unsigned memIndex=getInputMem();
       m_memory[memIndex].enqueue(msg);
       if (msg->isHeader()) m_inOcupado[memIndex]=true;
-      m_inMemSelected[interfaz-1]=memIndex;      
+      m_inMemSelected[interfaz-1]=memIndex;
    }
    else
    {
@@ -300,12 +300,12 @@ Boolean TPZMultiportIOFifoFlow :: onReadyUp( unsigned interfaz, unsigned cv)
    }*/
    return true;
 }
-    
+
 //*************************************************************************
 //:
 //  f: void getInputMem();
 //
-//  d: 
+//  d:
 //:
 //*************************************************************************
 unsigned TPZMultiportIOFifoFlow :: getInputMem()
@@ -317,13 +317,14 @@ unsigned TPZMultiportIOFifoFlow :: getInputMem()
       if ( (m_memory[0].numberOfElements()) > (m_memory[1].numberOfElements()) ) return 1;
       else return 0;
    }
-   else if ( m_inOcupado[0]==true && m_inOcupado[1]==true )
+   else
    {
       TPZString err;
       err.sprintf("Two messages in transit and a third one arrives, not allowed");
       EXIT_PROGRAM(err);
    }
-}   
+
+}
 
 //*************************************************************************
 //:
@@ -332,7 +333,7 @@ unsigned TPZMultiportIOFifoFlow :: getInputMem()
 //  d: Lectura desde varios puertos de entrada
 //:
 //*************************************************************************
-   
+
 Boolean TPZMultiportIOFifoFlow :: inputReading()
 {
    for(int interfaz=1;interfaz<m_inputs+1;interfaz++)
@@ -351,14 +352,14 @@ Boolean TPZMultiportIOFifoFlow :: inputReading()
             err.sprintf("Multiport Buffer Overflow");
             EXIT_PROGRAM(err);
          }
-      
+
          inputInterfaz(interfaz)->getData(&msg);
 #ifndef NO_TRAZA
-         TPZString texto=getComponent().asString() + "Flit Rx ( Time=" + TPZString(delayTime) + " # " + msg->asString() 
+         TPZString texto=getComponent().asString() + "Flit Rx ( Time=" + TPZString(delayTime) + " # " + msg->asString()
                    + ") holes=" + TPZString(bufferHoles());
          TPZWRITE2LOG( texto );
 #endif
-   
+
          if (msg->isHeader() || msg->isHeadTail())
          {
             msg->setDelayMultiport(delayTime+getDataDelay());
@@ -372,7 +373,7 @@ Boolean TPZMultiportIOFifoFlow :: inputReading()
             unsigned memIndex=getInputMem();
             m_memory[memIndex].enqueue(msg);
             if (msg->isHeader()) m_inOcupado[memIndex]=true;
-            m_inMemSelected[interfaz-1]=memIndex;      
+            m_inMemSelected[interfaz-1]=memIndex;
          }
          else
          {
@@ -391,17 +392,17 @@ Boolean TPZMultiportIOFifoFlow :: inputReading()
 //  d:
 //:
 //*************************************************************************
-   
+
 Boolean TPZMultiportIOFifoFlow :: stateChange()
 {
    unsigned lpack= ((TPZSimulation*)getComponent().getSimulation())->getPacketLength((TPZNetwork*)getOwnerRouter().getOwner());
    unsigned sizeInPackets=m_Size/lpack;
    if (getOwnerRouter().getContador(m_inputDirection)>=6) m_lowocupation=true;
    else if (getOwnerRouter().getContador(m_inputDirection) < 4) m_lowocupation=false;
-      
+
    if (m_NumOfPackets >= sizeInPackets-1) inputInterfaz(2)->sendStopRightNow();
    else inputInterfaz(2)->clearStop();
-      
+
    if (m_inputDirection==_LocalNode_)
    {
       if (m_NumOfPackets >= sizeInPackets-3) inputInterfaz(1)->sendStopRightNow();
@@ -430,12 +431,12 @@ Boolean TPZMultiportIOFifoFlow :: stateChange()
 //  d:
 //:
 //*************************************************************************
-   
+
 Boolean TPZMultiportIOFifoFlow :: outputWriting()
 {
    unsigned lpack= ((TPZSimulation*)getComponent().getSimulation())->getPacketLength((TPZNetwork*)getOwnerRouter().getOwner());
    unsigned sizeInPackets=m_Size/lpack;
-   
+
    //**********************************************************************
    //--Arbitration of both output ports
    //**********************************************************************
@@ -445,20 +446,20 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
    {
       outputInterfaz(j)->clearData();
    }
-   
+
    unsigned offset=rand()%2;
    for(int j=1; j<=m_inputs; j++)
    {
       int i=((j+offset)%2)+1;
       TPZMessage* flitnow;
-            
+
       if (m_memory[i-1].numberOfElements() == 0)
       {
          continue;
       }
-      
+
       m_memory[i-1].firstElement(flitnow);
-      
+
       //**********************************************************************
       //--Found a header flit
       //**********************************************************************
@@ -468,7 +469,7 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
 	 {
 	    continue;
 	 }
-	 //First we try to request access to the Output Stage	 
+	 //First we try to request access to the Output Stage
 	 Boolean isValidOut=checkHeader(flitnow, 1);
 	 if ( (!outputInterfaz(1)->isStopActive()) && (m_ocupado[0]==false) && (isValidOut==true) )
 	 {
@@ -479,7 +480,7 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
 	    sendFlit(flitnow, 1);
 #ifndef NO_TRAZA
             uTIME delayTime=getOwnerRouter().getCurrentTime();
-            TPZString texto=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime) 
+            TPZString texto=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime)
 	                    + " # " + flitnow->asString() + ") holes=" + TPZString(bufferHoles());
             TPZWRITE2LOG( texto );
 #endif
@@ -499,7 +500,7 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
                sendFlit(flitnow, 2);
 #ifndef NO_TRAZA
                uTIME delayTime=getOwnerRouter().getCurrentTime();
-               TPZString texto2=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime) 
+               TPZString texto2=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime)
 	                        + " # " + flitnow->asString() + ") holes=" + TPZString(bufferHoles());
                TPZWRITE2LOG( texto2 );
 #endif
@@ -517,7 +518,7 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
 	 sendFlit(flitnow, interfaz);
 #ifndef NO_TRAZA
          uTIME delayTime=getOwnerRouter().getCurrentTime();
-         TPZString texto3=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime) 
+         TPZString texto3=getComponent().asString() + "Flit Tx ( Time=" + TPZString(delayTime)
 	                  + " # " + flitnow->asString() + ") holes=" + TPZString(bufferHoles());
          TPZWRITE2LOG( texto3 );
 #endif
@@ -536,10 +537,10 @@ Boolean TPZMultiportIOFifoFlow :: outputWriting()
    //*************************************************************************
    /*if (getOwnerRouter().getContador(m_inputDirection)>=6) m_lowocupation=true;
    else if (getOwnerRouter().getContador(m_inputDirection) < 4) m_lowocupation=false;
-      
+
    if (m_NumOfPackets > sizeInPackets-1) inputInterfaz(2)->sendStopRightNow();
    else inputInterfaz(2)->clearStop();
-      
+
    if (m_inputDirection==_LocalNode_)
    {
       if (m_NumOfPackets >= sizeInPackets-3) inputInterfaz(1)->sendStopRightNow();
@@ -572,12 +573,12 @@ return true;
 Boolean TPZMultiportIOFifoFlow :: checkHeader(TPZMessage* flitnow, unsigned interfaz)
 {
    Boolean isValidOut;
-   
+
    if (interfaz==1)
    {
       int deltaX = flitnow->delta(0);
       int deltaY = flitnow->delta(1);
-      
+
       if (flitnow->isOrdered())
       {
          switch( m_outputDirection )
@@ -592,30 +593,34 @@ Boolean TPZMultiportIOFifoFlow :: checkHeader(TPZMessage* flitnow, unsigned inte
 	       isValidOut = (((deltaX==1)||(deltaX==-1))&&(deltaY < -1))? true : false; break;
 	    case _LocalNode_ :
 	       isValidOut = ( abs(deltaX)==1 && abs(deltaY)==1 )? true : false; break;
-         }	
+			default:
+		     EXIT_PROGRAM("error");
+         }
       }
       else
       {
          switch( m_outputDirection )
          {
-            case _Xplus_  : 
+            case _Xplus_  :
             isValidOut = (deltaX > 1)? true : false; break;
-            case _Xminus_ : 
+            case _Xminus_ :
             isValidOut = (deltaX < -1)? true : false; break;
-            case _Yplus_  : 
+            case _Yplus_  :
             isValidOut = (deltaY > 1)? true : false; break;
-            case _Yminus_ : 
-            isValidOut = (deltaY < -1)? true : false; break;         
+            case _Yminus_ :
+            isValidOut = (deltaY < -1)? true : false; break;
             case _LocalNode_ :
             isValidOut = ( abs(deltaX)==1 && abs(deltaY)==1 )? true : false; break;
+						default:
+						EXIT_PROGRAM("error");
          }
-      
+
          if (flitnow->getLastMissRouted()==true && m_outputDirection != _LocalNode_ )
          {
             isValidOut = true;
-         }         
+         }
       }
-      
+
    }
    else if (interfaz==2)
    {
@@ -634,7 +639,7 @@ Boolean TPZMultiportIOFifoFlow :: checkHeader(TPZMessage* flitnow, unsigned inte
       err.sprintf("Out of range interfaz");
       EXIT_PROGRAM(err);
    }
-   
+
    return isValidOut;
 }
 
@@ -645,7 +650,7 @@ Boolean TPZMultiportIOFifoFlow :: checkHeader(TPZMessage* flitnow, unsigned inte
 //  d:
 //:
 //*************************************************************************
-   
+
 Boolean TPZMultiportIOFifoFlow :: controlAlgoritm(Boolean info, int delta)
 {
    return true;
@@ -658,12 +663,12 @@ Boolean TPZMultiportIOFifoFlow :: controlAlgoritm(Boolean info, int delta)
 //  d:
 //:
 //*************************************************************************
-   
+
 Boolean TPZMultiportIOFifoFlow :: propagateStop()
 {
    return true;
 }
-   
+
 //*************************************************************************
 //:
 //  f: virtual Boolean onStopUp();
@@ -676,7 +681,7 @@ Boolean TPZMultiportIOFifoFlow :: onStopUp(unsigned interfaz, unsigned cv)
 {
    return true;
 }
-   
+
 //*************************************************************************
 //:
 //  f: virtual Boolean onStopDown();
@@ -689,7 +694,7 @@ Boolean TPZMultiportIOFifoFlow :: onStopDown(unsigned interfaz, unsigned cv)
 {
    return true;
 }
-   
+
 //*************************************************************************
 //:
 //  f: virtual void sendFlit();
@@ -711,7 +716,7 @@ void TPZMultiportIOFifoFlow :: sendFlit(TPZMessage* msg, unsigned interfaz)
 //  d:
 //:
 //*************************************************************************
-   
+
 unsigned TPZMultiportIOFifoFlow :: bufferElements() const
 {
    unsigned acum=0;

@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZCrossbarFlowVC.cpp
@@ -103,7 +103,7 @@ TPZCrossbarFlowVCTorus::TPZCrossbarFlowVCTorus(TPZComponent& component) :
 void TPZCrossbarFlowVCTorus :: initialize()
 {
    Inhereited :: initialize();
-   
+
    unsigned mux = ((TPZCrossbar&)(getComponent())).getOutputMux();
    if (mux%2 !=0)
    {
@@ -119,7 +119,7 @@ void TPZCrossbarFlowVCTorus :: initialize()
       EXIT_PROGRAM(err2);
    }
    m_InputPortOffsetTable   = new unsigned[m_inputs];
-   
+
    for(int i=0; i<m_inputs; i++)
    {
       m_InputPortOffsetTable[i] = 0;
@@ -132,19 +132,19 @@ void TPZCrossbarFlowVCTorus :: initialize()
 //  d:
 //:
 //*************************************************************************
-Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event) 
+Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
 {
    uTIME delayTime = getOwnerRouter().getCurrentTime();
    //**********************************************************************
    // EVENT= ROUTING
    //**********************************************************************
-   if (event.type() == _RoutingVC_) 
+   if (event.type() == _RoutingVC_)
    {
       //update the header and select output port
       TPZMessage *msg;
       unsigned iPort = event.source();
       m_MessageReceivedTable->valueAt(iPort, &msg);
-      if ( (!(msg->isHeader())) && (!(msg->isHeadTail())) ) 
+      if ( (!(msg->isHeader())) && (!(msg->isHeadTail())) )
       {
          TPZString err;
          err.sprintf("%s :Body flits should not go through this state", (char*)getComponent().asString() );
@@ -161,7 +161,7 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
          int deltaX = msg->delta(0);
          int deltaY = msg->delta(1);
          int deltaZ = msg->delta(2);
-      
+
          if (deltaX > 1) msg->setRoutingPort(_Xplus_);
          else if (deltaX < -1) msg->setRoutingPort(_Xminus_);
          else if (deltaY > +1) msg->setRoutingPort(_Yplus_);
@@ -173,17 +173,17 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
       unsigned portout = extractOutputPortNumber(msg);
       unsigned offset=getOffsetFor(msg);
       setOffsetForInputPort(iPort, offset);
-      
+
       //*****************************************************************
       //Ideal assignation of the first VC to request
       //*****************************************************************
       unsigned msgtype=msg->getVnet();
       unsigned VCFirstReq;
-      
+
       //Oredered messages must request the same VC to avoid message forwarding
       if (msg->isOrdered()) VCFirstReq=1+offset;
       else VCFirstReq= getFirstVCReqFor(iPort, portout, msgtype);
-      
+
       m_InOutVCTable->setValueAt(iPort, VCFirstReq);
       //*****************************************************************
 
@@ -194,35 +194,35 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
    //**********************************************************************
    // EVENT= VIRTUAL CHANNEL ARBITRATION
    //**********************************************************************
-    else if (event.type() == _VCAllocator_) 
+    else if (event.type() == _VCAllocator_)
     {
        unsigned iPort = event.source();
        unsigned oPort = event.destiny();
        unsigned VChannel = event.channel();
        TPZMessage* msg;
        m_MessageReceivedTable->valueAt(iPort, &msg);
-       
-       if ( ( (!(msg->isHeader())) && (!(msg->isHeadTail())) ) || (!iPort) || (!oPort) ) 
+
+       if ( ( (!(msg->isHeader())) && (!(msg->isHeadTail())) ) || (!iPort) || (!oPort) )
        {
           TPZString err;
           err.sprintf("%s :Some kind of error at this point", (char*)getComponent().asString() );
           EXIT_PROGRAM(err);
        }
-       
+
 #ifndef NO_TRAZA
        TPZString texto = getComponent().asString() + " Event VC ALLOCATION. TIME = ";
        texto += TPZString(getOwnerRouter().getCurrentTime()) + " # " + "iPort=" + TPZString(iPort) + " # oPort="
        + TPZString(oPort) + " # VChannel =" + TPZString(VChannel) + msg->asString() ;
        TPZWRITE2LOG(texto);
 #endif
-       
+
        //The absolute port value corresponding to the message must be calculated
        unsigned messtype=msg->getVnet();
        unsigned oVirtualChannel=getAbsolutValueForOutputVC(oPort, VChannel, messtype);
-       
+
        TPZState state=getStateForOutputVC(oVirtualChannel);
 
-       if (state!=FREE) 
+       if (state!=FREE)
        {
           //On the next VC arbitration event we request a different Virtual Channel
           unsigned mux = ((TPZCrossbar&)(getComponent())).getOutputMux();
@@ -239,7 +239,7 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
           TPZEvent VCAllocEvent(_VCAllocator_, iPort, oPort, VCNextRequest);
           getEventQueue().enqueue(VCAllocEvent, delayTime+m_VCArbitrationDelay);
        }
-       else 
+       else
        {
 #ifndef NO_TRAZA
           TPZString texto2 = getComponent().asString() + " Found Free VC" + " # OutputVC = " + TPZString(oVirtualChannel);
@@ -251,11 +251,11 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
        }
        ((TPZNetwork*)(getOwnerRouter().getOwner()))->incrEventCount( TPZNetwork::VCArbitration);
     }
-   
+
    //**********************************************************************
    // EVENT= SWITCH ARBITRATION
    //**********************************************************************
-    else if (event.type() == _SwitchAllocator_) 
+    else if (event.type() == _SwitchAllocator_)
     {
        unsigned iPort = event.source();
        unsigned oPort = event.destiny();
@@ -274,10 +274,10 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
        unsigned messtype=msg->getVnet();
        unsigned outputVChannel= (messtype-1)*(mux/msgtypes) + VChannel;
        if (oPort == m_outputs) outputVChannel=1;
-       
+
        TPZState state=getStateForOutputPort(oPort);
-       
-       if ( (!outputInterfaz(oPort)->isStopActive(outputVChannel)) && state==FREE) 
+
+       if ( (!outputInterfaz(oPort)->isStopActive(outputVChannel)) && state==FREE)
        {
 #ifndef NO_TRAZA
           TPZString texto2 = getComponent().asString() + " Free Port=" + TPZString(oPort) + "turns into ASIGNED";
@@ -288,7 +288,7 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
           TPZEvent SWTravEvent(_SwitchTraversal_, iPort, oPort, VChannel, msg);
           getEventQueue().enqueue(SWTravEvent, delayTime+m_SWArbitrationDelay);
        }
-       else 
+       else
        {
 #ifndef NO_TRAZA
           TPZString texto3 = getComponent().asString() + "already occupied port";
@@ -302,14 +302,14 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
    //**********************************************************************
    // EVENT= SWITCH TRAVERSAL
    //**********************************************************************
-    else if (event.type() == _SwitchTraversal_) 
+    else if (event.type() == _SwitchTraversal_)
     {
        unsigned iPort = event.source();
        unsigned oPort = event.destiny();
        unsigned VChannel = event.channel();
        TPZMessage* msg;
        m_MessageReceivedTable->valueAt(iPort, &msg);
-       
+
 #ifndef NO_TRAZA
        TPZString texto = getComponent().asString() + " Event SW TRAVERSAL. TIME = "
        + TPZString(getOwnerRouter().getCurrentTime()) + " # " + "iPort=" + TPZString(iPort)
@@ -321,7 +321,7 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
        unsigned messtype=msg->getVnet();
        unsigned outputVChannel= (messtype-1)*(mux/msgtypes) + VChannel;
        if (oPort == m_outputs) outputVChannel=1;
-       
+
        inputInterfaz(iPort)->clearStopRightNow();
        if (!msg->isMulticast() )updateMessageInfo(msg);//only unicast message need to update their contents.
        outputInterfaz(oPort)->sendData(msg, outputVChannel);
@@ -331,10 +331,10 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
 #endif
        setStateForOutputPort(oPort, FREE);
 
-       if (msg->isTail() || msg->isHeadTail() ) 
+       if (msg->isTail() || msg->isHeadTail() )
        {
           unsigned oVirtualChannel= getAbsolutValueForOutputVC(oPort, VChannel, messtype);
-          
+
 #ifndef NO_TRAZA
             TPZString texto3 = getComponent().asString() + "Channel liberation =" + TPZString(oVirtualChannel);
             TPZWRITE2LOG(texto3);
@@ -354,32 +354,32 @@ Boolean TPZCrossbarFlowVCTorus::dispatchEvent(const TPZEvent& event)
 //*************************************************************************
 //:
 //  f: virtual unsigned getFirstVCReqFor (unsigned IPORT)
-//                                
+//
 //  d:
 //:
 //*************************************************************************
-unsigned TPZCrossbarFlowVCTorus::getFirstVCReqFor(unsigned iPort, unsigned oPort, unsigned msgtype) 
+unsigned TPZCrossbarFlowVCTorus::getFirstVCReqFor(unsigned iPort, unsigned oPort, unsigned msgtype)
 {
    TPZMessage *msg;
    m_MessageReceivedTable->valueAt(iPort, &msg);
-   
+
    unsigned offset=getOffsetFor(msg);
    unsigned VCout;
    unsigned mux = ((TPZCrossbar&)(getComponent())).getOutputMux();
    unsigned msgtypes = ((TPZCrossbar&)(getComponent())).getNumberMT();
    Boolean ideal_asign = false;
-   for (int i=1; i<=(mux/(2*msgtypes)); i++) 
+   for (int i=1; i<=(mux/(2*msgtypes)); i++)
    {
       unsigned outVC=getAbsolutValueForOutputVC(oPort, i+offset, msgtype);
       TPZState state=getStateForOutputVC(outVC);
-      if (state==FREE) 
+      if (state==FREE)
       {
          ideal_asign = true;
          VCout = i+offset;
          break;
       }
    }
-   
+
    if (ideal_asign == false) VCout = (rand()%(mux/(2*msgtypes)))+offset+1;
    return VCout;
 }
@@ -387,73 +387,77 @@ unsigned TPZCrossbarFlowVCTorus::getFirstVCReqFor(unsigned iPort, unsigned oPort
 //*************************************************************************
 //:
 //  f: virtual unsigned getOffsetFor (TPZMessage* msg)
-//                                
+//
 //  d:
 //:
 //*************************************************************************
-unsigned TPZCrossbarFlowVCTorus::getOffsetFor(TPZMessage* msg) 
+unsigned TPZCrossbarFlowVCTorus::getOffsetFor(TPZMessage* msg)
 {
    unsigned offset;
-   
+
    unsigned mux = ((TPZCrossbar&)(getComponent())).getOutputMux();
    unsigned msgtypes = ((TPZCrossbar&)(getComponent())).getNumberMT();
    unsigned factor=mux/(2*msgtypes);
-   
+
    TPZROUTINGTYPE direction=msg->getRoutingPort();
    TPZPosition source=msg->source();
    TPZPosition destiny= msg->destiny();
    unsigned sourceComponent, destinyComponent;
-   
-   switch(direction)
-   {
-      case _Xplus_: 
-         sourceComponent= source.valueForCoordinate(TPZPosition::X);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::X);
-	 if (destinyComponent > sourceComponent) offset=0;
-	 else offset= factor;
-         break;
-      case _Xminus_:
-         sourceComponent= source.valueForCoordinate(TPZPosition::X);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::X);
-	 if (destinyComponent > sourceComponent) offset=factor;
-	 else offset= 0;
-         break;
-      case _Yplus_: 
-         sourceComponent= source.valueForCoordinate(TPZPosition::Y);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::Y);
-	 if (destinyComponent > sourceComponent) offset=0;
-	 else offset= factor;
-         break;
-      case _Yminus_:
-         sourceComponent= source.valueForCoordinate(TPZPosition::Y);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::Y);
-	 if (destinyComponent > sourceComponent) offset=factor;
-	 else offset= 0;
-         break;
-      case _Zplus_: 
-         sourceComponent= source.valueForCoordinate(TPZPosition::Z);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::Z);
-	 if (destinyComponent > sourceComponent) offset=0;
-	 else offset= factor;
-         break;
-      case _Zminus_:
-         sourceComponent= source.valueForCoordinate(TPZPosition::Z);
-	 destinyComponent= destiny.valueForCoordinate(TPZPosition::Z);
-	 if (destinyComponent > sourceComponent) offset=factor;
-	 else offset= 0;
-         break;
-      case _LocalNode_:
-         offset= 0;
-	 break;      
-   }
+
+  switch(direction)
+  {
+  case _Xplus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::X);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::X);
+      if (destinyComponent > sourceComponent) offset=0;
+      else offset= factor;
+      break;
+  case _Xminus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::X);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::X);
+      if (destinyComponent > sourceComponent) offset=factor;
+      else offset= 0;
+      break;
+  case _Yplus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::Y);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::Y);
+      if (destinyComponent > sourceComponent) offset=0;
+      else offset= factor;
+      break;
+  case _Yminus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::Y);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::Y);
+      if (destinyComponent > sourceComponent) offset=factor;
+      else offset= 0;
+      break;
+  case _Zplus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::Z);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::Z);
+      if (destinyComponent > sourceComponent) offset=0;
+      else offset= factor;
+      break;
+  case _Zminus_:
+      sourceComponent= source.valueForCoordinate(TPZPosition::Z);
+      destinyComponent= destiny.valueForCoordinate(TPZPosition::Z);
+      if (destinyComponent > sourceComponent) offset=factor;
+      else offset= 0;
+      break;
+  case _LocalNode_:
+      offset= 0;
+      break;
+  default:
+      TPZString err;
+      err.sprintf("%s :Unknown Direction at getOffsetTo", (char*)getComponent().asString() );
+      EXIT_PROGRAM(err);
+  }
    return offset;
-   
+
 }
 
 //*************************************************************************
 //:
 //  f: virtual void setStateForInputPort (unsigned i, TPZState state);
-//                                
+//
 //  d:
 //:
 //*************************************************************************
@@ -465,7 +469,7 @@ void TPZCrossbarFlowVCTorus ::  setOffsetForInputPort(unsigned i, unsigned offse
 //*************************************************************************
 //:
 //  f: virtual TPZState getStateForInputPort (unsigned i);
-//                                
+//
 //  d:
 //:
 //*************************************************************************

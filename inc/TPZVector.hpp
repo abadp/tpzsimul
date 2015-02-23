@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-// 	
+//
 //*************************************************************************
 //:
 //    File: TPZVector.hpp
 //
-//    Class: 
+//    Class:
 //
-//    Inherited from: 
+//    Inherited from:
 // :
 //*************************************************************************
 //end of header
@@ -66,44 +66,44 @@ public:
   const TYPE& ref(int index) const;   // Get an element of the vector
   TYPE& ref(int index);               // Get an element of the vector
   void clear();                       // remove all elements of the vector
-  int size() const { return m_size; } 
+  int size() const { return m_size; }
   void setSize(int new_size);         // Increase size, reallocates memory as needed
   void print(ostream& out) const;
 
   // Array Reference operator overloading
-  const TYPE& operator[](int index) const { return ref(index); }  
+  const TYPE& operator[](int index) const { return ref(index); }
   TYPE& operator[](int index) { return ref(index); }
 
   // Public copy constructor and assignment operator
-  TPZVector(const TPZVector& vec);  
+  TPZVector(const TPZVector& vec);
   TPZVector<TYPE>& operator=(const TPZVector& vec);
 private:
 
   void grow(int new_max_size);  // Expands vector to new_max_size
-  
+
   // Data members
   TYPE* m_vec;           // Array to hold the elements
   int m_size;            // Number of elements in use
   int m_max_size;        // Size of allocated array
 };
 
-template <class TYPE> 
+template <class TYPE>
 ostream& operator<<(ostream& out, const TPZVector<TYPE>& vec);
 
 // *********************
 
 template <class TYPE>
 TPZVector<TYPE>::TPZVector()
-{ 
-  m_size = 0; 
+{
+  m_size = 0;
   m_max_size = 0;
   m_vec = NULL;
 }
 
 template <class TYPE>
 TPZVector<TYPE>::TPZVector(int initial_size)
-{ 
-  m_size = 0; 
+{
+  m_size = 0;
   m_max_size = initial_size;
   m_vec = NULL;
   grow(initial_size);
@@ -111,24 +111,24 @@ TPZVector<TYPE>::TPZVector(int initial_size)
 
 template <class TYPE>
 TPZVector<TYPE>::~TPZVector()
-{ 
-  delete [] m_vec;  
+{
+  delete [] m_vec;
 }
 
-template <class TYPE> 
+template <class TYPE>
 const TYPE& TPZVector<TYPE>::ref(int index) const
 {
   return m_vec[index];
 }
 
-template <class TYPE> 
+template <class TYPE>
 TYPE& TPZVector<TYPE>::ref(int index)
 {
   return m_vec[index];
 }
 
 
-template <class TYPE> 
+template <class TYPE>
 void TPZVector<TYPE>::setSize(int new_size)
 {
   if (new_size > m_max_size) {
@@ -137,7 +137,7 @@ void TPZVector<TYPE>::setSize(int new_size)
   m_size = new_size;
 }
 
-template <class TYPE> 
+template <class TYPE>
 inline
 void TPZVector<TYPE>::clear()
 {
@@ -148,26 +148,26 @@ void TPZVector<TYPE>::clear()
 }
 
 // Copy constructor
-template <class TYPE> 
+template <class TYPE>
 TPZVector<TYPE>::TPZVector(const TPZVector& vec)
-{ 
+{
   // Setup the new memory
   m_size = vec.m_size;
   m_max_size = vec.m_max_size;
   if (m_max_size != 0) {
     m_vec = new TYPE[m_max_size];
-    assert(m_vec != (int)NULL);
-  } else { 
-    m_vec = (int)NULL;
+    assert(m_vec != NULL);
+  } else {
+    m_vec = NULL;
   }
-  
+
   // Copy the elements of the array
   for(int i=0; i<m_size; i++) {
     m_vec[i] = vec.m_vec[i];  // Element copy
   }
 }
 
-template <class TYPE> 
+template <class TYPE>
 TPZVector<TYPE>& TPZVector<TYPE>::operator=(const TPZVector& vec)
 {
   if (this == &vec) {
@@ -182,9 +182,9 @@ TPZVector<TYPE>& TPZVector<TYPE>::operator=(const TPZVector& vec)
 
     if (m_max_size != 0) {
       m_vec = new TYPE[m_max_size];
-      assert(m_vec != (int)NULL);
+      assert(m_vec != NULL);
     } else {
-      m_vec = (int)NULL;
+      m_vec = NULL;
     }
 
     // Copy the elements of the array
@@ -195,16 +195,16 @@ TPZVector<TYPE>& TPZVector<TYPE>::operator=(const TPZVector& vec)
   return *this;
 }
 
-template <class TYPE> 
+template <class TYPE>
 void TPZVector<TYPE>::grow(int new_max_size)
 {
   TYPE* temp_vec;
   m_max_size = new_max_size;
   if (new_max_size != 0) {
     temp_vec = new TYPE[new_max_size];
-    assert(temp_vec != (int)NULL);
+    assert(temp_vec != NULL);
   } else {
-    temp_vec = (int)NULL;
+    temp_vec = NULL;
   }
 
   // Copy the elements of the array
@@ -215,7 +215,7 @@ void TPZVector<TYPE>::grow(int new_max_size)
   m_vec = temp_vec;
 }
 
-template <class TYPE> 
+template <class TYPE>
 ostream& operator<<(ostream& out, const TPZVector<TYPE>& vec)
 {
   vec.print(out);
