@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-// 	
+//
 //*************************************************************************
 //:
 //    File: TPZBase.hpp
 //
-//    Class: 
+//    Class:
 //
-//    Inherited from: 
+//    Inherited from:
 // :
 //*************************************************************************
 //end of header
@@ -70,10 +70,10 @@
    #ifndef __TPZString_HPP__
    #include <TPZString.hpp>
    #endif
-      
+
    #include <iostream>
    #include <fstream>
-   
+
 //************************************************************************
 
    typedef unsigned long uTIME;
@@ -95,25 +95,25 @@
                } TPZROUTINGTYPE;
 
    enum { CHANNEL_X=1, CHANNEL_Y, CHANNEL_Z, CHANNEL_N };
-   
+
 //************************************************************************
 
    #ifdef true
       #undef true
    #endif
-   
+
    #ifdef false
       #undef false
    #endif
 
    #define true  1
    #define false 0
-   
+
 //************************************************************************
 
    TPZROUTINGTYPE _string2routingType(const TPZString& string);
    TPZString      _routingType2string(TPZROUTINGTYPE type);
-   
+
 //************************************************************************
 
    class TPZBase
@@ -199,8 +199,8 @@
                                  }
    #define EXIT(text) { cerr << text << endl; \
                         exit(-1); }
-#ifndef assert			
-   #define assert(code) { if(!code) { \
+#ifndef assert
+   #define assert(code) { if(!(code)) { \
                           cerr << TPZBase::errorLocation() << endl; \
                           cerr << " Text=     Assertion Failed" << endl; \
                           exit(-1);} }

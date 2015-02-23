@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZInjectorFlow.cpp
@@ -54,7 +54,7 @@
 //end of header
 
 
- 
+
 #include <TPZInjectorFlow.hpp>
 
 #ifndef __TPZFicheroLog_HPP__
@@ -92,7 +92,7 @@ IMPLEMENT_RTTI_DERIVED(TPZInjectorFlow,TPZFlow);
 //*************************************************************************
 
 TPZInjectorFlow :: TPZInjectorFlow( TPZComponent& component)
-                 : TPZFlow(component), 
+                 : TPZFlow(component),
 		   m_DataToSend(false),
                    m_PacketInjectionTime(0),
                    m_MissRouting(0),
@@ -139,7 +139,7 @@ TPZInjectorFlow :: ~TPZInjectorFlow()
 
 Boolean TPZInjectorFlow :: inputReading()
 {
-   return true;      
+   return true;
 }
 
 
@@ -152,7 +152,7 @@ Boolean TPZInjectorFlow :: inputReading()
 //*************************************************************************
 
 Boolean TPZInjectorFlow :: stateChange()
-{      
+{
    return true;
 }
 
@@ -167,19 +167,19 @@ Boolean TPZInjectorFlow :: stateChange()
 
 Boolean TPZInjectorFlow :: outputWriting()
 {
-   
+
    outputInterfaz() -> clearData();
-   
+
    if( isAnyMessageToSend() && (!outputInterfaz()->isStopActive()) )
    {
-      TPZMessage *msg;
-      if(msg = getNextFlitToSend())
+      TPZMessage *msg=getNextFlitToSend();
+      if(msg != NULL )
       {
-#ifdef PTOPAZ      
+#ifdef PTOPAZ
          TPZNetwork* net = ((TPZSimulation*)(getComponent().getSimulation()))->getNetwork();
          unsigned n = net->getThreadID(pthread_self());
          msg -> setPoolIndex(n);
-#endif	 
+#endif
          outputInterfaz() -> sendData(msg);
          m_flitsSent++;
      if( msg->isHeader() || msg->isHeadTail() )
@@ -196,7 +196,7 @@ Boolean TPZInjectorFlow :: outputWriting()
          texto += TPZString(delayTime) + " # " + msg->asString();
          if( msg->isHeader() || msg->isHeadTail() )
          {
-            texto += TPZString("  CABECERA: ") + 
+            texto += TPZString("  CABECERA: ") +
                      msg->source().asString() +
                      " => " + msg->destiny().asString();
             TPZNetwork* net = ((TPZSimulation*)(getComponent().getSimulation()))->getNetwork();
@@ -205,9 +205,9 @@ Boolean TPZInjectorFlow :: outputWriting()
          }
          TPZWRITE2LOG( texto );
       #endif
-      
+
    }
-   
+
    return true;
 }
 
@@ -237,22 +237,22 @@ void TPZInjectorFlow :: sendMessage(TPZMessage* msg)
 //  it is required.
 //
 #ifdef PTOPAZ
-     if (msg->getExternalInfo()!=0) pthread_mutex_lock(&m_QueueKey); 
+     if (msg->getExternalInfo()!=0) pthread_mutex_lock(&m_QueueKey);
 #endif
 
-     m_MessageQueue.enqueue(msg); 
+     m_MessageQueue.enqueue(msg);
 #ifndef NO_TRAZA
         uTIME delayTime = getOwnerRouter().getCurrentTime() ;
         TPZString texto = getComponent().asString() + " ENQUEUE. TIME = ";
             texto += TPZString(delayTime) + " # " + msg->asString();
             TPZWRITE2LOG( texto );
-#endif	
+#endif
 #ifdef PTOPAZ
-     if (msg->getExternalInfo()!=0) pthread_mutex_unlock(&m_QueueKey); 
+     if (msg->getExternalInfo()!=0) pthread_mutex_unlock(&m_QueueKey);
 #endif
 
    }
-   else 
+   else
    {
      delete msg;
    }
@@ -282,7 +282,7 @@ Boolean TPZInjectorFlow :: isAnyMessageToSend() const
 
 unsigned TPZInjectorFlow :: getMessagesToSend() const
 {
-   return m_MessageQueue.numberOfElements(); 
+   return m_MessageQueue.numberOfElements();
 }
 
 //*************************************************************************
@@ -295,7 +295,7 @@ unsigned TPZInjectorFlow :: getMessagesToSend() const
 
 unsigned TPZInjectorFlow :: getSentFlits() const
 {
-   return m_flitsSent; 
+   return m_flitsSent;
 }
 
 //*************************************************************************
@@ -306,7 +306,7 @@ unsigned TPZInjectorFlow :: getSentFlits() const
 //:
 //*************************************************************************
 
-unsigned TPZInjectorFlow :: getAvaliableMessages() 
+unsigned TPZInjectorFlow :: getAvaliableMessages()
 {
 #ifdef PTOPAZ
    TPZNetwork* net = ((TPZSimulation*)(getComponent().getSimulation()))->getNetwork();
@@ -344,7 +344,7 @@ Boolean TPZInjectorFlow :: controlAlgoritm(Boolean info, int delta)
 void TPZInjectorFlow :: getQueueKey()
 {
 #ifdef PTOPAZ
-   pthread_mutex_lock(&m_QueueKey); 
+   pthread_mutex_lock(&m_QueueKey);
 #endif
 }
 
@@ -359,7 +359,7 @@ void TPZInjectorFlow :: getQueueKey()
 void TPZInjectorFlow :: releaseQueueKey()
 {
 #ifdef PTOPAZ
-   pthread_mutex_unlock(&m_QueueKey); 
+   pthread_mutex_unlock(&m_QueueKey);
 #endif
 }
 
@@ -385,7 +385,7 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
 #endif
    if( getMessageQueue().elementAt(0,topMessage) )
    {
-   
+
       //If the message does not anticipate that there will be room for the whole flits
 #ifdef PTOPAZ
 #ifndef NO_POOL
@@ -393,7 +393,7 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
       {
          releaseQueueKey();
          return 0;
-      } 
+      }
 #endif
       if((returnMsg = getMessagePool(pool_index).allocate())==0)
       {
@@ -407,7 +407,7 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
       {
          return 0;
       }
-#endif 
+#endif
       if((returnMsg = getMessagePool().allocate())==0)
       {
          TPZString err;
@@ -415,11 +415,11 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
          EXIT_PROGRAM(err);
       }
 #endif
-  
+
       //Reset distance when
       //message back to be reused
       *returnMsg = *topMessage;
-             
+
       if( topMessage->flitNumber() < topMessage->packetSize() )
       {
          // The way to keep track of the flits is:
@@ -432,7 +432,7 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
       {
          // It has sent the last flit of the packet, which must be
          // check whether the package is the last message
-         
+
          if( topMessage->packetNumber() < topMessage->messageSize() )
          {
             // Resets the count of flits to 1.
@@ -447,32 +447,32 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
          }
       }
    }
-#ifdef PTOPAZ   
+#ifdef PTOPAZ
    releaseQueueKey();
-#endif 
+#endif
 
-   if( returnMsg->flitNumber() == 1 )  
-   {   
+   if( returnMsg->flitNumber() == 1 )
+   {
       int xdelta,ydelta,zdelta;
       net->routingRecord(returnMsg->source(),returnMsg->destiny(),xdelta, ydelta,zdelta,returnMsg->isOrdered());
       returnMsg->setDelta(xdelta,0);
       returnMsg->setDelta(ydelta,1);
       returnMsg->setDelta(zdelta,2);
-      
-      /// In the first flit leaving the injector 
+
+      /// In the first flit leaving the injector
       // this info must be updated to be copied
       // to the rest of packet flits
-      
+
       setPacketInjectionTime( MAXIMO(getOwnerRouter().getCurrentTime(),
                                      returnMsg->generationTime()) );
-      
+
       if ( returnMsg->packetSize()==1)
       {
          returnMsg->setType(TPZMessage::HEADTAIL);
       }
       else
       {
-         returnMsg->setType(TPZMessage::HEADER); 
+         returnMsg->setType(TPZMessage::HEADER);
       }
    }
    else if( returnMsg->flitNumber() == returnMsg->packetSize() )
@@ -483,9 +483,9 @@ TPZMessage* TPZInjectorFlow :: getNextFlitToSend()
    {
       returnMsg->setType(TPZMessage::INFO);
    }
-#ifdef PTOPAZ   
+#ifdef PTOPAZ
    returnMsg->setPoolIndex(pool_index);
-#endif   
+#endif
    returnMsg->setPacketInjectionTime(getPacketInjectionTime());
    return returnMsg;
 }

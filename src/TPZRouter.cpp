@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZRouter.cpp
@@ -175,7 +175,7 @@ TPZRouter::TPZRouter(const TPZComponentId& id) :
             m_ContadorXplus(0), m_ContadorXminus(0), m_ContadorYplus(0),
             m_ContadorYminus(0), m_ContadorLocal(0), m_ContadorTotal(0),
             m_ProtocolMessages(0), m_maskXplus(0), m_maskXminus(0),
-            m_maskYplus(0), m_maskYminus(0), 
+            m_maskYplus(0), m_maskYminus(0),
 	    m_maskZplus(0), m_maskZminus(0), m_maskLocalNode(0),
 	    m_escapePathFree(true),
             m_XplusFreeInOrder(true), m_XminusFreeInOrder(true),
@@ -183,8 +183,8 @@ TPZRouter::TPZRouter(const TPZComponentId& id) :
 	    m_LocalNodeFreeInOrder(true),m_ContadorLinkX(0), m_ContadorLinkY(0),
             m_StateLinkXplus(false), m_StateLinkXminus(false), m_StateLinkYplus(false),
             m_StateLinkYminus(false), m_StateLinkLocalNorm(false), m_StateLinkLocalRev(false),
-            m_LinkUtilization(0), m_LinkChangesDirection(0){	    
-#ifdef PTOPAZ 	    
+            m_LinkUtilization(0), m_LinkChangesDirection(0){
+#ifdef PTOPAZ
     pthread_mutex_init(&m_routerKey, NULL);
 #endif
 }
@@ -222,7 +222,7 @@ void TPZRouter::terminate() {
     forCursor(cursor) {
         cursor.element()->terminate();
     }
-#ifdef PTOPAZ 	    
+#ifdef PTOPAZ
    pthread_mutex_unlock(&m_routerKey);
    pthread_mutex_destroy(&m_routerKey);
 #endif
@@ -279,7 +279,7 @@ void TPZRouter::run(uTIME runTime) {
     TPZComponentSet::Cursor componentCursor(m_ComponentSet);
     TPZConnectionSet::Cursor connectionCursor(m_ConnectionSet);
     m_CurrentTime = runTime;
-    
+
     forCursor(componentCursor) {
         componentCursor.element()->run(runTime);
     }
@@ -292,26 +292,26 @@ void TPZRouter::run(uTIME runTime) {
 
 void TPZRouter::preRun(uTIME runTime) {
     TPZComponentSet::Cursor preRunCursor(m_PreRunComponentSet);
-    
+
     m_CurrentTime = runTime;
-    
+
     forCursor(preRunCursor) {
         preRunCursor.element()->preRun(runTime);
     }
 
-    
+
 }
 
 void TPZRouter::postRun(uTIME runTime) {
     TPZComponentSet::Cursor postRunCursor(m_PostRunComponentSet);
-    
+
     m_CurrentTime = runTime;
-    
+
     forCursor(postRunCursor) {
         postRunCursor.element()->postRun(runTime);
     }
 
-    
+
 }
 
 //*************************************************************************
@@ -334,7 +334,7 @@ void TPZRouter::initialize() {
         }
     }
     setInitializated(true);
-    
+
 }
 
 //*************************************************************************
@@ -352,7 +352,7 @@ void TPZRouter::postInitialize() {
     unsigned protocolNumber = ((TPZSimulation*)getSimulation())->getProtocolMessTypes();
     m_ProtocolMessages = new PAFProtocolMessages(protocolNumber);
     m_ProtocolMessages->initialize(0);
-    
+
     TPZComponentSet::Cursor cursor(m_ComponentSet);
     forCursor(cursor) {
         cursor.element()->postInitialize();
@@ -373,7 +373,7 @@ void TPZRouter::sendMessage(TPZMessage* msg) {
     //If it returns 0 it is a router without injectors
     //Designed for indirect and irregular networks.
     //Obviously direct networks have at least one host
-    //connected 
+    //connected
 
     if (injector) {
         injector->sendMessage(msg);
@@ -391,9 +391,9 @@ void TPZRouter::sendMessage(TPZMessage* msg) {
 void TPZRouter::onHeaderPacketReceived(const TPZMessage* msg) {
 
     TPZNetwork* net = (TPZNetwork*)getOwner();
-    
+
     net->onHeaderPacketReceived(msg);
-    
+
 }
 
 //*************************************************************************
@@ -405,7 +405,7 @@ void TPZRouter::onHeaderPacketReceived(const TPZMessage* msg) {
 //*************************************************************************
 
 void TPZRouter::onPacketReceived(TPZMessage* msg) {
-    
+
     setExternalInfo(msg->getExternalInfo());
     TPZNetwork* net = (TPZNetwork*)getOwner();
     net->onPacketReceived(msg);
@@ -494,14 +494,14 @@ void* TPZRouter::getExternalInfo() {
    {
       rc=0;
    }
-   
+
    if(rc!=0)
    {
 #ifndef NO_TRAZA
    TPZString texto = TPZString((long long unsigned)(rc));
    texto += TPZString(" Que me lo cogen");
    TPZWRITE2LOG( texto );
-#endif   
+#endif
      m_ExternalInfo.dequeue(rc);
    }
 #ifdef PTOPAZ
@@ -527,7 +527,7 @@ void TPZRouter::setExternalInfo(void* ptr) {
    pthread_mutex_unlock(&m_routerKey);
 #endif
 }
-	
+
 //*************************************************************************
 //:
 //  f: virtual void buildInputInterfaz (unsigned number = 1);
@@ -564,7 +564,7 @@ void TPZRouter::writeComponentStatus(ostream& os) {
     TPZComponent* component = componentWithName("CROSSBAR");
     if (component)
         os << component->getStatus() << endl;
-    
+
 }
 
 //*************************************************************************
@@ -628,7 +628,7 @@ TPZInjector* TPZRouter::chooseInjector(unsigned vNetwork, TPZPosition& src,
         } else if (m_InjectionType == INJECT_VC) {
             unsigned index = rand() % injectorNumber;
             m_InjectorList.elementAt(index, rc);
-        } 
+        }
     }
 
     return (TPZInjector*)rc;
@@ -983,7 +983,7 @@ unsigned TPZRouter::getOutputWithType(TPZROUTINGTYPE type) {
 TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
         INDEX& index) {
     TPZComponentId idRouter(TPZComponentId::Router, _LocalNode_, tag->tagId());
-    TPZString bufferSize, bufferControl, injectorControl, routingControl, inputs, outputs, 
+    TPZString bufferSize, bufferControl, injectorControl, routingControl, inputs, outputs,
             numberOfVirtualNetworks;
 
     tag->getAttributeValueWithName(TPZ_TAG_BUFFER_SIZE, bufferSize);
@@ -1008,14 +1008,14 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
     TPZGlobalData& gData = ((TPZSimulation*)(owner->getSimulation()))->globalData((TPZNetwork*)owner);
 
     if ( !gData.routerIsInitializated() ) {
-            
+
         gData.routerSetBufferSize(bufferSize.asInteger());
         gData.routerSetBufferControl(bufferControl);
-                
+
         gData.routerSetRoutingControl(routingControl);
         gData.routerSetInputsType(new TPZTypeArray(inputs.asInteger()));
         gData.routerSetOutputsType(new TPZTypeArray(outputs.asInteger()));
-        
+
     }
 
     if (injectorControl == TPZ_TAG_INJ_RANDOM) {
@@ -1036,11 +1036,11 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
     TPZTag* nextTag = TPZComponent::routerBuilder->getTagWithIndex(++index);
 
     TPZInterfaz** arrayInterfaz = new TPZInterfaz*[TPZ_MAX_NUMBER_OF_CV];
-    
+
     while (nextTag && nextTag->tagName()!=endTag) {
         if (nextTag->tagName() == TPZ_TAG_INPUT) {
             // This is an entry to the router (a wrapper)
-                        
+
             unsigned inputNumber = nextTag->tagId().asInteger();
             TPZString type, wrapper;
             nextTag->getAttributeValueWithName(TPZ_TAG_WRAPPER, wrapper);
@@ -1064,7 +1064,7 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
                     err.sprintf(ERR_TPZROUTE_003, i);
                     EXIT_PROGRAM(err);
                 }
-                
+
                 arrayInterfaz[i-1] = comp->getInputInterfaz(wNumb);
                 i++;
             }
@@ -1080,7 +1080,7 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
                 gData.routerInputsType()->setValueAt(inputNumber, _string2routingType(type));
         } else if (nextTag->tagName() == TPZ_TAG_OUTPUT) {
             // This is a solution to the router (a wrapper)
-            
+
 
             unsigned outputNumber = nextTag->tagId().asInteger();
             TPZString type, wrapper;
@@ -1089,7 +1089,7 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
             wrapper.replace( ',', ' ');
             TPZString tempWrapper;
             int i=1;
-            
+
             while ( (tempWrapper=wrapper.word(i)) != TPZString("") ) {
                 TPZString wIzda = TPZString::getStringLeftTo(tempWrapper, '.');
                 TPZString wDcha = TPZString::getStringRightTo(tempWrapper, '.');
@@ -1122,7 +1122,7 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
                 gData.routerOutputsType()->setValueAt(outputNumber, _string2routingType(type));
         } else {
             // It is a component
-            
+
 
             TPZComponent* newComponent = TPZComponent::routerBuilder->
             parseComponentDefinition(nextTag, router, index);
@@ -1132,7 +1132,7 @@ TPZRouter* TPZRouter::newFrom(const TPZTag* tag, TPZComponent* owner,
                 newComponent->initialize();
                 router->addComponent(newComponent);
             }
-            
+
         }
 
         nextTag = TPZComponent::routerBuilder->getTagWithIndex(++index);
@@ -1230,7 +1230,7 @@ unsigned TPZRouter::getContador(TPZROUTINGTYPE direction) {
     case _LocalNode_:
         return m_ContadorLocal;
     default:
-        break;
+        EXIT_PROGRAM("Exit at getCounter");;
     }
 }
 
@@ -1260,7 +1260,7 @@ TPZRouter* TPZRouter::getNeighbour(TPZROUTINGTYPE direction) {
         EXIT_PROGRAM("error");
 
     default:
-        break;
+        EXIT_PROGRAM("error");;
     }
 }
 //*************************************************************************
@@ -1332,6 +1332,9 @@ TPZPosition TPZRouter::positionOf(TPZROUTINGTYPE dir, const TPZPosition& pos,
         rp = rp - TPZPosition(0, 1, 0);
         break;
 
+    default:
+        EXIT_PROGRAM("error");
+
     }
 
     if (rp.valueForCoordinate(TPZPosition::X) < 0)
@@ -1373,9 +1376,8 @@ unsigned long long TPZRouter::getMask(TPZROUTINGTYPE direction) {
         return m_maskZminus;
     case _LocalNode_:
         return m_maskLocalNode;
-
     default:
-        break;
+        EXIT_PROGRAM("error");;
     }
 }
 
@@ -1418,20 +1420,20 @@ Boolean TPZRouter :: getFreeInOrder(TPZROUTINGTYPE direction)
 {
    switch( direction )
    {
-      case _Xplus_  : 
-         return m_XplusFreeInOrder;
-      case _Xminus_ : 
-         return m_XminusFreeInOrder;
-      case _Yplus_  : 
-           return m_YplusFreeInOrder;
-      case _Yminus_ : 
-           return m_YminusFreeInOrder;
+      case _Xplus_  :
+        return m_XplusFreeInOrder;
+      case _Xminus_ :
+        return m_XminusFreeInOrder;
+      case _Yplus_  :
+        return m_YplusFreeInOrder;
+      case _Yminus_ :
+        return m_YminusFreeInOrder;
       case _LocalNode_ :
-           return m_LocalNodeFreeInOrder;
+        return m_LocalNodeFreeInOrder;
       default :
-           break;
+        EXIT_PROGRAM("error");;
     }
-}  
+}
  //*************************************************************************
 //:
 //  f: Boolean getFreeInOrder(przROUTINGTYPE direction);
@@ -1444,25 +1446,25 @@ void TPZRouter :: setInOrderOccupied(TPZROUTINGTYPE direction)
 {
    switch( direction )
    {
-      case _Xplus_  : 
+      case _Xplus_  :
          m_XplusFreeInOrder= false;
 	 break;
-      case _Xminus_ : 
+      case _Xminus_ :
          m_XminusFreeInOrder=false;
 	 break;
-      case _Yplus_  : 
+      case _Yplus_  :
            m_YplusFreeInOrder=false;
 	   break;
-      case _Yminus_ : 
+      case _Yminus_ :
            m_YminusFreeInOrder=false;
 	   break;
       case _LocalNode_ :
            m_LocalNodeFreeInOrder=false;
-	       	            
+
       default :
            break;
     }
-}  
+}
  //*************************************************************************
 //:
 //  f: Boolean getFreeInOrder(przROUTINGTYPE direction);
@@ -1475,25 +1477,25 @@ void TPZRouter :: setInOrderFree(TPZROUTINGTYPE direction)
 {
    switch( direction )
    {
-      case _Xplus_  : 
+      case _Xplus_  :
          m_XplusFreeInOrder= true;
 	 break;
-      case _Xminus_ : 
+      case _Xminus_ :
          m_XminusFreeInOrder=true;
 	 break;
-      case _Yplus_  : 
+      case _Yplus_  :
            m_YplusFreeInOrder=true;
 	   break;
-      case _Yminus_ : 
+      case _Yminus_ :
            m_YminusFreeInOrder=true;
 	   break;
       case _LocalNode_ :
                m_LocalNodeFreeInOrder=true;
-	       	            
+
       default :
            break;
     }
-}  
+}
 
 //*************************************************************************
 //:
@@ -1504,13 +1506,13 @@ void TPZRouter :: setInOrderFree(TPZROUTINGTYPE direction)
 //*************************************************************************
 void TPZRouter::setStateLink(TPZROUTINGTYPE direction, Boolean state)
 {
-   switch (direction) 
+   switch (direction)
    {
       case _Xplus_:
       m_StateLinkXplus=state;
       break;
       case _Xminus_:
-      m_StateLinkXminus=state;    
+      m_StateLinkXminus=state;
       break;
       case _Yplus_:
       m_StateLinkYplus=state;
@@ -1518,6 +1520,8 @@ void TPZRouter::setStateLink(TPZROUTINGTYPE direction, Boolean state)
       case _Yminus_:
       m_StateLinkYminus=state;
       break;
+      default:
+      EXIT_PROGRAM("error");
    }
 }
 
@@ -1535,13 +1539,13 @@ void TPZRouter::setConsStateLink(Boolean reverse, Boolean state)
 //*************************************************************************
 Boolean TPZRouter::getStateLink(TPZROUTINGTYPE direction)
 {
-   switch (direction) 
+   switch (direction)
    {
       case _Xplus_:
       return m_StateLinkXplus;
       break;
       case _Xminus_:
-      return m_StateLinkXminus;    
+      return m_StateLinkXminus;
       break;
       case _Yplus_:
       return m_StateLinkYplus;
@@ -1552,6 +1556,8 @@ Boolean TPZRouter::getStateLink(TPZROUTINGTYPE direction)
       case _LocalNode_:
       return false;
       break;
+      default:
+      EXIT_PROGRAM("error");
    }
 }
 

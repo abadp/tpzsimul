@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZSimulation.cpp
 //
-//    Class: 
+//    Class:
 //
-//    Inherited from: 
+//    Inherited from:
 // :
 //*************************************************************************
 //end of header
@@ -60,15 +60,15 @@
 #include "TPZSimulation.hpp"
 
 #ifndef __TPZCONST_H__
-#include "TPZConst.hpp"        
+#include "TPZConst.hpp"
 #endif
 
 #ifndef __TPZSBLDR_HPP__
-#include "TPZSimulationBuilder.hpp"      
+#include "TPZSimulationBuilder.hpp"
 #endif
 
 #ifndef __TPZTRAFI_HPP__
-#include "TPZTrafficPattern.hpp"      
+#include "TPZTrafficPattern.hpp"
 #endif
 
 #include <stdio.h>
@@ -76,7 +76,7 @@
 //*************************************************************************
 
    #define SPACES " "
-    
+
 //*************************************************************************
 
 // Run time information
@@ -197,7 +197,7 @@ TPZSimulation :: TPZSimulation(const TPZComponentId& id)
 TPZSimulation :: ~TPZSimulation()
 {
    getNetwork()->terminate();
-   
+
    if(m_BufferOutput)
    {
       m_BufferOutput -> close();
@@ -212,7 +212,7 @@ TPZSimulation :: ~TPZSimulation()
 #else
    if(m_MessagePool) delete m_MessagePool;
 #endif
-      
+
    delete m_TrafficPattern;
    delete m_Network;
 }
@@ -233,7 +233,7 @@ void TPZSimulation :: initialize()
    m_Radius = m_Network->getSizeX();
 
    if(m_Network) m_Network->initialize();
-   Inhereited::initialize();   
+   Inhereited::initialize();
 }
 
 //*************************************************************************
@@ -267,14 +267,14 @@ void TPZSimulation :: setLoadSupply(double value)
    // Correction in some values when the traffic is
    // bimodal
    double realPacketLegth=m_PacketLength;
-   
+
    if(getTrafficPattern()->isBimodal() && getTrafficPattern()->getMessagesBimodal()<1)
    {
       realPacketLegth=m_PacketLength*(1+getTrafficPattern()->getProbBimodal()*(getTrafficPattern()->getMessagesBimodal()-1));
    }
    m_q = 8.0*value/m_Radius/m_MessageLength/realPacketLegth;
 
-   
+
 }
 
 //*************************************************************************
@@ -288,7 +288,7 @@ void TPZSimulation :: setLoadSupply(double value)
 void TPZSimulation :: setLoadProb(double value)
 {
    unsigned realPacketLegth=m_PacketLength;
-   
+
    if(getTrafficPattern()->isBimodal() && getTrafficPattern()->getMessagesBimodal()<1)
    {
       realPacketLegth=(unsigned int)(m_PacketLength*(1+getTrafficPattern()->getProbBimodal()*(1-getTrafficPattern()->getMessagesBimodal())));
@@ -314,7 +314,7 @@ TPZMessagePool& TPZSimulation :: getMessagePool() const
    return *pool;
 #else
    return *m_MessagePool;
-#endif   
+#endif
 }
 
 #ifdef PTOPAZ
@@ -330,7 +330,7 @@ TPZMessagePool& TPZSimulation :: getMessagePool(unsigned n) const
   TPZMessagePool* pool = m_MessagePool[n];
   return *pool;
 }
-#endif 
+#endif
 
 //*************************************************************************
 //:
@@ -345,11 +345,11 @@ void TPZSimulation :: initializePool(unsigned size)
     //allocation of new messages because pool size is
     //too small, it can be re-dimensioned here, multipying
     //current size by an unsigned value >1
-    
+
     //The probability of finding such a situation is higher
     //for multithreaded simulations, because pool is
     //distributed among threads.
-    
+
     assert(size>0);
 #ifdef PTOPAZ
     assert(m_numberThreads>0);
@@ -364,7 +364,7 @@ void TPZSimulation :: initializePool(unsigned size)
     }
 #else
    m_poolSize=size;
-   m_MessagePool = new TPZMessagePool(m_poolSize);   
+   m_MessagePool = new TPZMessagePool(m_poolSize);
 #endif
 
 
@@ -380,19 +380,19 @@ void TPZSimulation :: initializePool(unsigned size)
 
 void TPZSimulation :: run(uTIME time)
 {
-   
+
    /*if((getNetwork()->getMessagesInNet() == 0))
    {
-      if( getTrafficPattern()->isEmpty())  
+      if( getTrafficPattern()->isEmpty())
       {
          m_Clock+=time;
          return;
-      }  
+      }
    }*/
 
    if( time != 0)
    {
-      
+
       //With this line we could emulate frecuency relations between
       // processor and network non divisible (float)
       //if (drand48 ()> 1.0/m_RouterProcesorRatio) return;
@@ -407,14 +407,14 @@ void TPZSimulation :: run(uTIME time)
       for( uTIME tempClk=0; tempClk<time; tempClk++ )
       {
 #ifndef PTOPAZ
-         //In multihread simulation each slave thread generates the packets originated 
+         //In multihread simulation each slave thread generates the packets originated
          //in his portion of the simulated network. See TPZThread::run
 
          if( m_Clock <= m_StopSimulation )
          {
             getTrafficPattern()->generateMessages(m_q);
          }
-#endif   
+#endif
          if(m_Clock==m_resetStats)
          {
             //Cleaning cycles of warmup start
@@ -437,7 +437,7 @@ void TPZSimulation :: run(uTIME time)
       cout<<"         large network or multithreaded simulations. You should consider to "<<endl;
       cout<<"         change NO_POOL preprocessor variable in Makefile "<<endl;
       cout<< "--> mbytes_resident: " << process_memory_resident() << endl;
-      cout<< "--> mbytes_total: " << process_memory_total() << endl;  
+      cout<< "--> mbytes_total: " << process_memory_total() << endl;
 #endif
       if( isDiscardTraffic() == false)
       {
@@ -446,32 +446,32 @@ void TPZSimulation :: run(uTIME time)
           cout<<"          long and network is saturated "<<endl;
           cout<<"          (use -D option to avoid this)"<< endl;
           cout<<" "<<endl;
-      }   
+      }
 #ifdef PTOPAZ
       cout<<endl<<" Multithreaded TOPAZ with " << m_numberThreads <<" threads "<<endl<<endl;
 #endif
-      cout << "Simulating.." << endl; 
-   }  
+      cout << "Simulating.." << endl;
+   }
 
    if( getTrafficPattern() -> isFromFile() )
    {
-      
+
       for ( m_Clock=1; m_Clock<=m_SimulationCycles; m_Clock++ )
-      {  
+      {
          getTrafficPattern()->injectMessage();
 	 getNetwork()->run(m_Clock);
          writeCurrentData();
 
          m_Clock++;// Delay modeling processor speed is in the
                    //TPZTraffficPatternTrace, when initializing the trace
-         
+
       }
    }
-   else 
-   {   
+   else
+   {
        for( m_Clock=1; m_Clock<=m_SimulationCycles; m_Clock++ )
        {
-       
+
           //BurstMode Emulation.
           if( (m_Clock > m_StopSimulation || m_StopSimulMessages==0) && m_isRafagaMode)
           {
@@ -489,30 +489,30 @@ void TPZSimulation :: run(uTIME time)
                    if(m_Clock>=100)
                    {
                       m_SimulationCycles=m_Clock;
-                   } 
+                   }
                 }
          }//END BURST
-                  
+
          if( m_Clock <= m_StopSimulation )
          {
 #ifndef PTOPAZ
-            //To avoid injector synch, if multithreade, each thread runs his own. See TPZThread. This change does not affect 
-            //GEMS simulation becasue internal traffic is always set to EMPTY in such case. This small change increases 
+            //To avoid injector synch, if multithreade, each thread runs his own. See TPZThread. This change does not affect
+            //GEMS simulation becasue internal traffic is always set to EMPTY in such case. This small change increases
             //significantly simulator speedup.
-            getTrafficPattern()->generateMessages(m_q); 
+            getTrafficPattern()->generateMessages(m_q);
 #endif
-         } 
+         }
          if(m_Clock==m_resetStats)
          {
             //Cleaning cycles of cold start
             getNetwork()->initializeStats(m_resetStats);
          }
-         getNetwork()->run(m_Clock);   
+         getNetwork()->run(m_Clock);
          writeCurrentData();
-         
+
       } // for
    }
-   
+
    m_Clock--;
 }
 
@@ -529,7 +529,7 @@ void TPZSimulation :: writeCurrentData()
    unsigned long step;
    step= long(m_SimulationCycles/12);
 
-   
+
    if( (m_Clock%100) == 0 )
    {
       if( showBufferState() && m_Clock%showResolutionBS()==0) writeBufferStatus();
@@ -538,8 +538,8 @@ void TPZSimulation :: writeCurrentData()
          double clock = m_Clock;
          double latenciaMedia = 0.0;
          double msgTx = m_Network->getMessagesTx();
-         double msgRx = m_Network->getMessagesRx();         
-            
+         double msgRx = m_Network->getMessagesRx();
+
          if( msgRx )
          {
            latenciaMedia=double(  m_Network->getFlitsRx()/m_Clock);
@@ -547,9 +547,9 @@ void TPZSimulation :: writeCurrentData()
          TPZNotificationEvent event(EV_LATENCY,clock,latenciaMedia,msgTx,msgRx);
          notifyObservers(event);
       }
-      
+
    }
-      
+
    if( m_ShowState && ((m_Clock%step) == 0) )
    {
          cerr << "*";
@@ -570,7 +570,7 @@ void TPZSimulation :: writeCurrentData()
 void TPZSimulation :: writeResults()
 {
    TPZString buffer=TPZString(writeSimulationStatus());
-   
+
    if( ! isEnableNotification() )
    {
       cout << buffer;
@@ -592,7 +592,7 @@ void TPZSimulation :: writeResults()
 //*************************************************************************
 
 void TPZSimulation :: writeSimulationStatus(ostream& os)
-{                 
+{
    os << writeSimulationStatus();
    os.flush();
 }
@@ -606,12 +606,12 @@ void TPZSimulation :: writeSimulationStatus(ostream& os)
 //*************************************************************************
 
 TPZString TPZSimulation :: writeSimulationStatus()
-{     
+{
    if(m_Clock<=m_resetStats)
    {
       m_resetStats=0;
    }
-   
+
    double cargaAplicada = m_Network->getFlitsTx()*100.0/8.0/m_Radius/(m_Clock-m_resetStats);
    double cargaReal = m_Network->getFlitsRx()*100.0/8.0/m_Radius/(m_Clock-m_resetStats);
 
@@ -619,16 +619,16 @@ TPZString TPZSimulation :: writeSimulationStatus()
    if( getNetwork()->getSizeZ() > 1 )
    {
       cargaAplicada /= m_Radius;
-      cargaReal /= m_Radius;   
+      cargaReal /= m_Radius;
    }
-   
+
    unsigned index= getProtocolMessTypes();
    unsigned nodes=getNetwork()->getSizeX();
    if(getNetwork()->getSizeY()!=0)
       nodes=nodes*getNetwork()->getSizeY();
    if(getNetwork()->getSizeZ()!=0)
       nodes=nodes*getNetwork()->getSizeZ();
-                            
+
    double latMediaMsgTotal = m_Network->getTotalDelay(TPZNetwork::Message) / double(m_Network->getMessagesRx());
 
    double latMediaMsgNetwork = m_Network->getNetworkDelay(TPZNetwork::Message) / double(m_Network->getMessagesRx());
@@ -642,24 +642,24 @@ TPZString TPZSimulation :: writeSimulationStatus()
    double latMediaPaqBuffer = m_Network->getBufferDelay(TPZNetwork::Packet) / double(m_Network->getPacketsRx());
 
    double distanciaMedia = double(m_Network->getTotalDistance()) / double(m_Network->getMessagesRx());
-   
+
    double cargaAplicadaFC  = (double)m_Network->getFlitsTx()/(double)(m_Clock-m_resetStats);
-   
+
    double throughputNormalizado = throughput/nodes;
-      
+
    double cargaAplicadaNormalizada= cargaAplicadaFC/nodes;
-   
+
    double minimoInjectadoNormalizado =(double)m_Network->lowerFlitsSent()/double((m_Clock-m_resetStats));
-   
+
    double maximoInjectadoNormalizado = (double)m_Network->upperFlitsSent()/double((m_Clock-m_resetStats));
-         
+
    double minimoInjectado = minimoInjectadoNormalizado*nodes;
-   
+
    double maximoInjectado =  maximoInjectadoNormalizado*nodes;
-   
+
    time_t localHour2 = time(0);
    TPZString buffer;
-   
+
    //****************************************************************************************************************************
    // VERBOSITY=0
    //****************************************************************************************************************************
@@ -669,12 +669,12 @@ TPZString TPZSimulation :: writeSimulationStatus()
              TPZString(" Ended at       : " ) + ctime(&localHour2);
    buffer += TPZString("***********************************************************");
 
-   buffer += TPZString("\n Simulation time         = ") + 
+   buffer += TPZString("\n Simulation time         = ") +
              convertSeconds(difftime(localHour2,m_StartHour))+ TPZString(" (")+TPZString(difftime(localHour2,m_StartHour)) + TPZString(" secs)")+
              TPZString("\n");
    buffer += TPZString(" Memory Footprint        = ") + TPZString(process_memory_total()) + TPZString(" MBytes)")+TPZString("\n");
    buffer += TPZString(" Traffic Pattern         = ") + m_TrafficPattern->asString() +
-             TPZString("\n Seed                    = ") + TPZString(m_Seed) +                           
+             TPZString("\n Seed                    = ") + TPZString(m_Seed) +
              TPZString("\n Cycles simulated        = ") + TPZString(m_Clock) +
              TPZString("\n Cycles deprecated       = ") + TPZString(m_resetStats) +
              TPZString("\n Buffers size            = ") + TPZString(globalData().routerBufferSize()) +
@@ -682,14 +682,14 @@ TPZString TPZSimulation :: writeSimulationStatus()
              TPZString("\n Packets length          = ") + TPZString(m_PacketLength) + " flits" +
 	     TPZString("\n************************ PERFORMANCE ***********************") +
              TPZString("\n Supply Thr. Norm        = ") + TPZString(cargaAplicadaNormalizada) + " flits/cycle/router " +
-             TPZString("\n Accept Thr. Norm        = ") + TPZString(throughputNormalizado) + " f/c/r (m: " 
+             TPZString("\n Accept Thr. Norm        = ") + TPZString(throughputNormalizado) + " f/c/r (m: "
                                                        + TPZString(minimoInjectadoNormalizado)+ ", M:" +
                                                        + TPZString(maximoInjectadoNormalizado) +")"+
              TPZString("\n Supply Thr.             = ") + TPZString(cargaAplicadaFC) + " f/c" +
-             TPZString("\n Throughput              = ") + TPZString(throughput) + " f/c (m: " 
+             TPZString("\n Throughput              = ") + TPZString(throughput) + " f/c (m: "
                                                        + TPZString(minimoInjectado)+ ", M:" +
                                                        + TPZString(maximoInjectado) +")"+
-             TPZString("\n Average Distance        = ") + TPZString(distanciaMedia) +                       
+             TPZString("\n Average Distance        = ") + TPZString(distanciaMedia) +
              TPZString("\n Messages generated      = ") + TPZString(m_Network->getMessagesTx()) +
              TPZString("\n Messages received       = ") + TPZString(m_Network->getMessagesRx()) +
              TPZString("\n Messages to inject      = ") + TPZString(m_Network->getMessagesToTx()) +
@@ -711,7 +711,7 @@ TPZString TPZSimulation :: writeSimulationStatus()
              TPZString("\n Link Traversal          = ") + TPZString(m_Network->getEventCount( TPZNetwork::LinkTraversal))+
 	     TPZString("\n\n**********************************************************")+
 	     TPZString("\n");
-             
+
 	     //****************************************************************************************************************************
              // VERBOSITY=1
              //****************************************************************************************************************************
@@ -732,7 +732,7 @@ TPZString TPZSimulation :: writeSimulationStatus()
                 buffer += TPZString("\n**********************************************************");
                 buffer += TPZString("\n");
              }
-	     
+
 	     //****************************************************************************************************************************
              // VERBOSITY=2
              //****************************************************************************************************************************
@@ -796,19 +796,19 @@ TPZString TPZSimulation :: writeSimulationStatus()
                    }
                 }
              }
-             
+
    if( getTrafficPattern()->isBimodal() || (m_MessageLength>1) )
    {
       buffer += TPZString("\nTotal packet latency    = ") + TPZString(latMediaPaqTotal) +
                 TPZString("\nNetwork packet latency  = ") + TPZString(latMediaPaqNetwork) +
                 TPZString("\nBuffer packet latency   = ") + TPZString(latMediaPaqBuffer) +
-                TPZString("\nMaximum packet latency  = ") + 
+                TPZString("\nMaximum packet latency  = ") +
                 TPZString(m_Network->getMaximLatency(TPZNetwork::Packet));
    }
-   
-             
 
-   
+
+
+
    buffer+=m_Network->getReport();
    if(m_Network->getReport()!=TPZString(""))
    {
@@ -817,7 +817,7 @@ TPZString TPZSimulation :: writeSimulationStatus()
    if( m_Network->getDumpMapInjectors()==1)
    {
       buffer+=m_Network->printMapInjectors(m_Clock-m_resetStats);
-   }        
+   }
   return buffer;
 
 }
@@ -831,7 +831,7 @@ TPZString TPZSimulation :: writeSimulationStatus()
 
 void TPZSimulation :: resetStats()
 {
-  cout<<endl<<"<TOPAZ> Clearing Stats at "<<m_Clock<<" </TOPAZ>"<<endl;     
+  cout<<endl<<"<TOPAZ> Clearing Stats at "<<m_Clock<<" </TOPAZ>"<<endl;
   m_Network->initializeStats(m_Clock);
   m_resetStats=m_Clock;
 }
@@ -858,8 +858,8 @@ TPZString TPZSimulation :: convertSeconds(double secs)
       minutes = (unsigned long)(seconds/60);
       seconds = seconds%60;
    }
-   
-   sprintf(buffer,"%02d:%02d:%02d\0",hours,minutes,seconds);
+
+   sprintf(buffer,"%02lu:%02lu:%02lu\n",hours,minutes,seconds);
    return buffer;
 }
 
@@ -887,7 +887,7 @@ void TPZSimulation ::setBuffersFileName(const TPZString& name)
        m_BufferStateResolution=unsigned((parameters.word(2)).asInteger());
        setAsciiOutputFormat();
    }
-   
+
 }
 
 //*************************************************************************
@@ -902,9 +902,9 @@ void TPZSimulation :: writeBufferStatus()
 {
    if( ! m_BufferOutput )
    {
-      m_BufferOutput = new ofstream(buffersFileName());     
+      m_BufferOutput = new ofstream(buffersFileName());
    }
-   
+
    m_Network -> writeBufferStatus(*m_BufferOutput,getAsciiOutputFormat());
 }
 
@@ -922,19 +922,19 @@ void TPZSimulation :: setTrafficPattern(const TPZString& name)
    Boolean isBimodal = false;
    Boolean isReactive = false;
    Boolean isMulticast = false;
-      
+
    double probBimodal;
    double msgBimodal;
    unsigned numMessTypes;
    double probMulticast;
    unsigned lengthMulticast;
-   
+
    if( getTrafficPattern() )
    {
       if( getTrafficPattern()->isBimodal() ) isBimodal=true;
       else if ( getTrafficPattern()->isReactive() ) isReactive=true;
       else if (getTrafficPattern()->isMulticast() ) isMulticast=true;
-      
+
       probBimodal = getTrafficPattern()->getProbBimodal();
       msgBimodal  = getTrafficPattern()->getMessagesBimodal();
       numMessTypes = getTrafficPattern()->getNumMessTypes();
@@ -942,60 +942,60 @@ void TPZSimulation :: setTrafficPattern(const TPZString& name)
       lengthMulticast = getTrafficPattern()->getLengthMulticast();
       delete getTrafficPattern();
    }
-   
+
    TPZTag tag(TPZ_TAG_PATTERN,TPZ_TAG_MODAL);
-   if (isBimodal) 
+   if (isBimodal)
    {
       TPZTag tag1(TPZ_TAG_PATTERN,TPZ_TAG_BIMODAL);
       tag = tag1;
    }
-   
+
    else if (isReactive)
    {
       TPZTag tag2(TPZ_TAG_PATTERN,TPZ_TAG_REACTIVE);
       tag = tag2;
    }
-   
+
    else if (isMulticast)
    {
       TPZTag tag4(TPZ_TAG_PATTERN,TPZ_TAG_MULTICAST);
       tag = tag4;
    }
-      
+
    if ( true )
    {
       tag.addAttribute(new TPZAttribute(TPZ_TAG_NUM_MESS_TYPES,numMessTypes));
    }
-   
+
    if( isBimodal )
    {
       tag.addAttribute(new TPZAttribute(TPZ_TAG_PROBBIMODAL,probBimodal));
-      tag.addAttribute(new TPZAttribute(TPZ_TAG_MSGBIMODAL,msgBimodal));   
+      tag.addAttribute(new TPZAttribute(TPZ_TAG_MSGBIMODAL,msgBimodal));
    }
-   
+
    if( isMulticast )
    {
       tag.addAttribute(new TPZAttribute(TPZ_TAG_NUM_MESS_TYPES,numMessTypes));
       tag.addAttribute(new TPZAttribute(TPZ_TAG_PROB_MULTICAST,probMulticast));
-      tag.addAttribute(new TPZAttribute(TPZ_TAG_LENGTH_MULTICAST,lengthMulticast));   
+      tag.addAttribute(new TPZAttribute(TPZ_TAG_LENGTH_MULTICAST,lengthMulticast));
    }
-      
+
    // The traffic can come with 2 parameters
    TPZString tempName = name;
    tempName.replace(',',' ');
-   
+
    if( tempName.word(1) != TPZString("") )
       tag.addAttribute(new TPZAttribute(TPZ_TAG_TYPE,tempName.word(1)));
 
    if( tempName.word(2) != TPZString("") )
       tag.addAttribute(new TPZAttribute(TPZ_TAG_PARAM1,tempName.word(2)));
-   
+
    if( tempName.word(3) != TPZString("") )
       tag.addAttribute(new TPZAttribute(TPZ_TAG_PARAM2,tempName.word(3)));
 
    TPZTrafficPattern* pattern =
                       TPZTrafficPattern::createTrafficPattern(tag,*this);
-		     
+
    setTrafficPattern(pattern);
 }
 
@@ -1011,7 +1011,7 @@ void TPZSimulation ::overrideNetwork(const TPZString& name )
    //destroyed the previously built in the sgml
    TPZNetwork* net=getNetwork();
    net->terminate();
-   
+
    net= (TPZNetwork*)(TPZComponent::networkBuilder->
                      createComponentWithId(name,this));
    this->setNetwork(net);
@@ -1040,7 +1040,7 @@ void TPZSimulation :: setBimodalTraffic(const TPZString& params)
    {
       EXIT_PROGRAM(ERR_TPZSIMUL_0012);
    }
-   
+
    getTrafficPattern()->setBimodal();
    getTrafficPattern()->setMessagesBimodal(parameters.word(1).asInteger());
    getTrafficPattern()->setProbBimodal(parameters.word(2).asDouble());
@@ -1057,7 +1057,7 @@ void TPZSimulation :: setBimodalTraffic(const TPZString& params)
 void TPZSimulation :: setTrafficPatternFile(const TPZString& name)
 {
    delete getTrafficPattern();
-   TPZTrafficPattern* pattern = 
+   TPZTrafficPattern* pattern =
                       TPZTrafficPattern::createTrafficPattern(name,*this);
    setTrafficPattern(pattern);
 }
@@ -1086,14 +1086,14 @@ TPZString TPZSimulation :: asString() const
 //*************************************************************************
 
 TPZSimulation* TPZSimulation::newFrom(const TPZTag* tag, INDEX& index)
-{   
+{
    TPZComponentId idSimulation(*tag);
-   TPZSimulation* simulation = new TPZSimulation(idSimulation);  
+   TPZSimulation* simulation = new TPZSimulation(idSimulation);
    simulation->parseTags(simulation,tag,index);
    return simulation;
-} 
-   
-   
+}
+
+
 //*************************************************************************
 //:
 //  f: void parseTags (TPZSimulation * simulation, TPZTag const * tag,
@@ -1102,14 +1102,14 @@ TPZSimulation* TPZSimulation::newFrom(const TPZTag* tag, INDEX& index)
 //  d:
 //:
 //*************************************************************************
-void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag, 
+void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag,
                                      INDEX& index)
-{   
+{
    TPZString endTag = TPZString("/") + tag->tagName();
    TPZString notClosed=tag->tagName();
    TPZTag* nextTag = TPZSimulation::simulationBuilder->
                      getTagWithIndex(++index);
-   
+
    while( nextTag && nextTag->tagName()!=endTag )
    {
       TPZString tagName = nextTag->tagName();
@@ -1135,7 +1135,7 @@ void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag,
       else if( tagName == TPZ_TAG_STOPSIMUL )
       {
          TPZString stopSimulation = nextTag->tagId();
-         simulation->setStopSimulation(stopSimulation.asInteger());      
+         simulation->setStopSimulation(stopSimulation.asInteger());
       }
       else if( tagName == TPZ_TAG_STOPSIMUL_MSG )
       {
@@ -1146,38 +1146,38 @@ void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag,
       else if(tagName == TPZ_TAG_RESETSTATS)
       {
          TPZString resetStats = nextTag->tagId();
-         simulation->setResetStats(resetStats.asInteger());    
+         simulation->setResetStats(resetStats.asInteger());
       }
       else if( tagName == TPZ_TAG_MESSAGELENGTH )
       {
          TPZString messageLength = nextTag->tagId();
-         simulation->setMessageLength(messageLength.asInteger());      
+         simulation->setMessageLength(messageLength.asInteger());
       }
       else if( tagName == TPZ_TAG_PACKETLENGTH )
       {
          TPZString packetLength = nextTag->tagId();
-         simulation->setPacketLength(packetLength.asInteger());      
+         simulation->setPacketLength(packetLength.asInteger());
       }
       else if( tagName == TPZ_TAG_LOAD )
       {
          TPZString load = nextTag->tagId();
-         simulation->setDefaultLoadSupply(load.asDouble());      
-      }     
+         simulation->setDefaultLoadSupply(load.asDouble());
+      }
       else if( tagName == TPZ_TAG_PROB )
       {
          TPZString prob = nextTag->tagId();
-         simulation->setDefaultLoadProb(prob.asDouble());      
-      }     
+         simulation->setDefaultLoadProb(prob.asDouble());
+      }
       else if( tagName == TPZ_TAG_PATTERN )
       {
-         TPZTrafficPattern* pattern = 
+         TPZTrafficPattern* pattern =
                             TPZTrafficPattern::createTrafficPattern(*nextTag,*simulation);
          simulation->setTrafficPattern(pattern);
       }
       else if( tagName == TPZ_TAG_SEED )
       {
          TPZString seed = nextTag->tagId();
-         simulation->setSeed(seed.asInteger());      
+         simulation->setSeed(seed.asInteger());
       }
       else if( tagName == TPZ_TAG_RAFAGA)
       {
@@ -1188,7 +1188,7 @@ void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag,
          simulation->setBurstRepet(number.asInteger());
       }
 
-      //Specific flags to work with ruby. 
+      //Specific flags to work with ruby.
       //   Link width in bytes
       //   Frecuency relation between processor and router
       //   virtual networks or fisical networks
@@ -1207,15 +1207,15 @@ void TPZSimulation::parseTags(TPZSimulation *simulation, const TPZTag* tag,
          TPZString unify = nextTag->tagId();
          simulation->m_unifyNetworks = unify.asInteger();
       }
-      
-      nextTag = TPZSimulation::simulationBuilder->getTagWithIndex(++index);      
+
+      nextTag = TPZSimulation::simulationBuilder->getTagWithIndex(++index);
 
    } // while
 
    simulation->setSimulation(simulation);
    simulation->initialize();
 
-   
+
   // return simulation;
 }
 

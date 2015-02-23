@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZString.cpp
 //
 //    Class:  TPZString
 //
-//    Inherited from: 
+//    Inherited from:
 // :
 //*************************************************************************
 //end of header
@@ -66,19 +66,19 @@
 //:
 //  f: inline unsigned size () const;
 //  d: Returns the number of characters in the string;
-//: 
+//:
 //*************************************************************************
 
 //*************************************************************************
 //:
 //  f: TPZString ();
-// 
+//
 //  d: Default Constructor. Initialize the buffer to 0;
-//: 
+//:
 //*************************************************************************
 
-TPZString :: TPZString() 
-           : m_pBuffer(0), 
+TPZString :: TPZString()
+           : m_pBuffer(0),
              m_Tamano(0)
 {
 
@@ -88,7 +88,7 @@ TPZString :: TPZString()
 //*************************************************************************
 //:
 //  f: TPZString (const TPZString & aTPZString)
-//  
+//
 //  d: Copy Constructor. Build a buffer and copy all characters
 //:
 //*************************************************************************
@@ -154,7 +154,7 @@ TPZString :: TPZString(char aChar)
 TPZString :: TPZString(int aInt)
 {
    char temp[22];
-   for(int clear=0;clear<22;clear++) temp[clear]=0; 
+   for(int clear=0;clear<22;clear++) temp[clear]=0;
    ::sprintf(temp,"%d",aInt);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
@@ -174,8 +174,8 @@ TPZString :: TPZString(int aInt)
 TPZString :: TPZString(long aLong)
 {
    char temp[22];
-   for(int clear=0;clear<22;clear++) temp[clear]=0; 
-   ::sprintf(temp,"%d",aLong);
+   for(int clear=0;clear<22;clear++) temp[clear]=0;
+   ::sprintf(temp,"%ld",aLong);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
    strcpy(m_pBuffer,temp);
@@ -193,8 +193,8 @@ TPZString :: TPZString(long aLong)
 TPZString :: TPZString(unsigned long long aLongLong)
 {
    char temp[22];
-   for(int clear=0;clear<22;clear++) temp[clear]=0; 
-   ::sprintf(temp,"%d",aLongLong);
+   for(int clear=0;clear<22;clear++) temp[clear]=0;
+   ::sprintf(temp,"%llu",aLongLong);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
    strcpy(m_pBuffer,temp);
@@ -212,8 +212,8 @@ TPZString :: TPZString(unsigned long long aLongLong)
 TPZString :: TPZString(unsigned uint)
 {
    char temp[22];
-   for(int clear=0;clear<22;clear++) temp[clear]=0; 
-   ::sprintf(temp,"%d",uint);
+   for(int clear=0;clear<22;clear++) temp[clear]=0;
+   ::sprintf(temp,"%u",uint);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
    strcpy(m_pBuffer,temp);
@@ -232,8 +232,8 @@ TPZString :: TPZString(unsigned uint)
 TPZString :: TPZString(unsigned long ulong)
 {
    char temp[22];
-   for(int clear=0;clear<22;clear++) temp[clear]=0; 
-   ::sprintf(temp,"%d",ulong);
+   for(int clear=0;clear<22;clear++) temp[clear]=0;
+   ::sprintf(temp,"%lu",ulong);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
    strcpy(m_pBuffer,temp);
@@ -252,7 +252,7 @@ TPZString :: TPZString(unsigned long ulong)
 TPZString :: TPZString(double aDouble)
 {
    char temp[30];
-   for(int clear=0;clear<30;clear++) temp[clear]=0; 
+   for(int clear=0;clear<30;clear++) temp[clear]=0;
    ::sprintf(temp,"%g",aDouble);
    m_Tamano = strlen(temp) ;
    m_pBuffer = new char[ m_Tamano+1 ];
@@ -293,7 +293,7 @@ int TPZString :: isLike(const TPZString& aString) const
    {
       return 1;
    }
-   
+
    return 0;
 }
 
@@ -309,7 +309,7 @@ int TPZString :: asInteger() const
 {
    if( m_pBuffer )
       return atoi(m_pBuffer);
-      
+
    return -1;
 }
 
@@ -326,7 +326,7 @@ double TPZString :: asDouble() const
 {
    if( m_pBuffer )
       return (double)(atof(m_pBuffer));
-      
+
    return -1.0;
 }
 
@@ -442,7 +442,7 @@ TPZString TPZString :: subString(unsigned first, unsigned increment) const
        pTemp[i] = m_pBuffer[first+i-1];
 
    pTemp[length] = '\0';
-   
+
    rs = pTemp;
    delete[] pTemp;
    return rs;
@@ -586,10 +586,10 @@ TPZString& TPZString :: remove(const TPZString& string)
    int index  = indexOf(string);
    if( index )
    {
-      (*this) = ( (index==1) ? TPZString("") : subString(1,index-1) ) + 
+      (*this) = ( (index==1) ? TPZString("") : subString(1,index-1) ) +
                 subString(index+string.size());
    }
-     
+
    return *this;
 }
 
@@ -606,7 +606,7 @@ void TPZString :: replace(char org, char dst)
 {
    for(register int i=0; i<m_Tamano; i++)
    {
-      if( *(m_pBuffer+i) == org ) 
+      if( *(m_pBuffer+i) == org )
          *(m_pBuffer+i) = dst;
    }
 }
@@ -791,7 +791,7 @@ char TPZString :: operator [] (unsigned index) const
 TPZString TPZString :: operator + (const TPZString& aString) const
 {
    TPZString rs = *this;
-   
+
    if( aString.m_Tamano )
    {
       unsigned sizeTotal = m_Tamano + aString.m_Tamano + 1;
@@ -879,15 +879,15 @@ TPZString& TPZString :: operator = (const TPZString& aString)
 {
    delete[] m_pBuffer;
    m_pBuffer = 0;
-   
+
    m_Tamano = aString.m_Tamano;
-   
+
    if( m_Tamano )
    {
       m_pBuffer = new char[m_Tamano+1];
       memcpy(m_pBuffer,aString.m_pBuffer,(m_Tamano+1)*sizeof(char));
    }
-   
+
    return *this;
 }
 
@@ -980,10 +980,10 @@ TPZString TPZString :: getStringLeftTo(const TPZString& text, char delim)
    unsigned index = text.indexOf(delim);
    if( index )
       return text.subString(1,index-1);
-      
+
    // In the absence of the delimiter string is returned unwillingly
    // passed by reference.
-   
+
    return text;
 }
 
@@ -1001,7 +1001,7 @@ TPZString TPZString :: getStringRightTo(const TPZString& text, char delim)
    unsigned index = text.indexOf(delim);
    if( index )
       return text.subString(index+1);
-   
+
    // If no success the delimiter returns an empty string.
    return "";
 }

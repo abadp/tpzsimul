@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZRoutingMuxedFlowBubbleAdap.cpp
@@ -100,15 +100,15 @@ IMPLEMENT_RTTI_DERIVED(TPZRoutingMuxedFlowBubbleAdap,TPZRoutingMuxedFlowBubble);
 
 TPZRoutingMuxedFlowBubbleAdap :: TPZRoutingMuxedFlowBubbleAdap( TPZComponent& component)
                           : TPZRoutingMuxedFlowBubble(component)
-{  
+{
    m_inputs= ((TPZRoutingMuxed&)getComponent()).numberOfInputs();
    m_RequestState=new unsigned[m_inputs+1];
-   
+
    for( int i=0;i<=m_inputs;i++)
    {
       m_RequestState[i] = 1;
    }
-      
+
 }
 
 TPZRoutingMuxedFlowBubbleAdap :: ~TPZRoutingMuxedFlowBubbleAdap()
@@ -127,28 +127,28 @@ TPZRoutingMuxedFlowBubbleAdap :: ~TPZRoutingMuxedFlowBubbleAdap()
 Boolean TPZRoutingMuxedFlowBubbleAdap :: dispatchEvent(const TPZEvent& event)
 {
    uTIME delay = getOwnerRouter().getCurrentTime();
-   
+
    if( event.type() == _SendRequest_ )
    {
 
-      unsigned interfaz=m_currentInterfaz;       
+      unsigned interfaz=m_currentInterfaz;
 #ifndef NO_TRAZA
       TPZString texto1 = getComponent().asString() + TPZString(" Event= SEND-REQUEST ");
       texto1 += TPZString(" TIME:") + TPZString(delay);
       texto1 += TPZString(" iPort:") + TPZString(interfaz);
       TPZWRITE2LOG(texto1);
-#endif      
+#endif
       TPZMessage *msgTx;
       if (createMessageRequest(&msgTx, interfaz))
       {
          outputInterfaz()->sendDataRightNow(msgTx); //TPZ
-         
+
 #ifndef NO_TRAZA
          TPZString texto2 = getComponent().asString() + TPZString(" REQ Tx. TIME=");
          texto2 += TPZString(delay) + TPZString(" # ") + msgTx->asString();
          TPZWRITE2LOG( texto2 );
 #endif
-             
+
          TPZEvent event(_CheckResponse_, interfaz);
          getEventQueue().enqueue(event,delay+1);
       }
@@ -164,26 +164,26 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: dispatchEvent(const TPZEvent& event)
          texto3 += TPZString(" TIME:") + TPZString(delay);
          texto3 += TPZString(" Elemets at queue:") + TPZString(m_arbitrationQueue.numberOfElements());
          TPZWRITE2LOG(texto3);
-#endif	 
+#endif
 
 	 TPZEvent event(_SendRequest_);
-         getEventQueue().enqueue(event, delay+1);  
+         getEventQueue().enqueue(event, delay+1);
       }
    }
-   
+
    else if( event.type() == _CheckResponse_ )
    {
-      
+
 #ifndef NO_TRAZA
       TPZString texto4 = getComponent().asString() + TPZString(" Event= CHECK-RESPONSE ");
       texto4 += TPZString(" TIME:") + TPZString(delay);
       TPZWRITE2LOG(texto4);
 #endif
       unsigned interfaz = event.source();
-            
+
       if( outputInterfaz() -> isStopActive() )
       {
-         
+
 	 if( m_RequestState[interfaz]==4 )
 	 {
 	    m_RequestState[interfaz]=1;
@@ -201,11 +201,11 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: dispatchEvent(const TPZEvent& event)
       texto5 += TPZString(" TIME:") + TPZString(delay);
       texto5 += TPZString(" Elemets at queue:") + TPZString(m_arbitrationQueue.numberOfElements());
       TPZWRITE2LOG(texto5);
-#endif	 
+#endif
 
 	 TPZEvent event(_SendRequest_);
          getEventQueue().enqueue(event, delay);
-	 
+
       }
       else
       {
@@ -216,9 +216,9 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: dispatchEvent(const TPZEvent& event)
 #endif
          m_RequestState[interfaz]=1;
 	 TPZEvent event(_DataTransmit_, interfaz);
-	 getEventQueue().enqueue(event, delay);         
+	 getEventQueue().enqueue(event, delay);
       }
-      
+
    }
    else if( event.type() == _DataTransmit_ )
    {
@@ -234,39 +234,39 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: dispatchEvent(const TPZEvent& event)
       {
          updateMessageInfo(m_syncPorts[interfaz]);
 	 inputInterfaz(interfaz)->clearStop();
-      }      
+      }
       outputInterfaz()->sendDataRightNow(m_syncPorts[interfaz]);
 #ifndef NO_TRAZA
       TPZString texto7 = getComponent().asString() + TPZString(" Event= DATA-TRANSMIT ");
       texto7 += TPZString(" TIME:") + TPZString(delay) + TPZString(" MSG: ") + m_syncPorts[interfaz]->asString();
       texto7 += TPZString("iPort=") + TPZString(interfaz);
       TPZWRITE2LOG(texto7);
-#endif      
+#endif
       if( m_syncPorts[interfaz]->isTail() )
       {
          if(m_arbitrationQueue.numberOfElements()!=0)
 	 {
-	    m_arbitrationQueue.dequeue(m_currentInterfaz);	    
+	    m_arbitrationQueue.dequeue(m_currentInterfaz);
 #ifndef NO_TRAZA
       TPZString texto8 = getComponent().asString() + TPZString(" Dequeue request from iPort= ") + TPZString(interfaz);
       texto8 += TPZString(" Next iPort= ") + TPZString(m_currentInterfaz);
       TPZWRITE2LOG(texto8);
 #endif
  	    TPZEvent event(_SendRequest_);
-            getEventQueue().enqueue(event, delay+1); 
+            getEventQueue().enqueue(event, delay+1);
 	 }
 	 else
 	 {
 	    m_currentInterfaz=0;
 	 }
-	 
+
 
       }
       m_syncPorts[interfaz]=0;
-      
-      
+
+
    }
-   
+
    return true;
 }
 
@@ -285,12 +285,12 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
    {
       TPZString err;
       err.sprintf("zero sync");
-      err.sprintf(getComponent().asString()); 
+      err.sprintf(getComponent().asString());
       EXIT_PROGRAM(err);
    }
-   
+
    TPZMessage *header = m_syncPorts[interfaz];
-   
+
    if (!header->isHeader())
    {
       TPZString err;
@@ -299,13 +299,13 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
       err.sprintf("This message should be a header flit");
       EXIT_PROGRAM(err);
    }
-   
+
    //Create the request message to send to the router
    if((*pMsg = getMessagePool().allocate())==0)
    {
          TPZString err;
          err.sprintf(ERR_TPZPOOL_001);
-         EXIT_PROGRAM(err);    
+         EXIT_PROGRAM(err);
    }
    TPZMessage* msg=*pMsg;
    msg->setType(TPZMessage::REQ);
@@ -313,12 +313,12 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
    msg->setDelta(header->delta(1), 1);
    msg->setDelta(header->delta(2), 2);
    msg->setVnet(header->getVnet());
-#ifdef PTOPAZ	
+#ifdef PTOPAZ
    TPZNetwork* net = ((TPZSimulation*)(getComponent().getSimulation()))->getNetwork();
    unsigned pool_index=net->getThreadID(pthread_self());
    msg->setPoolIndex(pool_index);
-#endif   
-   
+#endif
+
    if ((header->deltaAbs(0)==1) && (header->deltaAbs(1)==1) &&(header->deltaAbs(2)==1) )
    {
       //Reached destination, set routing and channel
@@ -335,12 +335,12 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
       int deltaY = header->delta(1);
       int deltaZ = header->delta(2);
       int vnet= header->getVnet();
-      
+
       if (header->isOrdered())
       {
          m_RequestState[interfaz]=4;
       }
-      
+
       //First we try throug XADAP channel
       if (m_RequestState[interfaz]==1)
       {
@@ -383,7 +383,7 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
 	 }
 	 m_RequestState[interfaz]=4;
       }
-      
+
       //Finally we try through the DOR channels
       if (m_RequestState[interfaz]==4)
       {
@@ -392,21 +392,21 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
 	    header->setRoutingPort((deltaX>0) ? _Xplus_ : _Xminus_);
 	    header->setChannel(2*vnet);
 	    msg->setRoutingPort((deltaX>0) ? _Xplus_ : _Xminus_);
-	    msg->setChannel((vnet-1)*2+1);	    
+	    msg->setChannel((vnet-1)*2+1);
 	 }
          else if (header->deltaAbs(1)>1)
 	 {
 	    header->setRoutingPort((deltaY>0) ? _Yplus_ : _Yminus_);
 	    header->setChannel(2*vnet);
 	    msg->setRoutingPort((deltaY>0) ? _Yplus_ : _Yminus_);
-	    msg->setChannel((vnet-1)*2+1);	    
+	    msg->setChannel((vnet-1)*2+1);
 	 }
 	 else if (header->deltaAbs(2)>1)
 	 {
 	    header->setRoutingPort((deltaZ>0) ? _Zplus_ : _Zminus_);
 	    header->setChannel(2*vnet);
 	    msg->setRoutingPort((deltaZ>0) ? _Zplus_ : _Zminus_);
-	    msg->setChannel((vnet-1)*2+1);	    
+	    msg->setChannel((vnet-1)*2+1);
 	 }
 	 else
 	 {
@@ -416,15 +416,16 @@ Boolean TPZRoutingMuxedFlowBubbleAdap :: createMessageRequest(TPZMessage** pMsg,
             err.sprintf("This message should not request LocalNode");
             EXIT_PROGRAM(err);
 	 }
-	 
-	 if(!controlAlgoritm()) 
+
+	 if(!controlAlgoritm())
 	 {
 	    getMessagePool().release(msg);
 	    return false;
 	 }
 	 return true;
       }
-   } 
+   }
+   return false; 
 }
 
 //*************************************************************************

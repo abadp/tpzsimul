@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZThread.cpp
 //
 //    Class:  TPZThread
 //
-//    Inherited from: 
+//    Inherited from:
 // :
 //*************************************************************************
 //end of header
@@ -95,9 +95,9 @@ TPZThread::~TPZThread()
    pthread_join(m_thread, NULL);
    pthread_cond_destroy(&m_exitFlag);
    pthread_mutex_destroy(&m_exitKey);
-   
 
-   
+
+
 }
 
 
@@ -109,7 +109,7 @@ TPZThread::~TPZThread()
 //*************************************************************************
 
 int TPZThread::Start(int id, unsigned x, unsigned y, unsigned z, TPZNetwork* pthis, int numThreads)
-{ 
+{
    int rc;
    m_MyNet = pthis;
    m_ThreadId=id;
@@ -125,7 +125,7 @@ int TPZThread::Start(int id, unsigned x, unsigned y, unsigned z, TPZNetwork* pth
    pthread_attr_init(&tattr);
    pthread_attr_setdetachstate(&tattr, PTHREAD_CREATE_JOINABLE);
 
-   return pthread_create(&m_thread, &tattr, EntryPoint, this);     
+   return pthread_create(&m_thread, &tattr, EntryPoint, this);
 }
 
 //*************************************************************************
@@ -141,21 +141,22 @@ void * TPZThread::EntryPoint(void * pthis)
 {
    TPZThread * pt = (TPZThread*)pthis;
    pt -> ThreadFunction();
+   return NULL;
 }
 
 void TPZThread::clockEdge(uTIME time)
 {
    pthread_mutex_lock(&m_exitKey);
-   m_runTime = time; 
-   pthread_cond_signal(&m_exitFlag); 
+   m_runTime = time;
+   pthread_cond_signal(&m_exitFlag);
    pthread_mutex_unlock(&m_exitKey);
 }
 
-void TPZThread::terminate()           
+void TPZThread::terminate()
 {
    pthread_mutex_lock(&m_exitKey);
    m_kill = true;
-   pthread_cond_signal(&m_exitFlag); 
+   pthread_cond_signal(&m_exitFlag);
    pthread_mutex_unlock(&m_exitKey);
 }
 
@@ -174,19 +175,19 @@ void TPZThread :: ThreadFunction()
    int max_XYZ, min_XYZ;
    int rc;
    register unsigned int i;
-   
-   //Distribute routers among threads per XY dimension. Lower unbalance in 
-   //with awkward number of threads. Any change in this requieres to modify 
+
+   //Distribute routers among threads per XY dimension. Lower unbalance in
+   //with awkward number of threads. Any change in this requieres to modify
    //router->thread assigment in TPZNetwork::postinitialize
 
    jump = (unsigned int)std::ceil(1.0*m_SizeX*m_SizeY*m_SizeZ/m_num); // number of routers per thread
    max_XYZ = (m_ThreadId+1)*jump-1; // last row to evaluate
-   min_XYZ = m_ThreadId*jump; 
+   min_XYZ = m_ThreadId*jump;
    if (m_ThreadId == m_num-1)
    {
       max_XYZ = m_SizeX*m_SizeY*m_SizeZ-1;
    }
-  
+
    m_MyNet->setThreadID(pthread_self(), m_ThreadId);
    double loadProb = ((TPZSimulation*)m_MyNet->getSimulation())->getLoad();
 
@@ -197,7 +198,7 @@ void TPZThread :: ThreadFunction()
    {
        //Cant be done in the same interation
        for(i=min_XYZ; i<=max_XYZ; i++ )
-            {  
+            {
                int Z=i/(m_SizeX*m_SizeY);
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
@@ -205,24 +206,24 @@ void TPZThread :: ThreadFunction()
                router->preRun(m_runTime);
             }
        for(i=min_XYZ; i<=max_XYZ; i++ )
-            {  
+            {
                int Z=i/(m_SizeX*m_SizeY);
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
                TPZRouter* router = m_MyNet -> getRouterAt(X,Y,Z);
                router->run(m_runTime);
-            }    
+            }
        for(i=min_XYZ; i<=max_XYZ; i++ )
-            {  
+            {
                int Z=i/(m_SizeX*m_SizeY);
                int Y=(i-Z*m_SizeX*m_SizeY)/m_SizeX;
                int X=(i-Z*m_SizeX*m_SizeY)%m_SizeX;
                TPZRouter* router = m_MyNet -> getRouterAt(X,Y,Z);
                router->postRun(m_runTime);
-            }      
+            }
 
       //Only slaves are synchorized before to run the connections
-      if((rc = pthread_barrier_wait(barrierConnections))>0) 
+      if((rc = pthread_barrier_wait(barrierConnections))>0)
       {
           perror("Connection Barrier broken at slaves");
           pthread_exit(NULL);
@@ -232,28 +233,28 @@ void TPZThread :: ThreadFunction()
       forCursor(connectionCursor)
       {
          connectionCursor.element()->run(m_runTime);
-      }  
+      }
 
       //Slaves and master thread (at TPZNetwork::run) are synchr. at the begining
       //of the thread.
-      if((rc = pthread_barrier_wait(barrierRouters))>0) 
+      if((rc = pthread_barrier_wait(barrierRouters))>0)
       {
           perror("Router Barrier broken at slaves");
           pthread_exit(NULL);
       }
 
       pthread_cond_wait(&m_exitFlag, &m_exitKey);
-      
+
       //Generate Messages for myself. If GEMS this does nothing becasue traffic is always EMPTY
       ((TPZSimulation*)m_MyNet->getSimulation())->getTrafficPattern()->generateMessagesXsegment(loadProb, min_XYZ, max_XYZ);
-        
+
       if(m_kill) pthread_exit(NULL);
    }
-    
+
 
 #endif
 }
-      
+
 
 //*************************************************************************
 // end of file

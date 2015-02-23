@@ -5,24 +5,24 @@
 //   This file is part of the TOPAZ network simulator, originallty developed
 //   at the Unviersity of Cantabria
 //
-//   TOPAZ shares a large proportion of code with SICOSYS which was 
+//   TOPAZ shares a large proportion of code with SICOSYS which was
 //   developed by V.Puente and J.M.Prellezo
 //
 //   TOPAZ has been developed by P.Abad, L.G.Menezo, P.Prieto and
 //   V.Puente
-// 
+//
 //  --------------------------------------------------------------------
 //
 //  If your use of this software contributes to a published paper, we
 //  request that you (1) cite our summary paper that appears on our
 //  website (http://www.atc.unican.es/topaz/) and (2) e-mail a citation
 //  for your published paper to topaz@atc.unican.es
-//  
+//
 //  If you redistribute derivatives of this software, we request that
 //  you notify us and either (1) ask people to register with us at our
 //  website (http://www.atc.unican.es/topaz/) or (2) collect registration
 //  information and periodically send it to us.
-//  
+//
 //   --------------------------------------------------------------------
 //
 //   TOPAZ is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@
 //
 //   The GNU General Public License is contained in the file LICENSE.
 //
-//     
+//
 //*************************************************************************
 //:
 //    File: TPZNetworkMidimew.cpp
@@ -95,12 +95,12 @@ IMPLEMENT_RTTI_DERIVED(TPZNetworkMidimew,TPZNetwork);
 
 TPZNetworkMidimew :: TPZNetworkMidimew( const TPZComponentId& id,
                                     const TPZString& routerId,
-                                    unsigned x, 
-                                    unsigned y, 
+                                    unsigned x,
+                                    unsigned y,
                                     unsigned z )
                  : TPZNetwork(id,routerId,x,y,z)
 {
-   unsigned diametro=getDiameter();   
+   unsigned diametro=getDiameter();
    initializeHistogram(diametro);
 }
 
@@ -130,13 +130,13 @@ TPZNetworkMidimew :: ~TPZNetworkMidimew()
 void TPZNetworkMidimew :: initialize()
 {
    if( isInitializated() ) return;
-   
+
    if(getSizeY()!=1 ||getSizeZ()!=1)
    {
      TPZString err;
      err.sprintf( ERR_TPZTONET_002, (char*)getRouterId() );
      err.sprintf("\n Midimew Network Ysize and Zsize must be =1. All nodes in Xsize!");
-     EXIT_PROGRAM(err); 
+     EXIT_PROGRAM(err);
    }
 
    if( !getSizeX() || !getSizeY() || !getSizeZ() )
@@ -145,7 +145,7 @@ void TPZNetworkMidimew :: initialize()
       err.sprintf(ERR_TPZTONET_001, getSizeX(), getSizeY(), getSizeZ() );
       EXIT_PROGRAM(err);
    }
-   int i, j, k;     
+   int i, j, k;
    for( i=0; i<getSizeX(); i++ )
    {
       for( j=0; j<getSizeY(); j++ )
@@ -161,9 +161,9 @@ void TPZNetworkMidimew :: initialize()
                err.sprintf( ERR_TPZTONET_002, (char*)getRouterId() );
                EXIT_PROGRAM(err);
             }
-            newRouter->setPosition(pos);                       
+            newRouter->setPosition(pos);
             addRouter(newRouter);
-            
+
          }
       }
    }
@@ -208,14 +208,14 @@ unsigned TPZNetworkMidimew :: distance(const TPZPosition& org, const TPZPosition
 //:
 //*************************************************************************
 
-void TPZNetworkMidimew :: routingRecord( const TPZPosition& org, 
+void TPZNetworkMidimew :: routingRecord( const TPZPosition& org,
                                        const TPZPosition& dst,
                                        int&  deltaX,
                                        int&  deltaY,
                                        int&  deltaZ,
                                        Boolean ordered )
 {
-   
+
    int m,signo;
    //optimal routing record solutions
    int x0;
@@ -227,7 +227,7 @@ void TPZNetworkMidimew :: routingRecord( const TPZPosition& org,
    int origen=org.valueForCoordinate(TPZPosition::X);
    int destino=dst.valueForCoordinate(TPZPosition::X);
    helperRR(origen,destino,deltaX,deltaY,deltaZ,ordered);
-    
+
    deltaX = (deltaX>=0) ? deltaX+1 : deltaX-1;
    deltaY = (deltaY>=0) ? deltaY+1 : deltaY-1;
    deltaZ = 1; //third dimension not allowed
@@ -236,7 +236,7 @@ void TPZNetworkMidimew :: routingRecord( const TPZPosition& org,
 //:
 //  f: helperRR(int origen, int destino, int& deltaX, int& deltaY, int& deltaZ,Boolean ordered ) const
 //
-//  d: 
+//  d:
 //:
 //*************************************************************************
 
@@ -251,14 +251,14 @@ void  TPZNetworkMidimew ::helperRR( int  origen, int destino, int&  deltaX, int&
    //
    int b=(int)ceill(sqrt(getSizeX()/2.0));
    //I need to decide when the message is generated according to the torus
-   
+
     m = abs(destino-origen);
-   
+
     if(destino<=origen)
        signo=-1;
     else
        signo=1;
-    
+
     if (m>getSizeX()/2){
        signo=-signo;
        m=getSizeX()-m;
@@ -268,7 +268,7 @@ void  TPZNetworkMidimew ::helperRR( int  origen, int destino, int&  deltaX, int&
     y0=-m%b;
     x0=-y0+m/b;
     y1=b+y0;
-    x1=x0-(b-1);   
+    x1=x0-(b-1);
     //
     if(abs(x0)+abs(y0)<abs(x1)+abs(y1))
     {
@@ -284,10 +284,10 @@ void  TPZNetworkMidimew ::helperRR( int  origen, int destino, int&  deltaX, int&
    {
        //Balanced utilization when point-to-point order is required
        //function of source node
-       if(drand48()<0.5 && !ordered || ordered && origen%2 == 0)
+       if( (drand48()<0.5 && !ordered) || (ordered && origen%2 == 0))
        {
          deltaX=signo*x1;
-         deltaY=signo*y1;  
+         deltaY=signo*y1;
        }
        else
        {
@@ -301,10 +301,10 @@ void  TPZNetworkMidimew ::helperRR( int  origen, int destino, int&  deltaX, int&
       TPZString err;
       err.sprintf("Superado diametro de la red\n");
       EXIT_PROGRAM(err);
-    }  
-   
+    }
+
 }
-      
+
 //*************************************************************************
 //:
 //  f: TPZPosition CreatePosition (int num);
@@ -312,9 +312,9 @@ void  TPZNetworkMidimew ::helperRR( int  origen, int destino, int&  deltaX, int&
 //  d:
 //:
 //*************************************************************************
-TPZPosition TPZNetworkMidimew::CreatePosition(int num)     
-   {  
-         unsigned numi=unsigned(num);        
+TPZPosition TPZNetworkMidimew::CreatePosition(int num)
+   {
+         unsigned numi=unsigned(num);
          unsigned x = numi%unsigned(getSizeX());
          return TPZPosition(x,0);
 
@@ -334,35 +334,35 @@ TPZNetworkMidimew* TPZNetworkMidimew :: newFrom( const TPZTag* tag,
    TPZComponentId idNetwork(*tag);
    TPZString sizeX, sizeY, sizeZ;
    unsigned x, y=1, z=1;
-   
+
    if( !(tag->getAttributeValueWithName(TPZ_TAG_SIZEX, sizeX)) )
    {
       TPZString err;
       err.sprintf(ERR_TPZTONET_003, (char*)TPZ_TAG_SIZEX );
       EXIT_PROGRAM(err);
    }
-   
+
    if( tag->getAttributeValueWithName(TPZ_TAG_SIZEY, sizeY) )
    {
       y = sizeY.asInteger();
    }
-   
+
    if( tag->getAttributeValueWithName(TPZ_TAG_SIZEZ, sizeZ) )
    {
       z = sizeZ.asInteger();
    }
-   
+
    x = sizeX.asInteger();
-   
+
    if( !x || !y || !z )
    {
       TPZString err;
       err.sprintf(ERR_TPZTONET_004, x, y, z );
       EXIT_PROGRAM(err);
    }
-   
+
    TPZString routerId;
-   
+
    if( ! (tag->getAttributeValueWithName(TPZ_TAG_REFROUTER, routerId)) )
    {
       TPZString err;
@@ -377,14 +377,14 @@ TPZNetworkMidimew* TPZNetworkMidimew :: newFrom( const TPZTag* tag,
    {
       delay = connectionDelay.asInteger();
    }
-   
+
    TPZNetworkMidimew* net = new TPZNetworkMidimew( idNetwork, routerId, x, y, z );
    net->setConnectionDelay(delay);
-   
-   
+
+
    net -> setSimulation(owner);
    net -> initialize();
-   
+
    return net;
 }
 //*************************************************************************
@@ -438,12 +438,12 @@ void TPZNetworkMidimew :: initializeConnectionsFor(const TPZPosition& pos)
    TPZRouter* router = getRouterAt(pos);
    int myNum=pos.valueForCoordinate(TPZPosition::X);
    int b=(int)ceill(sqrt(getSizeX()/2.0));
-   
+
    TPZRouter* routerXp = getRouterAt(CreatePosition((myNum+b)%getSizeX()));
    TPZRouter* routerXm = getRouterAt(CreatePosition((myNum-b+getSizeX())%getSizeX()));
    TPZRouter* routerYp = getRouterAt(CreatePosition((myNum+(b-1))%getSizeX()));
    TPZRouter* routerYm = getRouterAt(CreatePosition((myNum-(b-1)+getSizeX())%getSizeX()));
-   TPZRouter* routerZp = getRouterAt( positionOf(_Zplus_,pos)  );  
+   TPZRouter* routerZp = getRouterAt( positionOf(_Zplus_,pos)  );
    TPZRouter* routerZm = getRouterAt( positionOf(_Zminus_,pos) );
 
 
@@ -453,7 +453,7 @@ void TPZNetworkMidimew :: initializeConnectionsFor(const TPZPosition& pos)
    unsigned iYm = router->getInputWithType(_Yminus_);
    unsigned iZp = router->getInputWithType(_Zplus_);
    unsigned iZm = router->getInputWithType(_Zminus_);
-   
+
    unsigned oXp = router->getInputWithType(_Xplus_);
    unsigned oXm = router->getInputWithType(_Xminus_);
    unsigned oYp = router->getInputWithType(_Yplus_);

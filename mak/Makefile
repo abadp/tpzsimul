@@ -17,8 +17,8 @@ DEBUG =                    #Enables debugger ready exec (empty to disable)
 HOST_TYPE := $(shell uname -m)
 
 ifeq ($(shell uname),Darwin)
-   CC =/opt/local/bin/g++-mp-4.4
-   OPTS = -O6 -Wno-deprecated 
+   CC =g++
+   OPTS = -O3 -Wno-deprecated 
    OPTS_DEBUG = -Wno-deprecated  -ggdb -g 
 else
 ifeq ($(HOST_TYPE),i686)
