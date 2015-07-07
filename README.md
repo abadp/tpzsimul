@@ -15,10 +15,10 @@ TOPAZ is a general-purpose interconnection network simulator that allows the mod
   * _12/17/2014_ Updated Topaz-GEM5 interface to support latest GEM5 stable version (Changeset bdb307e8be54 in gem5-dev repo )
 
 # Documentation #
-  * [Getting Started](GettingStarted) A quick guide to understad how to get the sources and compile the simulator.
-  * [Simulator Configuration](SimulationConfiguration) How to configure the simulator (A quick review of SGML configuration files, how to define Routers, Netwkorks and Simulation) sand most common command line options
-  * [Components Available](AvailableComponents) A list of the components availables in the _tip_
-  * [GEM5 Integration](GEM5Integration) A small review of **GEM5** integration and an introductory HOW-TO  for using GEM5 with TOPAZ networks
+  * [Getting Started](https://github.com/abadp/tpzsimul/wiki/GettingStarted) A quick guide to understad how to get the sources and compile the simulator.
+  * [Simulator Configuration](https://github.com/abadp/tpzsimul/wiki/SimulationConfiguration) How to configure the simulator (A quick review of SGML configuration files, how to define Routers, Netwkorks and Simulation) sand most common command line options
+  * [Components Available](https://github.com/abadp/tpzsimul/wiki/AvaliableComponents) A list of the components availables in the _tip_
+  * [GEM5 Integration](https://github.com/abadp/tpzsimul/wiki/GEM5Integration) A small review of **GEM5** integration and an introductory HOW-TO  for using GEM5 with TOPAZ networks
 
 # Support #
 In order to allow other users to interact, please submit your questions **only** to the [topaz-discuss list](http://groups.google.com/group/topaz-discuss) .
