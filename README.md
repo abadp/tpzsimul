@@ -4,7 +4,7 @@ TOPAZ is a general-purpose interconnection network simulator that allows the mod
 
 # Announcements #
 
-  * _02/10/2012_ Initial release publicly available (See [here](http://code.google.com/p/tpzsimul/source/checkout))
+  * _02/10/2012_ Initial release publicly available 
   * _05/09/2012_ Paper presented at NOCs
   * _07/29/2012_ Updated to latest GEM5 version
   * _05/09/2012_ Updated to latest ruby API changes in GEM5
@@ -15,11 +15,10 @@ TOPAZ is a general-purpose interconnection network simulator that allows the mod
   * _12/17/2014_ Updated Topaz-GEM5 interface to support latest GEM5 stable version (Changeset bdb307e8be54 in gem5-dev repo )
 
 # Documentation #
-  * [Getting Started](http://code.google.com/p/tpzsimul/wiki/GStarted) A quick guide to understad how to get the sources and compile the simulator.
-  * [Simulator Configuration](http://code.google.com/p/tpzsimul/wiki/SimulationConfiguration) How to configure the simulator and most common command line options
-  * [SGML Configuration](http://code.google.com/p/tpzsimul/wiki/SGML) A quick review of SGML configuration files. How to define Routers, Netwkorks and Simulations
-  * [Components Available](http://code.google.com/p/tpzsimul/wiki/Out_of_the_box) A list of the components availables in the _tip_
-  * [GEM5 Integration](http://code.google.com/p/tpzsimul/wiki/GEM5Integration) A small review of **GEM5** integration and an introductory HOW-TO  for using GEM5 with TOPAZ networks
+  * [Getting Started](GettingStarted) A quick guide to understad how to get the sources and compile the simulator.
+  * [Simulator Configuration](SimulationConfiguration) How to configure the simulator (A quick review of SGML configuration files, how to define Routers, Netwkorks and Simulation) sand most common command line options
+  * [Components Available](AvailableComponents) A list of the components availables in the _tip_
+  * [GEM5 Integration](GEM5Integration) A small review of **GEM5** integration and an introductory HOW-TO  for using GEM5 with TOPAZ networks
 
 # Support #
 In order to allow other users to interact, please submit your questions **only** to the [topaz-discuss list](http://groups.google.com/group/topaz-discuss) .
